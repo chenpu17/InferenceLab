@@ -10,6 +10,7 @@ import {
   QUALITY_TITLE,
   qualityClass,
 } from '../../lib/format';
+import { useI18n } from '../../i18n';
 
 const BLOCK_STATE_CLASS: Record<string, string> = {
   FREE: 'block-free',
@@ -24,21 +25,35 @@ const BLOCK_STATE_CLASS: Record<string, string> = {
   LOADING: 'block-loading',
 };
 
+const BLOCK_STATE_LABEL: Record<string, string> = {
+  FREE: '未占用',
+  RESERVED: '已预留',
+  PARTIAL: '部分写入',
+  COMPLETE: '计算完成',
+  CACHED_ACTIVE: '缓存活跃',
+  REUSABLE: '待复用',
+  EVICTING: '淘汰中',
+  OFFLOADING: '写回中',
+  HOST_RESIDENT: '主机驻留',
+  LOADING: '主机加载中',
+};
+
 function HbmBar({ rank }: { rank: RankPlan }): ReactNode {
+  const { t } = useI18n();
   const budget = rank.hbmBudgetBytes;
   const runtime = rank.runtimeBytes + rank.workspacePeakBytes + rank.graphCaptureBytes + rank.commBufferBytes;
   const segments = [
-    { key: 'weights', label: 'Weights', value: rank.weightBytes, color: 'var(--compute)' },
-    { key: 'runtime', label: 'Runtime / Workspace', value: runtime, color: 'var(--unknown)' },
-    { key: 'kv', label: 'KV Pool 预留', value: rank.kvPoolReservedBytes, color: 'var(--kv)' },
-    { key: 'slack', label: 'Slack', value: Math.max(0, rank.hbmSlackBytes), color: 'var(--surface-hi)' },
+    { key: 'weights', label: t('权重'), value: rank.weightBytes, color: 'var(--compute)' },
+    { key: 'runtime', label: t('运行时 / 工作区'), value: runtime, color: 'var(--unknown)' },
+    { key: 'kv', label: t('KV Pool 预留'), value: rank.kvPoolReservedBytes, color: 'var(--kv)' },
+    { key: 'slack', label: t('余量'), value: Math.max(0, rank.hbmSlackBytes), color: 'var(--surface-hi)' },
   ];
   if (budget <= 0) {
-    return <p className="na-note">HBM 预算不可计算（容量或利用率未知）。</p>;
+    return <p className="na-note">{t('HBM 预算不可计算（容量或利用率未知）。')}</p>;
   }
   return (
     <>
-      <div className="hbm-bar" role="img" aria-label="HBM 预算组成">
+      <div className="hbm-bar" role="img" aria-label={t('HBM 预算组成')}>
         {segments.map((segment) => (
           <span
             key={segment.key}
@@ -59,7 +74,7 @@ function HbmBar({ rank }: { rank: RankPlan }): ReactNode {
         ))}
       </div>
       <div className="ledger-total">
-        <span>HBM 预算</span>
+        <span>{t('HBM 预算')}</span>
         <b className="mono">{formatBytes(budget)}</b>
       </div>
     </>
@@ -67,6 +82,7 @@ function HbmBar({ rank }: { rank: RankPlan }): ReactNode {
 }
 
 export function MemoryLens(): ReactNode {
+  const { t, lt } = useI18n();
   const plan = useLabStore((state) => state.planPreview);
   const scenario = useLabStore((state) => state.scenario);
   const viewState = useLabStore((state) => state.viewState);
@@ -103,8 +119,8 @@ export function MemoryLens(): ReactNode {
   if (!plan || !selectedRank) {
     return (
       <div className="lens-empty">
-        <h3>尚无内存账本</h3>
-        <p>需要可计算的权重与 KV 布局；Unknown 模板不会显示猜测容量。</p>
+        <h3>{t('尚无内存账本')}</h3>
+        <p>{t('需要可计算的权重与 KV 布局；Unknown 模板不会显示猜测容量。')}</p>
       </div>
     );
   }
@@ -115,7 +131,7 @@ export function MemoryLens(): ReactNode {
   const speculativeSupport = plan.speculative?.frameworkSupport;
   const speculativeKnown = speculativeSupport === 'supported' || speculativeSupport === 'partial';
   const speculativeSupportLabel =
-    speculativeSupport === 'unknown' ? 'UNKNOWN' : speculativeSupport === 'unsupported' ? 'UNSUPPORTED' : 'SYNTHETIC';
+    speculativeSupport === 'unknown' ? 'UNKNOWN' : speculativeSupport === 'unsupported' ? t('不支持') : 'SYNTHETIC';
 
   const engine = plan.engines.find((item) => item.id === selectedRank.engineId);
   const engineView = engine && viewState ? viewState.engines[engine.id] : null;
@@ -150,12 +166,12 @@ export function MemoryLens(): ReactNode {
     <div className="memory-lens">
       {selectionMissing && (
         <p className="topology-selection memory-selection-note">
-          所选实体不在当前 Plan，已显示 Rank 0；切换回 Topology 可重新选择。
+          {t('所选实体不在当前 Plan，已显示 Rank 0；切换回 Topology 可重新选择。')}
         </p>
       )}
       <div className="memory-layout">
-        <aside className="rank-list" aria-label="Rank 列表">
-          <div className="subhead">RANKS · {plan.ranks.length}</div>
+        <aside className="rank-list" aria-label={t('Rank 列表')}>
+          <div className="subhead">{t('Rank 列表 · {count}', { count: plan.ranks.length })}</div>
           <div className="rank-grid">
             {plan.ranks.map((rank) => {
               const selected = rank.acceleratorId === selectedRank.acceleratorId;
@@ -166,8 +182,13 @@ export function MemoryLens(): ReactNode {
                 <button
                   key={rank.rankId}
                   className={`rank-cell ${selected ? 'selected' : ''}`}
-                  title={`${rank.acceleratorId} · ${rank.engineId} · KV ${used}/${total} blocks`}
-                  onClick={() => selectEntity({ kind: 'device', id: rank.acceleratorId, label: `设备 ${rank.acceleratorId}` })}
+                  title={t('{accelerator} · {engine} · KV {used}/{total} Block', {
+                    accelerator: rank.acceleratorId,
+                    engine: rank.engineId,
+                    used,
+                    total,
+                  })}
+                  onClick={() => selectEntity({ kind: 'device', id: rank.acceleratorId, label: t('设备 {id}', { id: rank.acceleratorId }) })}
                 >
                   <span>{rank.acceleratorId.split('-').slice(-1)[0]!.padStart(2, '0')}</span>
                   <span className="rank-mini-bar">
@@ -183,7 +204,7 @@ export function MemoryLens(): ReactNode {
           <div className="memory-card">
             <div className="card-head">
               <div>
-                <div className="eyebrow">HBM · EXTERNAL LEDGER</div>
+                <div className="eyebrow">{t('HBM · 外层账本')}</div>
                 <h3>{selectedRank.acceleratorId}</h3>
                 <p className="caption">
                   {selectedRank.nodeId} · {selectedRank.engineId} · {selectedRank.dpReplicaId}
@@ -191,7 +212,7 @@ export function MemoryLens(): ReactNode {
               </div>
               <span
                 className={`quality-tag ${qualityClass(selectedRank.capacityQuality)}`}
-                title={QUALITY_TITLE[selectedRank.capacityQuality]}
+                title={lt(QUALITY_TITLE[selectedRank.capacityQuality])}
                 data-testid="hbm-capacity-quality"
               >
                 {capacityUnavailable ? 'UNKNOWN' : QUALITY_LABEL[selectedRank.capacityQuality]}
@@ -200,74 +221,81 @@ export function MemoryLens(): ReactNode {
             {capacityUnavailable ? (
               <p className="na-note">
                 {syntheticKvReservation
-                  ? `权重为 Unknown，HBM 总构成不可验证；KV 预留 ${formatBytes(selectedRank.kvPoolReservedBytes)} 来自显式 kv_cache_memory_bytes，仅用于合成运行。`
-                  : '权重或 KV 布局为 Unknown，HBM 构成与 KV 预留不可计算；不显示猜测容量。'}
+                  ? t('权重为 Unknown，HBM 总构成不可验证；KV 预留 {bytes} 来自显式 kv_cache_memory_bytes，仅用于合成运行。', {
+                      bytes: formatBytes(selectedRank.kvPoolReservedBytes),
+                    })
+                  : t('权重或 KV 布局为 Unknown，HBM 构成与 KV 预留不可计算；不显示猜测容量。')}
               </p>
             ) : (
               <HbmBar rank={selectedRank} />
             )}
             <p className="caption note-line">
-              KV Pool 是 HBM 预算中的已预留段；请求新增 Block 只增加下层 used，不会重复增加外层 HBM 承诺。
+              {t('KV Pool 是 HBM 预算中的已预留段；请求新增 Block 只增加下层 used，不会重复增加外层 HBM 承诺。')}
             </p>
           </div>
 
           <div className="memory-card">
             <div className="card-head">
               <div>
-                <div className="eyebrow">KV POOL · INTERNAL LEDGER</div>
-                <h3>KV Cache · {kvUnavailable ? 'N/A' : `${totalBlocks} blocks`}</h3>
+                <div className="eyebrow">{t('KV 池 · 内层账本')}</div>
+                <h3>{kvUnavailable ? 'KV Cache · N/A' : t('KV Cache · {count} 块', { count: totalBlocks })}</h3>
                 <p className="caption">
                   block_size={scenario.runtime.blockSize} ·{' '}
-                  {kvUnavailable ? 'KV 布局 Unknown' : `${formatBytes(selectedRank.kvBytesPerBlock)} / block`}
+                  {kvUnavailable ? t('KV 布局 Unknown') : `${formatBytes(selectedRank.kvBytesPerBlock)} / block`}
                 </p>
               </div>
               <span
                 className={`quality-tag ${qualityClass(selectedRank.kvQuality)}`}
-                title={QUALITY_TITLE[selectedRank.kvQuality]}
+                title={lt(QUALITY_TITLE[selectedRank.kvQuality])}
                 data-testid="kv-quality"
               >
                 {QUALITY_LABEL[selectedRank.kvQuality]}
               </span>
             </div>
             {kvUnavailable ? (
-              <p className="na-note">KV 布局为 Unknown，无法计算 Block 数、每 Token 字节与池容量。</p>
+              <p className="na-note">{t('KV 布局为 Unknown，无法计算 Block 数、每 Token 字节与池容量。')}</p>
             ) : (
               <>
-                <div className="kv-bar" role="img" aria-label="KV Pool 使用率">
+                <div className="kv-bar" role="img" aria-label={t('KV Pool 使用率')}>
                   <span className="kv-used" style={{ width: `${percentOf(kvUsed, Math.max(1, kvTotal)) * 100}%` }} />
                 </div>
                 <div className="kv-stats">
                   <div>
-                    <span>Used</span>
+                    <span>{t('已用')}</span>
                     <b className="mono">{formatBytes(kvUsed)}</b>
                   </div>
                   <div>
-                    <span>Free</span>
+                    <span>{t('空闲')}</span>
                     <b className="mono">{formatBytes(Math.max(0, kvTotal - kvUsed))}</b>
                   </div>
                   <div>
-                    <span>Blocks</span>
+                    <span>{t('块数')}</span>
                     <b className="mono">{usedBlocks} / {totalBlocks}</b>
                   </div>
                   <div>
-                    <span>Bytes / token</span>
+                    <span>{t('每 Token 字节')}</span>
                     <b className="mono" data-testid="kv-bytes-per-token">
                       {formatBytes(selectedRank.kvBytesPerToken)}
                     </b>
                   </div>
                   <div>
-                    <span>Peak (run)</span>
+                    <span>{t('峰值（运行）')}</span>
                     <b className="mono">{formatBytes(kvPeak)}</b>
                   </div>
                 </div>
 
-                <div className="block-grid" aria-label="KV Block 状态">
+                <div className="block-grid" aria-label={t('KV Block 状态')}>
                   {sortedBlocks.slice(0, 160).map((block) => (
                     <button
                       key={block.id}
                       className={`block-cell ${BLOCK_STATE_CLASS[block.state] ?? ''} ${selectedBlockId === block.id ? 'selected' : ''}`}
-                      title={`#${block.blockIndex} · ${block.state} · ${block.location} · refs=${block.refCount} · ${shortHash(block.hash)}`}
-                      aria-label={`Block ${block.blockIndex}, ${block.state}, ${block.location}, refs ${block.refCount}`}
+                      title={`#${block.blockIndex} · ${t(BLOCK_STATE_LABEL[block.state] ?? block.state)} · ${lt(block.location)} · refs=${block.refCount} · ${shortHash(block.hash)}`}
+                      aria-label={t('Block {index}，状态 {state}，位置 {location}，引用 {refs}', {
+                        index: block.blockIndex,
+                        state: t(BLOCK_STATE_LABEL[block.state] ?? block.state),
+                        location: lt(block.location),
+                        refs: block.refCount,
+                      })}
                       data-state={block.state}
                       onClick={() => selectEntity({ kind: 'block', id: block.id, label: `KV Block #${block.blockIndex}` })}
                     >
@@ -276,21 +304,21 @@ export function MemoryLens(): ReactNode {
                     </button>
                   ))}
                   {freeBlocks > 0 && (
-                    <div className="block-cell block-free block-free-summary" title={`${freeBlocks} free blocks`}>
+                    <div className="block-cell block-free block-free-summary" title={t('{count} 个空闲 Block', { count: freeBlocks })}>
                       +{freeBlocks}
                     </div>
                   )}
                   {sortedBlocks.length === 0 && freeBlocks === 0 && (
-                    <p className="na-note">KV 池为空：block_size 或显式预算不足以容纳一个 Block。</p>
+                    <p className="na-note">{t('KV 池为空：block_size 或显式预算不足以容纳一个 Block。')}</p>
                   )}
                 </div>
                 <div className="block-legend">
-                  <span><i className="block-reserved" aria-hidden="true" /> reserved</span>
-                  <span><i className="block-complete" aria-hidden="true" /> complete</span>
-                  <span><i className="block-cached" aria-hidden="true" /> cached</span>
-                  <span><i className="block-reusable" aria-hidden="true" /> reusable</span>
-                  <span><i className="block-host" aria-hidden="true" /> host</span>
-                  <span><i className="block-loading" aria-hidden="true" /> loading</span>
+                  <span><i className="block-reserved" aria-hidden="true" /> {t('预留')}</span>
+                  <span><i className="block-complete" aria-hidden="true" /> {t('已完成')}</span>
+                  <span><i className="block-cached" aria-hidden="true" /> {t('已缓存')}</span>
+                  <span><i className="block-reusable" aria-hidden="true" /> {t('可复用')}</span>
+                  <span><i className="block-host" aria-hidden="true" /> {t('主机')}</span>
+                  <span><i className="block-loading" aria-hidden="true" /> {t('加载中')}</span>
                 </div>
               </>
             )}
@@ -304,37 +332,43 @@ export function MemoryLens(): ReactNode {
             >
               <div className="card-head">
                 <div>
-                  <div className="eyebrow">PP · PIPELINE STAGES</div>
-                  <h3>PP{plan.pipeline.ppSize} · {plan.pipeline.stages.length} stages</h3>
+                  <div className="eyebrow">{t('PP · 流水线 Stage')}</div>
+                  <h3>{t('PP{size} · {count} 个 Stage', { size: plan.pipeline.ppSize, count: plan.pipeline.stages.length })}</h3>
                   <p className="caption">
                     {selectedRank.ppStageIndex !== undefined
-                      ? `本 Rank 属于 Stage ${selectedRank.ppStageIndex}：层 ${plan.pipeline.stages.find((stage) => stage.stageIndex === selectedRank.ppStageIndex)?.layerRange.join('–') ?? 'n/a'}`
-                      : '按连续层范围切分；Activation 在 Stage 间传递。'}
+                      ? t('本 Rank 属于 Stage {stage}：层 {layers}', {
+                          stage: selectedRank.ppStageIndex,
+                          layers:
+                            plan.pipeline.stages
+                              .find((stage) => stage.stageIndex === selectedRank.ppStageIndex)
+                              ?.layerRange.join('–') ?? 'N/A',
+                        })
+                      : t('按连续层范围切分；Activation 在 Stage 间传递。')}
                   </p>
                 </div>
-                <span className="quality-tag">M4 · assumption</span>
+                <span className="quality-tag">{t('M4 · 假设')}</span>
               </div>
               <div className="kv-stats">
                 <div>
-                  <span>Bubble</span>
+                  <span>{t('气泡')}</span>
                   <b className="mono">{formatPercent(plan.pipeline.bubbleFraction, 1)}</b>
                 </div>
                 <div>
-                  <span>Activation / token</span>
+                  <span>{t('Activation / Token')}</span>
                   <b className="mono">{formatBytes(plan.pipeline.activationBytesPerToken)}</b>
                 </div>
                 <div>
-                  <span>Stage 层数</span>
+                  <span>{t('Stage 层数')}</span>
                   <b className="mono">
                     {plan.pipeline.stages[0] ? plan.pipeline.stages[0].layerRange[1] - plan.pipeline.stages[0].layerRange[0] : 0}
                   </b>
                 </div>
                 <div>
-                  <span>本 Rank 分片</span>
+                  <span>{t('本 Rank 分片')}</span>
                   <b className="mono">{formatBytes(selectedRank.activationBytesPerRank ?? 0)}</b>
                 </div>
               </div>
-              <p className="caption note-line">{plan.pipeline.note}</p>
+              <p className="caption note-line">{lt(plan.pipeline.note)}</p>
             </div>
           )}
 
@@ -346,31 +380,31 @@ export function MemoryLens(): ReactNode {
             >
               <div className="card-head">
                 <div>
-                  <div className="eyebrow">SP · ACTIVATION SHARD</div>
-                  <h3>SP{plan.sequenceParallel.spSize} · {plan.sequenceParallel.groupIds.length} groups</h3>
-                  <p className="caption">复用 TP Rank，只沿序列维切分 Activation；Workspace 不随之切分，与 PCP/DCP 的上下文 KV 切分不同。</p>
+                  <div className="eyebrow">{t('SP · Activation 分片')}</div>
+                  <h3>{t('SP{size} · {count} 个组', { size: plan.sequenceParallel.spSize, count: plan.sequenceParallel.groupIds.length })}</h3>
+                  <p className="caption">{t('复用 TP Rank，只沿序列维切分 Activation；Workspace 不随之切分，与 PCP/DCP 的上下文 KV 切分不同。')}</p>
                 </div>
-                <span className="quality-tag">M4 · assumption</span>
+                <span className="quality-tag">{t('M4 · 假设')}</span>
               </div>
               <div className="kv-stats">
                 <div>
-                  <span>Shard factor</span>
+                  <span>{t('分片系数')}</span>
                   <b className="mono">{plan.sequenceParallel.activationShardFactor}×</b>
                 </div>
                 <div>
-                  <span>Collective / step</span>
+                  <span>{t('每步 Collective')}</span>
                   <b className="mono">{plan.sequenceParallel.collectiveCostUs} µs</b>
                 </div>
                 <div>
-                  <span>本 Rank Activation</span>
+                  <span>{t('本 Rank Activation')}</span>
                   <b className="mono">{formatBytes(selectedRank.activationBytesPerRank ?? 0)}</b>
                 </div>
                 <div>
-                  <span>设备增量</span>
+                  <span>{t('设备增量')}</span>
                   <b className="mono">0</b>
                 </div>
               </div>
-              <p className="caption note-line">{plan.sequenceParallel.note}</p>
+              <p className="caption note-line">{lt(plan.sequenceParallel.note)}</p>
             </div>
           )}
 
@@ -378,14 +412,14 @@ export function MemoryLens(): ReactNode {
             <div className="memory-card speculative-card">
               <div className="card-head">
                 <div>
-                  <div className="eyebrow">SPECULATIVE · {plan.speculative.method.toUpperCase()}</div>
-                  <h3>{plan.speculative.draftTokens} draft · accept {formatPercent(plan.speculative.acceptanceRate, 0)}</h3>
+                  <div className="eyebrow">{t('投机解码 · {method}', { method: plan.speculative.method.toUpperCase() })}</div>
+                  <h3>{t('{count} 个 Draft · 接受率 {rate}', { count: plan.speculative.draftTokens, rate: formatPercent(plan.speculative.acceptanceRate, 0) })}</h3>
                   <p className="caption">
                     {speculativeSupport === 'unknown'
-                      ? '适配器未声明支持该方法；接受率仍是场景输入，但不能作为已验证收益。'
+                      ? t('适配器未声明支持该方法；接受率仍是场景输入，但不能作为已验证收益。')
                       : speculativeSupport === 'unsupported'
-                        ? '适配器明确不支持该方法；场景输入仅用于结构展示，不产生可运行收益。'
-                        : '接受率是场景假设；收益随任务与采样参数变化，不是固定加速比。'}
+                        ? t('适配器明确不支持该方法；场景输入仅用于结构展示，不产生可运行收益。')
+                        : t('接受率是场景假设；收益随任务与采样参数变化，不是固定加速比。')}
                   </p>
                 </div>
                 <span
@@ -399,7 +433,7 @@ export function MemoryLens(): ReactNode {
               </div>
               <div className="kv-stats">
                 <div>
-                  <span>期望接受 / 步</span>
+                  <span>{t('期望接受 / 步')}</span>
                   <b className="mono">
                     {speculativeKnown
                       ? plan.speculative.expectedAcceptedTokensPerStep.toFixed(2)
@@ -407,7 +441,7 @@ export function MemoryLens(): ReactNode {
                   </b>
                 </div>
                 <div>
-                  <span>期望加速比</span>
+                  <span>{t('期望加速比')}</span>
                   <b className="mono" data-testid="spec-speedup">
                     {speculativeKnown
                       ? `${plan.speculative.expectedDecodeSpeedup.toFixed(2)}×`
@@ -415,7 +449,7 @@ export function MemoryLens(): ReactNode {
                   </b>
                 </div>
                 <div>
-                  <span>Draft 成本比</span>
+                  <span>{t('Draft 成本比')}</span>
                   <b className="mono">
                     {speculativeKnown
                       ? plan.speculative.draftCostRatio.toFixed(2)
@@ -423,11 +457,11 @@ export function MemoryLens(): ReactNode {
                   </b>
                 </div>
                 <div>
-                  <span>Token Budget</span>
+                  <span>{t('Token 预算')}</span>
                   <b className="mono">+{plan.speculative.draftTokens}</b>
                 </div>
               </div>
-              <p className="caption note-line">{plan.speculative.note}</p>
+              <p className="caption note-line">{lt(plan.speculative.note)}</p>
             </div>
           )}
 
@@ -435,35 +469,37 @@ export function MemoryLens(): ReactNode {
             <div className="memory-card moe-card">
               <div className="card-head">
                 <div>
-                  <div className="eyebrow">MoE · EXPERT RESIDENCY</div>
-                  <h3>EP{expertPlacement.epSize} · {expertPlacement.expertCount} experts · top-{expertPlacement.topK}</h3>
+                  <div className="eyebrow">{t('MoE · 专家驻留')}</div>
+                  <h3>{t('EP{size} · {count} 个专家 · top-{topK}', { size: expertPlacement.epSize, count: expertPlacement.expertCount, topK: expertPlacement.topK })}</h3>
                   <p className="caption">
-                    每 Rank 基础 {expertPlacement.expertsPerRank} 个 + 冗余 {expertPlacement.redundantExpertsPerRank} 个；
-                    冗余副本增加 HBM，不增加逻辑专家数。
+                    {t('每 Rank 基础 {base} 个 + 冗余 {redundant} 个； 冗余副本增加 HBM，不增加逻辑专家数。', {
+                      base: expertPlacement.expertsPerRank,
+                      redundant: expertPlacement.redundantExpertsPerRank,
+                    })}
                   </p>
                 </div>
-                <span className="quality-tag">M4 · assumption</span>
+                <span className="quality-tag">{t('M4 · 假设')}</span>
               </div>
               <div className="kv-stats">
                 <div>
-                  <span>本 Rank 专家</span>
+                  <span>{t('本 Rank 专家')}</span>
                   <b className="mono">{rankExpertAssignments.length}</b>
                 </div>
                 <div>
-                  <span>专家权重</span>
+                  <span>{t('专家权重')}</span>
                   <b className="mono">{formatBytes(rankExpertBytes)}</b>
                 </div>
                 <div>
-                  <span>总专家权重</span>
+                  <span>{t('总专家权重')}</span>
                   <b className="mono">{formatBytes(expertPlacement.totalExpertBytes)}</b>
                 </div>
                 <div>
-                  <span>热点比</span>
-                  <b className="mono">{moe ? `${moe.hotspotRatio.toFixed(2)}×` : '运行后更新'}</b>
+                  <span>{t('热点比')}</span>
+                  <b className="mono">{moe ? `${moe.hotspotRatio.toFixed(2)}×` : t('运行后更新')}</b>
                 </div>
               </div>
               {topExpertLoads.length > 0 && (
-                <div className="expert-loads" aria-label="专家负载 Top 8">
+                <div className="expert-loads" aria-label={t('专家负载 Top 8')}>
                   {topExpertLoads.map((load) => (
                     <div className="expert-load-row" key={load.expertId}>
                       <span className="mono">{load.expertId}</span>
@@ -475,9 +511,9 @@ export function MemoryLens(): ReactNode {
                   ))}
                 </div>
               )}
-              {!moe && <p className="na-note">运行后可观察 topK 路由后的专家负载与 All-to-All 估算。</p>}
+              {!moe && <p className="na-note">{t('运行后可观察 topK 路由后的专家负载与 All-to-All 估算。')}</p>}
               <p className="caption note-line">
-                专家路由为带偏斜的合成教学模型；A2A 字节/耗时按共享互联容量估算，不是实测。
+                {t('专家路由为带偏斜的合成教学模型；A2A 字节/耗时按共享互联容量估算，不是实测。')}
               </p>
             </div>
           )}
@@ -486,28 +522,28 @@ export function MemoryLens(): ReactNode {
             <div className="memory-card host-card">
               <div className="card-head">
                 <div>
-                  <div className="eyebrow">HOST · DRAM TIER</div>
-                  <h3>CPU Offload Cache</h3>
-                  <p className="caption">仅建模完整 Block 的主机驻留/回迁；不做逐层流水。</p>
+                  <div className="eyebrow">{t('主机 · DRAM 层')}</div>
+                  <h3>{t('CPU Offload 缓存')}</h3>
+                  <p className="caption">{t('仅建模完整 Block 的主机驻留/回迁；不做逐层流水。')}</p>
                 </div>
-                <span className="quality-tag">M3 · partial</span>
+                <span className="quality-tag">{t('M3 · 部分')}</span>
               </div>
               <div className="kv-stats">
                 <div>
-                  <span>Host Used</span>
+                  <span>{t('主机已用')}</span>
                   <b className="mono">{formatBytes(hostUsedBytes)}</b>
                 </div>
                 <div>
-                  <span>Host Cache</span>
+                  <span>{t('主机缓存')}</span>
                   <b className="mono">{formatBytes(hostBytes)}</b>
                 </div>
                 <div>
-                  <span>Host Blocks</span>
+                  <span>{t('主机 Block 数')}</span>
                   <b className="mono">{hostBlocks.length}</b>
                 </div>
                 <div>
-                  <span>Offload / Load</span>
-                  <b className="mono">{activeRun ? `${offloads ?? 0} / ${hostLoads ?? 0}` : '运行后更新'}</b>
+                  <span>{t('卸载 / 加载')}</span>
+                  <b className="mono">{activeRun ? `${offloads ?? 0} / ${hostLoads ?? 0}` : t('运行后更新')}</b>
                 </div>
               </div>
             </div>

@@ -4,6 +4,14 @@
 
 ## [Unreleased] · 2026-11-05
 
+### UI 本地化与响应式修复
+
+- 新增中英文切换：默认中文，Header 语言按钮写入 `inferencelab.prefs.v1`，`?lang=en|zh` 可覆盖当前会话；同步 `document.documentElement.lang`。
+- 英文文案按界面区域拆分为 `src/i18n/en/*`，中文源字符串作为 key；`lt()` 继续处理 core/profiles 生成的领域文案，并新增 `src/i18n/zh/domain.ts` 覆盖必须保留英文的枚举值。
+- 清理中文界面残留的英文 chrome（面板标题、状态、图例、表格/卡片说明等）；技术标识符、质量标签、公式与 ID 保持原样。
+- 修复窄屏文字裁切：Tool Rail 英文标签加宽、Header 在 1024/900/767/480 等断点隐藏次要控件、390px 下场景选择器与运行按钮重排、Timeline 头部在 390px 收起事件计数并限制网格最小宽度；Metric/KPI 说明文字允许换行。
+- 新增 `apps/web/test/i18n.test.ts` 与 `docs/LOCALIZATION.md`；E2E-18 覆盖语言切换与刷新后的持久化。
+
 ### M5 · 真实数据与性能校准
 
 - 新增 `packages/core/src/validation/calibration.ts`：校准 bundle Zod 校验、重复 ID 提示、错误路径。
@@ -76,10 +84,10 @@
 ## 验证记录
 
 - `pnpm lint`：通过。
-- `pnpm test`：core 80 + adapters 6 + profiles 27 + web 5 = 118 条单元测试通过。
+- `pnpm test`：core 80 + adapters 6 + profiles 27 + web 11 = 124 条单元测试通过。
 - `pnpm typecheck`：4 个 workspace 全部通过。
 - `pnpm build`：Vite 生产构建通过。
 - `pnpm audit --audit-level=moderate`：0 个已知漏洞。
-- `pnpm e2e`：23 条 Playwright 用例通过（含 M4/M5、性能与截图基线）。
+- `pnpm e2e`：24 条 Playwright 用例通过（含 M4/M5、性能与截图基线）。
 
 性能数字随机器变化，最新一次结果见 `docs/performance-report.json` 与 `docs/PERFORMANCE.md`。

@@ -55,7 +55,7 @@ test.describe('UI screenshot baseline', () => {
     const skip = page.getByRole('button', { name: '跳过' });
     if (await skip.isVisible().catch(() => false)) await skip.click();
     await page.getByRole('button', { name: '06 校验与证据' }).click();
-    await expect(page.locator('.plan-badge')).toContainText('INVALID');
+    await expect(page.locator('.plan-badge')).toContainText('无效');
     await page.screenshot({ path: path.join(OUT, '1440x900-invalid.png') });
   });
 

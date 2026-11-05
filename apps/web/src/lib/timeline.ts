@@ -30,10 +30,16 @@ export interface TimelineModel {
 }
 
 const TRACK_META: Record<TrackId, { label: string; color: string }> = {
-  prefill: { label: 'Prefill compute', color: 'var(--compute)' },
-  transfer: { label: 'KV / Transfer', color: 'var(--transfer)' },
+  prefill: { label: 'Prefill 计算', color: 'var(--compute)' },
+  transfer: { label: 'KV / 传输', color: 'var(--transfer)' },
   decode: { label: 'Decode', color: 'var(--kv)' },
-  wait: { label: 'Wait / blocked', color: 'var(--blocked)' },
+  wait: { label: '等待 / 阻塞', color: 'var(--blocked)' },
+};
+
+const COMPUTE_KIND_LABEL: Record<string, string> = {
+  prefill: 'Prefill 计算',
+  decode: 'Decode',
+  mixed: '混合',
 };
 
 type RawSegment = Omit<TimelineSegment, 'lane'>;
@@ -78,7 +84,7 @@ export function buildTimeline(events: SimEvent[]): TimelineModel {
       const base = {
         startUs: event.timeUs,
         endUs: event.timeUs + duration,
-        label: `${kind} · ${String(detail.engineId ?? event.targetId ?? '')}`,
+        label: `${COMPUTE_KIND_LABEL[kind] ?? kind} · ${String(detail.engineId ?? event.targetId ?? '')}`,
         engineId: String(detail.engineId ?? event.targetId ?? ''),
         eventId: event.id,
         eventIndex: index,
@@ -122,7 +128,7 @@ export function buildTimeline(events: SimEvent[]): TimelineModel {
           track: 'wait',
           startUs: start.timeUs,
           endUs: event.timeUs,
-          label: event.type === 'REQUEST_REJECTED' ? 'blocked / rejected' : 'waiting',
+          label: event.type === 'REQUEST_REJECTED' ? '阻塞 / 拒绝' : '等待',
           requestId: event.requestId,
           eventId: start.eventId,
           eventIndex: start.eventIndex,
@@ -142,7 +148,7 @@ export function buildTimeline(events: SimEvent[]): TimelineModel {
         track: 'wait',
         startUs: start.timeUs,
         endUs: end,
-        label: 'waiting at end',
+        label: '结束时仍在等待',
         requestId,
         eventId: start.eventId,
         eventIndex: start.eventIndex,

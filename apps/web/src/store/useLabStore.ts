@@ -32,6 +32,7 @@ import {
   withRuntime,
 } from '../lib/scenario';
 import { simulationClient } from '../worker/client';
+import type { Locale } from '../i18n/types';
 
 export type Route = 'lab' | 'experiments' | 'reference';
 export type Lens = 'topology' | 'memory' | 'scheduler' | 'transport' | 'metrics';
@@ -85,6 +86,7 @@ interface LabState {
   playbackSpeed: PlaybackSpeed;
   qualityTier: QualityTier;
   theme: Theme;
+  locale: Locale;
   reducedMotion: boolean;
   running: boolean;
   runError: string | null;
@@ -128,6 +130,7 @@ interface LabState {
   selectRun: (runId: string) => void;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  setLocale: (locale: Locale) => void;
   setReducedMotion: (value: boolean) => void;
   toggleDrawer: (drawer: keyof DrawerState) => void;
   toggleLegend: () => void;
@@ -160,26 +163,34 @@ function loadPersistedDraft(): Scenario | null {
   }
 }
 
-function loadPreferences(): { theme: Theme; reducedMotion: boolean } {
+function loadPreferences(): { theme: Theme; reducedMotion: boolean; locale: Locale } {
   const media = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  const queryLocale = new URLSearchParams(window.location.search).get('lang');
   try {
     const raw = window.localStorage.getItem(PREF_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as { theme?: Theme; reducedMotion?: boolean };
+      const parsed = JSON.parse(raw) as { theme?: Theme; reducedMotion?: boolean; locale?: Locale };
       return {
         theme: parsed.theme === 'light' ? 'light' : 'dark',
         reducedMotion: typeof parsed.reducedMotion === 'boolean' ? parsed.reducedMotion : media,
+        locale: queryLocale === 'en' || queryLocale === 'zh'
+          ? queryLocale
+          : parsed.locale === 'en' ? 'en' : 'zh',
       };
     }
   } catch {
     // ignore
   }
-  return { theme: 'dark', reducedMotion: media };
+  return {
+    theme: 'dark',
+    reducedMotion: media,
+    locale: queryLocale === 'en' || queryLocale === 'zh' ? queryLocale : 'zh',
+  };
 }
 
-function savePreferences(theme: Theme, reducedMotion: boolean): void {
+function savePreferences(theme: Theme, reducedMotion: boolean, locale: Locale): void {
   try {
-    window.localStorage.setItem(PREF_KEY, JSON.stringify({ theme, reducedMotion }));
+    window.localStorage.setItem(PREF_KEY, JSON.stringify({ theme, reducedMotion, locale }));
   } catch {
     // ignore
   }
@@ -257,6 +268,7 @@ export const useLabStore = create<LabState>((set, get) => ({
   playbackSpeed: 1,
   qualityTier: 'synthetic',
   theme: preferences.theme,
+  locale: preferences.locale,
   reducedMotion: preferences.reducedMotion,
   running: false,
   runError: null,
@@ -614,7 +626,7 @@ export const useLabStore = create<LabState>((set, get) => ({
 
   setTheme: (theme) => {
     set({ theme });
-    savePreferences(theme, get().reducedMotion);
+    savePreferences(theme, get().reducedMotion, get().locale);
   },
 
   toggleTheme: () => {
@@ -622,9 +634,15 @@ export const useLabStore = create<LabState>((set, get) => ({
     get().setTheme(theme);
   },
 
+  setLocale: (locale) => {
+    set({ locale });
+    savePreferences(get().theme, get().reducedMotion, locale);
+    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+  },
+
   setReducedMotion: (value) => {
     set({ reducedMotion: value, playing: value ? false : get().playing });
-    savePreferences(get().theme, value);
+    savePreferences(get().theme, value, get().locale);
   },
 
   toggleDrawer: (drawer) => {

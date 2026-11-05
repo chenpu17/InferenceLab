@@ -16,6 +16,7 @@ function routeFromHash(): Route {
 export function App(): ReactNode {
   const route = useLabStore((state) => state.route);
   const theme = useLabStore((state) => state.theme);
+  const locale = useLabStore((state) => state.locale);
   const reducedMotion = useLabStore((state) => state.reducedMotion);
 
   usePlayback();
@@ -24,8 +25,9 @@ export function App(): ReactNode {
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.dataset.motion = reducedMotion ? 'reduced' : 'full';
+    root.lang = locale === 'zh' ? 'zh-CN' : 'en';
     root.style.colorScheme = theme;
-  }, [theme, reducedMotion]);
+  }, [theme, locale, reducedMotion]);
 
   useEffect(() => {
     if (!window.location.hash) {

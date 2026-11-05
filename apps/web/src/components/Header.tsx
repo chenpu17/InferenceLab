@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { scenarioPresets } from '@inferencelab/profiles';
 import { useLabStore, type Mode } from '../store/useLabStore';
 import { QUALITY_TITLE } from '../lib/format';
+import { useI18n } from '../i18n';
 
 const MODES: Array<{ id: Mode; label: string; title?: string; disabled?: boolean }> = [
   { id: 'explore', label: '原理探索' },
@@ -11,13 +12,14 @@ const MODES: Array<{ id: Mode; label: string; title?: string; disabled?: boolean
 
 function QualityBadge(): ReactNode {
   const tier = useLabStore((state) => state.qualityTier);
+  const { t } = useI18n();
   const label = tier === 'measured' ? 'MEASURED' : tier === 'unknown' ? 'UNKNOWN' : 'SYNTHETIC';
   const title =
     tier === 'measured'
-      ? '至少一项指标来自已校准/实测 Profile；其余指标仍需逐项查看来源。'
+      ? t('至少一项指标来自已校准/实测 Profile；其余指标仍需逐项查看来源。')
       : tier === 'unknown'
-        ? '关键 Profile 或 KV 布局未知；UI 不会显示精确时间或容量结论。'
-        : QUALITY_TITLE.assumption;
+        ? t('关键 Profile 或 KV 布局未知；UI 不会显示精确时间或容量结论。')
+        : t(QUALITY_TITLE.assumption);
   return (
     <span className={`quality-pill quality-${tier}`} title={title} data-testid="quality-badge">
       ◆ {label}
@@ -30,6 +32,7 @@ function DraftBadge(): ReactNode {
   const activeRun = useLabStore((state) => state.activeRun);
   const draftDirty = useLabStore((state) => state.draftDirty);
   const planStatus = useLabStore((state) => state.planStatus);
+  const { t } = useI18n();
   let label = '● 结构预览';
   let tone = 'neutral';
   if (running) {
@@ -41,7 +44,7 @@ function DraftBadge(): ReactNode {
     label = '● 配置非法';
     tone = 'blocked';
   } else if (planStatus === 'unknown') {
-    label = '● Unknown';
+    label = '● 未知';
     tone = 'unknown';
   } else if (activeRun && draftDirty) {
     label = '● Draft · 未运行';
@@ -52,7 +55,7 @@ function DraftBadge(): ReactNode {
   }
   return (
     <span className={`draft-pill draft-${tone}`} data-testid="draft-state">
-      {label}
+      {t(label)}
     </span>
   );
 }
@@ -76,6 +79,7 @@ export function Header(): ReactNode {
   const setReducedMotion = useLabStore((state) => state.setReducedMotion);
   const resetOnboarding = useLabStore((state) => state.resetOnboarding);
   const toggleDrawer = useLabStore((state) => state.toggleDrawer);
+  const { t, lt, locale, setLocale } = useI18n();
   const [consentOpen, setConsentOpen] = useState(false);
   const consentFirstRef = useRef<HTMLButtonElement>(null);
 
@@ -90,19 +94,19 @@ export function Header(): ReactNode {
   const runDisabled = running || planStatus === 'planning' || planStatus === 'idle' || planStatus === 'invalid';
   const runTitle =
     planStatus === 'invalid'
-      ? 'Plan 不可行；请先在配置面板修复错误。'
+      ? t('Plan 不可行；请先在配置面板修复错误。')
       : planStatus === 'planning'
-        ? '正在生成结构预览…'
+        ? t('正在生成结构预览…')
         : running
-          ? '仿真正在 Worker 中运行。'
+          ? t('仿真正在 Worker 中运行。')
           : planStatus === 'unknown'
-            ? 'Plan 为 unknown；点击后需要显式选择降级方式。'
-            : '冻结当前 Draft，运行离散事件仿真。';
+            ? t('Plan 为 unknown；点击后需要显式选择降级方式。')
+            : t('冻结当前 Draft，运行离散事件仿真。');
 
   return (
     <header className="app-header">
       <div className="header-left">
-        <button className="brand" onClick={() => navigate('lab')} aria-label="返回工作台">
+        <button className="brand" onClick={() => navigate('lab')} aria-label={t('返回工作台')}>
           <span className="brandmark">◈</span>
           <span className="brandtext">
             InferenceLab <span className="version">v1.1</span>
@@ -110,7 +114,7 @@ export function Header(): ReactNode {
         </button>
         <label className="scenario-picker">
           <span className="scenario-dot" aria-hidden="true" />
-          <span className="sr-only">选择场景预设</span>
+          <span className="sr-only">{t('选择场景预设')}</span>
           <select
             value={presetValue}
             onChange={(event) => {
@@ -118,35 +122,35 @@ export function Header(): ReactNode {
             }}
             data-testid="scenario-select"
           >
-            {presetValue === '' && <option value="">自定义 · {scenario.title}</option>}
+            {presetValue === '' && <option value="">{t('自定义 · {title}', { title: lt(scenario.title) })}</option>}
             {scenarioPresets.map((preset) => (
               <option key={preset.id} value={preset.scenario.id}>
-                {preset.title}
+                {lt(preset.title)}
               </option>
             ))}
           </select>
         </label>
-        <nav className="top-nav" aria-label="一级功能">
+        <nav className="top-nav" aria-label={t('一级功能')}>
           <button className={route === 'lab' ? 'active' : ''} onClick={() => navigate('lab')}>
-            工作台
+            {t('工作台')}
           </button>
           <button className={route === 'experiments' ? 'active' : ''} onClick={() => navigate('experiments')}>
-            实验
+            {t('实验')}
           </button>
           <button className={route === 'reference' ? 'active' : ''} onClick={() => navigate('reference')}>
-            参考
+            {t('参考')}
           </button>
         </nav>
-        <div className="mode-switch" role="group" aria-label="工作模式">
+        <div className="mode-switch" role="group" aria-label={t('工作模式')}>
           {MODES.map((item) => (
             <button
               key={item.id}
               className={mode === item.id ? 'active' : ''}
               disabled={item.disabled}
-              title={item.title}
+              title={item.title ? t(item.title) : undefined}
               onClick={() => setMode(item.id)}
             >
-              {item.label}
+              {t(item.label)}
             </button>
           ))}
         </div>
@@ -155,43 +159,58 @@ export function Header(): ReactNode {
         <QualityBadge />
         <DraftBadge />
         <button
+          className="icon-btn lang-btn"
+          data-testid="locale-toggle"
+          title={locale === 'zh' ? t('切换到英文') : t('切换到中文')}
+          aria-label={locale === 'zh' ? t('切换到英文') : t('切换到中文')}
+          onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+        >
+          {locale === 'zh' ? 'EN' : '中'}
+        </button>
+        <button
           className="icon-btn mobile-only"
-          title="打开配置面板"
-          aria-label="打开配置面板"
+          title={t('打开配置面板')}
+          aria-label={t('打开配置面板')}
           onClick={() => toggleDrawer('config')}
         >
           ☰
         </button>
         <button
-          className="icon-btn"
-          title={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
-          aria-label={theme === 'dark' ? '切换到浅色主题' : '切换到深色主题'}
+          className="icon-btn theme-btn"
+          title={theme === 'dark' ? t('切换到浅色主题') : t('切换到深色主题')}
+          aria-label={theme === 'dark' ? t('切换到浅色主题') : t('切换到深色主题')}
           onClick={toggleTheme}
         >
           {theme === 'dark' ? '◐' : '◑'}
         </button>
         <button
-          className={`icon-btn ${reducedMotion ? 'active' : ''}`}
-          title={reducedMotion ? '减少动效已开启：用颜色/数字瞬态替代移动粒子' : '开启减少动效'}
-          aria-label="切换减少动效"
+          className={`icon-btn motion-btn ${reducedMotion ? 'active' : ''}`}
+          title={
+            reducedMotion
+              ? t('减少动效已开启：用颜色/数字瞬态替代移动粒子')
+              : t('开启减少动效')
+          }
+          aria-label={t('切换减少动效')}
           aria-pressed={reducedMotion}
           onClick={() => setReducedMotion(!reducedMotion)}
         >
           ◔
         </button>
-        <button className="icon-btn" title="重新打开 3 分钟引导" aria-label="帮助" onClick={resetOnboarding}>
+        <button className="icon-btn help-btn" title={t('重新打开 3 分钟引导')} aria-label={t('帮助')} onClick={resetOnboarding}>
           ?
         </button>
         <button
           className="run-btn"
           disabled={runDisabled}
           title={runTitle}
+          aria-label={running ? t('运行中…') : t('运行实验')}
           onClick={() => {
             if (planStatus === 'unknown') setConsentOpen(true);
             else void runNow(false);
           }}
         >
-          {running ? '运行中…' : '▶ 运行实验'}
+          <span className="run-icon" aria-hidden="true">{running ? '◌' : '▶'}</span>
+          <span className="run-text">{running ? t('运行中…') : t('运行实验')}</span>
         </button>
       </div>
 
@@ -211,15 +230,15 @@ export function Header(): ReactNode {
               if (event.key === 'Escape') setConsentOpen(false);
             }}
           >
-            <div className="eyebrow">PLAN · UNKNOWN</div>
-            <h2 id="unknown-consent-title">当前 Plan 含未知数据</h2>
+            <div className="eyebrow">{t('Plan · 未知')}</div>
+            <h2 id="unknown-consent-title">{t('当前 Plan 含未知数据')}</h2>
             <p>
-              权重、KV 布局或框架能力中存在未验证项。请选择如何继续；系统不会把猜测当作已验证结果。
+              {t('权重、KV 布局或框架能力中存在未验证项。请选择如何继续；系统不会把猜测当作已验证结果。')}
             </p>
             {unknownWarnings.length > 0 && (
               <ul className="consent-reasons">
                 {unknownWarnings.map((warning) => (
-                  <li key={`${warning.code}-${warning.path}`}>{warning.message}</li>
+                  <li key={`${warning.code}-${warning.path}`}>{lt(warning.message)}</li>
                 ))}
               </ul>
             )}
@@ -232,30 +251,30 @@ export function Header(): ReactNode {
                   setLens('topology');
                 }}
               >
-                仅结构查看
+                {t('仅结构查看')}
               </button>
               <button
                 className="btn primary"
                 disabled={!canRunSynthetic}
                 title={
                   canRunSynthetic
-                    ? '以场景中标注的合成参数运行；所有时间指标保持 SYNTHETIC。'
-                    : '当前模板没有可计算的 KV Block，时间仿真无法启动。'
+                    ? t('以场景中标注的合成参数运行；所有时间指标保持 SYNTHETIC。')
+                    : t('当前模板没有可计算的 KV Block，时间仿真无法启动。')
                 }
                 onClick={() => {
                   setConsentOpen(false);
                   void runNow(true);
                 }}
               >
-                使用已标注合成参数模拟
+                {t('使用已标注合成参数模拟')}
               </button>
               <button className="btn" onClick={() => setConsentOpen(false)}>
-                取消
+                {t('取消')}
               </button>
             </div>
             {!canRunSynthetic && (
               <p className="caption consent-note">
-                该模板缺少可用的 KV 布局，无法建立 KV Block 池；时间仿真会拒绝启动。请先查看结构或补充 Profile。
+                {t('该模板缺少可用的 KV 布局，无法建立 KV Block 池；时间仿真会拒绝启动。请先查看结构或补充 Profile。')}
               </p>
             )}
           </div>

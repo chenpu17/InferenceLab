@@ -2,6 +2,21 @@ import { useMemo, type ReactNode } from 'react';
 import type { RequestView } from '@inferencelab/core';
 import { useLabStore } from '../../store/useLabStore';
 import { formatCount, percentOf } from '../../lib/format';
+import { useI18n } from '../../i18n';
+
+const WAITING_REASON_LABEL: Record<string, string> = {
+  WAITING_FOR_KV_AFTER_PREEMPTION: '抢占后等待 KV',
+  WAITING_FOR_REMOTE_KV: '等待远端 KV',
+  HOST_KV_LOADING: '主机 KV 加载中',
+  REMOTE_KV_READY: '远端 KV 就绪',
+  PD_ENGINE_MISSING: '缺少 PD 引擎',
+  PREEMPTED_RECOMPUTE: '抢占后重算',
+  BUDGET_TOO_SMALL_FOR_PREFILL: '预算不足以 Prefill',
+  BUDGET_TOO_SMALL_FOR_DECODE: '预算不足以 Decode',
+  KV_ALLOC_BLOCKED: 'KV 分配阻塞',
+  SCHEDULER_STALLED: '调度停滞',
+  REJECTED: '已拒绝',
+};
 
 function RequestChip({
   request,
@@ -12,6 +27,7 @@ function RequestChip({
   selected: boolean;
   onSelect: () => void;
 }): ReactNode {
+  const { t } = useI18n();
   // Live KV progress: numComputedTokens resets on preemption, while
   // computedPrefillTokens is cumulative work and may exceed promptTokens.
   const prefillDone = Math.min(request.numComputedTokens, request.promptTokens);
@@ -29,7 +45,9 @@ function RequestChip({
           {prefillDone}/{request.promptTokens} + {request.numGeneratedTokens}/{request.outputTokens}
         </span>
       </span>
-      {request.waitingReason && <span className="request-reason">{request.waitingReason}</span>}
+      {request.waitingReason && (
+        <span className="request-reason">{t(WAITING_REASON_LABEL[request.waitingReason] ?? request.waitingReason)}</span>
+      )}
       {request.preemptions > 0 && <span className="request-preempt">↺ {request.preemptions}</span>}
     </button>
   );
@@ -52,6 +70,7 @@ function QueueColumn({
   onSelect: (id: string) => void;
   tone: string;
 }): ReactNode {
+  const { t } = useI18n();
   return (
     <div className={`queue-column queue-${tone}`}>
       <div className="queue-head">
@@ -72,14 +91,15 @@ function QueueColumn({
             />
           );
         })}
-        {ids.length === 0 && <div className="queue-empty">空</div>}
-        {ids.length > 24 && <div className="queue-more">+{ids.length - 24} more</div>}
+        {ids.length === 0 && <div className="queue-empty">{t('空')}</div>}
+        {ids.length > 24 && <div className="queue-more">{t('+{count} 条', { count: ids.length - 24 })}</div>}
       </div>
     </div>
   );
 }
 
 export function SchedulerLens(): ReactNode {
+  const { t, lt } = useI18n();
   const plan = useLabStore((state) => state.planPreview);
   const scenario = useLabStore((state) => state.scenario);
   const activeRun = useLabStore((state) => state.activeRun);
@@ -118,15 +138,15 @@ export function SchedulerLens(): ReactNode {
   if (!plan || !engine) {
     return (
       <div className="lens-empty">
-        <h3>尚无调度结构</h3>
-        <p>配置可用后，这里会显示 Waiting / Running / Preempted 与 Token Budget。</p>
+        <h3>{t('尚无调度结构')}</h3>
+        <p>{t('配置可用后，这里会显示等待 / 运行 / 被抢占与 Token Budget。')}</p>
       </div>
     );
   }
 
   return (
     <div className="scheduler-lens">
-      <div className="engine-tabs" role="tablist" aria-label="Engine 选择">
+      <div className="engine-tabs" role="tablist" aria-label={t('Engine 选择')}>
         {engines.map((item) => (
           <button
             key={item.id}
@@ -136,24 +156,24 @@ export function SchedulerLens(): ReactNode {
             onClick={() => selectEntity({ kind: 'engine', id: item.id })}
           >
             {item.id}
-            <span className="engine-role">{item.role}</span>
+            <span className="engine-role">{lt(item.role)}</span>
           </button>
         ))}
       </div>
 
       <div className="budget-ribbon">
         <div className="budget-label">
-          <span>Per-iteration budget</span>
+          <span>{t('每轮预算')}</span>
           <b className="mono">
-            {formatCount(budgetUsed)} / {formatCount(budgetTotal)} tokens
+            {t('{used} / {total} Token', { used: formatCount(budgetUsed), total: formatCount(budgetTotal) })}
           </b>
         </div>
-        <div className="budget-bar" role="img" aria-label="Token Budget 使用">
+        <div className="budget-bar" role="img" aria-label={t('Token Budget 使用')}>
           <span className="budget-used" style={{ width: `${percentOf(budgetUsed, Math.max(1, budgetTotal)) * 100}%` }} />
           <span className="budget-rest" />
         </div>
         <div className="budget-meta">
-          <span>iteration {engineView?.lastIteration ?? 0}</span>
+          <span>{t('迭代 {n}', { n: engineView?.lastIteration ?? 0 })}</span>
           <span>max_num_seqs={scenario.runtime.maxNumSeqs}</span>
           <span>preemptions={preemptions}</span>
           <span>steps={steps}</span>
@@ -164,34 +184,34 @@ export function SchedulerLens(): ReactNode {
         <div className="scheduler-static">
           <div className="queue-column">
             <div className="queue-head">
-              <span>WAITING</span>
+              <span>{lt('WAITING')}</span>
               <b className="mono">—</b>
             </div>
-            <p className="queue-hint">运行后按 FCFS 显示等待队列。</p>
-            <div className="queue-empty">尚无事件</div>
+            <p className="queue-hint">{t('运行后按 FCFS 显示等待队列。')}</p>
+            <div className="queue-empty">{t('尚无事件')}</div>
           </div>
           <div className="queue-column">
             <div className="queue-head">
-              <span>RUNNING</span>
+              <span>{lt('RUNNING')}</span>
               <b className="mono">—</b>
             </div>
-            <p className="queue-hint">调度迭代会更新 Running 与预算扣减。</p>
-            <div className="queue-empty">尚无事件</div>
+            <p className="queue-hint">{t('调度迭代会更新运行状态与预算扣减。')}</p>
+            <div className="queue-empty">{t('尚无事件')}</div>
           </div>
           <div className="queue-column">
             <div className="queue-head">
-              <span>PREEMPTED</span>
+              <span>{lt('PREEMPTED')}</span>
               <b className="mono">—</b>
             </div>
-            <p className="queue-hint">KV 不足时 recompute 抢占会进入此列。</p>
-            <div className="queue-empty">尚无事件</div>
+            <p className="queue-hint">{t('KV 不足时 recompute 抢占会进入此列。')}</p>
+            <div className="queue-empty">{t('尚无事件')}</div>
           </div>
         </div>
       ) : (
         <div className="scheduler-queues">
           <QueueColumn
-            title="WAITING"
-            hint="FCFS 等待；预算或 KV 不足时停留。"
+            title={lt('WAITING')}
+            hint={t('FCFS 等待；预算或 KV 不足时停留。')}
             ids={engineView?.waiting ?? []}
             requests={requestMap}
             selectedId={selectedId}
@@ -199,8 +219,8 @@ export function SchedulerLens(): ReactNode {
             tone="waiting"
           />
           <QueueColumn
-            title="RUNNING"
-            hint="本迭代已获预算的序列。"
+            title={lt('RUNNING')}
+            hint={t('本迭代已获预算的序列。')}
             ids={engineView?.running ?? []}
             requests={requestMap}
             selectedId={selectedId}
@@ -208,8 +228,8 @@ export function SchedulerLens(): ReactNode {
             tone="running"
           />
           <QueueColumn
-            title="PREEMPTED"
-            hint="被释放 KV 后等待重算的请求。"
+            title={lt('PREEMPTED')}
+            hint={t('被释放 KV 后等待重算的请求。')}
             ids={engineView?.preempted ?? []}
             requests={requestMap}
             selectedId={selectedId}
@@ -222,19 +242,24 @@ export function SchedulerLens(): ReactNode {
       {activeRequest && (
         <div className="request-detail-strip">
           <span className="mono">{activeRequest.id}</span>
-          <span>{activeRequest.status}</span>
+          <span>{lt(activeRequest.status)}</span>
           <span>
-            cached {activeRequest.cachedInputTokens} tok · computed {activeRequest.computedPrefillTokens}/{activeRequest.promptTokens}
+            {t('已缓存 {cached} tok · 已计算 {computed}/{prompt}', {
+              cached: activeRequest.cachedInputTokens,
+              computed: activeRequest.computedPrefillTokens,
+              prompt: activeRequest.promptTokens,
+            })}
           </span>
-          <span>generated {activeRequest.numGeneratedTokens}/{activeRequest.outputTokens}</span>
-          <span>preemptions {activeRequest.preemptions}</span>
-          {activeRequest.waitingReason && <span className="reason">{activeRequest.waitingReason}</span>}
+          <span>{t('已生成 {generated}/{output}', { generated: activeRequest.numGeneratedTokens, output: activeRequest.outputTokens })}</span>
+          <span>{t('抢占 {count}', { count: activeRequest.preemptions })}</span>
+          {activeRequest.waitingReason && (
+            <span className="reason">{t(WAITING_REASON_LABEL[activeRequest.waitingReason] ?? activeRequest.waitingReason)}</span>
+          )}
         </div>
       )}
 
       <p className="helper scheduler-note">
-        这是 vLLM V1 的机制子集：Token Budget、max_num_seqs、Running 优先与 FCFS Waiting 准入。不是逐行复刻源码，
-        也不代表真实后端的所有策略。选择请求后可在 Inspector 使用 Focus Cause 追踪 KV / 链路。
+        {t('这是 vLLM V1 的机制子集：Token Budget、max_num_seqs、运行优先与 FCFS 等待准入。不是逐行复刻源码， 也不代表真实后端的所有策略。选择请求后可在 Inspector 查看等待原因并追踪 KV / 链路。')}
       </p>
     </div>
   );

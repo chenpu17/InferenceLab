@@ -3,6 +3,7 @@ import type { PlanResult } from '@inferencelab/core';
 import { useLabStore } from '../../store/useLabStore';
 import { hardwareFor } from '../../lib/scenario';
 import { entityLabel } from '../../lib/entities';
+import { useI18n, type MessageParams } from '../../i18n';
 
 function deviceShortLabel(acceleratorId: string): string {
   const parts = acceleratorId.split('-');
@@ -10,6 +11,8 @@ function deviceShortLabel(acceleratorId: string): string {
 }
 
 function groupLabel(
+  t: (source: string, params?: MessageParams) => string,
+  lt: (text: string | null | undefined) => string,
   plan: PlanResult,
   replicaId: string,
   ranks: ReadonlyArray<{ tpGroupSize?: number; ppStageIndex?: number }> = plan.ranks,
@@ -18,10 +21,11 @@ function groupLabel(
   const engine = plan.engines.find((item) => item.dpReplicaId === replicaId);
   const stage = ranks[0]?.ppStageIndex;
   const sp = plan.sequenceParallel?.spSize ?? 1;
-  return `Replica ${replicaId.replace(/^dp-?/, '')}${stage !== undefined ? ` · PP Stage ${stage}` : ''} · TP${tp}${sp > 1 ? ` · SP${sp}` : ''}${engine && engine.role !== 'mixed' ? ` · ${engine.role}` : ''}`;
+  return `${t('副本 {replica}', { replica: replicaId.replace(/^dp-?/, '') })}${stage !== undefined ? t(' · PP Stage {stage}', { stage }) : ''} · TP${tp}${sp > 1 ? ` · SP${sp}` : ''}${engine && engine.role !== 'mixed' ? ` · ${lt(engine.role)}` : ''}`;
 }
 
 export function TopologyLens(): ReactNode {
+  const { t, lt, locale } = useI18n();
   const plan = useLabStore((state) => state.planPreview);
   const scenario = useLabStore((state) => state.scenario);
   const planStatus = useLabStore((state) => state.planStatus);
@@ -51,9 +55,9 @@ export function TopologyLens(): ReactNode {
   if (!plan) {
     return (
       <div className="lens-empty">
-        <h3>尚未生成结构预览</h3>
-        <p>修改配置后会自动 Plan；或检查右侧的校验错误。</p>
-        {planStatus === 'planning' && <p className="mono">planning…</p>}
+        <h3>{t('尚未生成结构预览')}</h3>
+        <p>{t('修改配置后会自动 Plan；或检查右侧的校验错误。')}</p>
+        {planStatus === 'planning' && <p className="mono">{t('规划中…')}</p>}
       </div>
     );
   }
@@ -83,14 +87,19 @@ export function TopologyLens(): ReactNode {
   return (
     <div className="topology-lens">
       <div className="topology-meta">
-        <span>{plan.totals.nodeCount} NODES / {plan.totals.acceleratorCount} ACCELERATORS</span>
+        <span>
+          {t('{nodes} 节点 / {accelerators} 加速卡', {
+            nodes: plan.totals.nodeCount,
+            accelerators: plan.totals.acceleratorCount,
+          })}
+        </span>
         <span className="mono">
-          {epGroups.length > 0 ? `EP groups ${epGroups.length} · ` : ''}
-          {ppGroups.length > 0 ? `PP stages ${ppGroups.length} · ` : ''}
-          {spGroups.length > 0 ? `SP groups ${spGroups.length} · ` : ''}
-          {pcpGroups.length > 0 ? `PCP groups ${pcpGroups.length} · ` : ''}
-          {dcpGroups.length > 0 ? `DCP groups ${dcpGroups.length} · ` : ''}
-          PHYSICAL LAYOUT · NOT TO SCALE
+          {epGroups.length > 0 ? `${t('EP 组 {count}', { count: epGroups.length })} · ` : ''}
+          {ppGroups.length > 0 ? `${t('PP Stage {count}', { count: ppGroups.length })} · ` : ''}
+          {spGroups.length > 0 ? `${t('SP 组 {count}', { count: spGroups.length })} · ` : ''}
+          {pcpGroups.length > 0 ? `${t('PCP 组 {count}', { count: pcpGroups.length })} · ` : ''}
+          {dcpGroups.length > 0 ? `${t('DCP 组 {count}', { count: dcpGroups.length })} · ` : ''}
+          {t('物理布局 · 非等比')}
         </span>
       </div>
 
@@ -99,7 +108,7 @@ export function TopologyLens(): ReactNode {
           <article className={`node-card ${selectedNodeId === node.id ? 'selected' : ''}`} key={node.id}>
             <button className="node-head" onClick={() => selectEntity({ kind: 'node', id: node.id })}>
               <span className="node-name">◫ {node.label ?? node.id}</span>
-              <span className="node-meta">{ranks.length} ranks · physical</span>
+              <span className="node-meta">{t('{count} ranks · 物理', { count: ranks.length })}</span>
             </button>
             {replicas.map((replicaId) => {
               const replicaRanks = ranks.filter((rank) => rank.dpReplicaId === replicaId);
@@ -125,10 +134,14 @@ export function TopologyLens(): ReactNode {
                     <button
                       className="group-head"
                       onClick={() => group && selectEntity({ kind: 'group', id: group.id })}
-                      title={group ? `TP Group ${group.id} · ${group.memberRankIds.length} ranks` : replicaId}
+                      title={
+                        group
+                          ? t('TP 组 {id} · {count} ranks', { id: group.id, count: group.memberRankIds.length })
+                          : replicaId
+                      }
                     >
-                      <span>{groupLabel(plan, replicaId, chunk.ranks)}</span>
-                      <span className="group-tag">{chunk.ranks.length} ranks</span>
+                      <span>{groupLabel(t, lt, plan, replicaId, chunk.ranks)}</span>
+                      <span className="group-tag">{t('{count} 个 Rank', { count: chunk.ranks.length })}</span>
                     </button>
                     <div className="device-grid">
                       {chunk.ranks.map((rank) => {
@@ -143,7 +156,11 @@ export function TopologyLens(): ReactNode {
                             key={rank.rankId}
                             className={`device-cell ${selected ? 'selected' : ''} ${busy ? 'busy' : ''} ${waiting ? 'waiting' : ''}`}
                             title={`${accelerator?.label ?? rank.acceleratorId}\nRank ${rank.rankId} · ${replicaId}${rank.tpGroupId ? ` · ${rank.tpGroupId}` : ''}${tags.length > 0 ? `\n${tags.join(' · ')}` : ''}`}
-                            aria-label={`${accelerator?.label ?? rank.acceleratorId}，${groupLabel(plan, replicaId, chunk.ranks)}${tags.length > 0 ? `，${tags.join('，')}` : ''}`}
+                            aria-label={[
+                              accelerator?.label ?? rank.acceleratorId,
+                              groupLabel(t, lt, plan, replicaId, chunk.ranks),
+                              ...tags,
+                            ].join(locale === 'en' ? ', ' : '，')}
                             onClick={() => selectEntity({ kind: 'device', id: rank.acceleratorId, label: `设备 ${rank.acceleratorId}` })}
                             onDoubleClick={() => {
                               selectEntity({ kind: 'device', id: rank.acceleratorId }, { lens: 'memory' });
@@ -180,45 +197,57 @@ export function TopologyLens(): ReactNode {
       <div className="fabric-row">
         <span className="fabric-line" />
         <span className="fabric-tag">
-          ⟷ Fabric / Link · {hardware?.links.length ?? 0} links · {hardware?.contentionDomains.length ?? 0} domains
+          {t('⟷ Fabric / 链路 · {links} 链路 · {domains} 竞争域', {
+            links: hardware?.links.length ?? 0,
+            domains: hardware?.contentionDomains.length ?? 0,
+          })}
         </span>
         <span className="fabric-line" />
       </div>
 
       {selectedEntity?.kind === 'device' && (
         <p className="topology-selection">
-          已选择 {entityLabel(selectedEntity)}；切换 Lens 会保留该设备与虚拟时间。
+          {t('已选择 {label}；切换 Lens 会保留该设备与虚拟时间。', {
+            label: lt(entityLabel(selectedEntity)),
+          })}
         </p>
       )}
       {selectedEntity?.kind === 'group' && selectedGroup && (
         <p className="topology-selection">
-          已选择 {entityLabel(selectedEntity)}；{selectedGroup.kind} 组内设备共享该维度通信域，但每张卡仍有独立 HBM 预算。
-          {selectedGroup.kind === 'DCP' ? ' DCP 复用 TP Rank，不新增设备。' : ''}
-          {selectedGroup.kind === 'PCP' ? ' PCP 是显式放置维度，可能增加 Rank 数。' : ''}
-          {selectedGroup.kind === 'PP' ? ' PP Stage 持有连续层范围，Activation 在 Stage 间传递。' : ''}
-          {selectedGroup.kind === 'SP' ? ' SP 复用 TP Rank，只沿序列维切分 Activation，不新增设备。' : ''}
+          {t('已选择 {label}；{kind} 组内设备共享该维度通信域，但每张卡仍有独立 HBM 预算。', {
+            label: lt(entityLabel(selectedEntity)),
+            kind: selectedGroup.kind,
+          })}
+          {selectedGroup.kind === 'DCP' ? t(' DCP 复用 TP Rank，不新增设备。') : ''}
+          {selectedGroup.kind === 'PCP' ? t(' PCP 是显式放置维度，可能增加 Rank 数。') : ''}
+          {selectedGroup.kind === 'PP' ? t(' PP Stage 持有连续层范围，Activation 在 Stage 间传递。') : ''}
+          {selectedGroup.kind === 'SP' ? t(' SP 复用 TP Rank，只沿序列维切分 Activation，不新增设备。') : ''}
         </p>
       )}
       {epGroups.length > 0 && (
         <p className="topology-selection">
-          EP 分组与 TP/DP 叠加显示；同一张卡可以同时属于 TP、DP 与 EP 组。专家权重按 EP 分片，而不是再乘一次 TP。
+          {t('EP 分组与 TP/DP 叠加显示；同一张卡可以同时属于 TP、DP 与 EP 组。专家权重按 EP 分片，而不是再乘一次 TP。')}
         </p>
       )}
       {plan.pipeline && (
         <p className="topology-selection">
-          PP{plan.pipeline.ppSize}：{plan.pipeline.stages.length} 个 Stage 各持有连续层范围；理想 Bubble{' '}
-          {(plan.pipeline.bubbleFraction * 100).toFixed(1)}%，跨 Stage Activation 仅按结构成本估算。
+          {t('PP{ppSize}：{stages} 个 Stage 各持有连续层范围；理想 Bubble {bubble}%，跨 Stage Activation 仅按结构成本估算。', {
+            ppSize: plan.pipeline.ppSize,
+            stages: plan.pipeline.stages.length,
+            bubble: (plan.pipeline.bubbleFraction * 100).toFixed(1),
+          })}
         </p>
       )}
       {plan.sequenceParallel && (
         <p className="topology-selection">
-          SP{plan.sequenceParallel.spSize} 复用 TP Rank，把 Activation 沿序列维切分；Workspace 不随之切分。它不是
-          PCP/DCP 的上下文 KV 切分，也不新增设备。
+          {t('SP{spSize} 复用 TP Rank，把 Activation 沿序列维切分；Workspace 不随之切分。它不是 PCP/DCP 的上下文 KV 切分，也不新增设备。', {
+            spSize: plan.sequenceParallel.spSize,
+          })}
         </p>
       )}
       {selectedEntity?.kind === 'device' && (
         <button className="text-link" onClick={() => setLens('memory')}>
-          查看该设备的 HBM / KV →
+          {t('查看该设备的 HBM / KV →')}
         </button>
       )}
     </div>

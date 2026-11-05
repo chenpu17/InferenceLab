@@ -9,7 +9,7 @@ async function openLab(page: Page): Promise<void> {
 
 async function selectPreset(page: Page, scenarioId: string, expectedAccelerators: number): Promise<void> {
   await page.selectOption('[data-testid="scenario-select"]', scenarioId);
-  await expect(page.locator('.topology-meta')).toContainText(`${expectedAccelerators} ACCELERATORS`);
+  await expect(page.locator('.topology-meta')).toContainText(`${expectedAccelerators} 加速卡`);
 }
 
 async function runExperiment(page: Page): Promise<void> {
@@ -39,7 +39,7 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(page.locator('.group-head').first()).toContainText('TP16');
 
     await page.locator('[data-testid="tp-8"]').click();
-    await expect(page.locator('.topology-meta')).toContainText('2 NODES / 32 ACCELERATORS');
+    await expect(page.locator('.topology-meta')).toContainText('2 节点 / 32 加速卡');
     await expect(page.locator('.group-frame')).toHaveCount(4);
     await expect(page.locator('.group-head').first()).toContainText('TP8');
 
@@ -47,7 +47,7 @@ test.describe('InferenceLab UI acceptance', () => {
     await page.reload();
     const skip = page.getByRole('button', { name: '跳过' });
     if (await skip.isVisible().catch(() => false)) await skip.click();
-    await expect(page.locator('.topology-meta')).toContainText('2 NODES / 32 ACCELERATORS');
+    await expect(page.locator('.topology-meta')).toContainText('2 节点 / 32 加速卡');
     await expect(page.locator('.group-frame')).toHaveCount(4);
   });
 
@@ -86,12 +86,12 @@ test.describe('InferenceLab UI acceptance', () => {
     if (await skip.isVisible().catch(() => false)) await skip.click();
 
     await page.getByRole('button', { name: '06 校验与证据' }).click();
-    await expect(page.locator('.plan-badge')).toContainText('INVALID');
+    await expect(page.locator('.plan-badge')).toContainText('无效');
     await expect(page.locator('.run-btn')).toBeDisabled();
     await expect(page.locator('[data-testid="plan-issues"]')).toContainText('TP_GROUP_SIZE');
 
     await page.locator('[data-testid="tp-4"]').click();
-    await expect(page.locator('.plan-badge')).toContainText('FEASIBLE');
+    await expect(page.locator('.plan-badge')).toContainText('可行');
     await expect(page.locator('.run-btn')).toBeEnabled();
   });
 
@@ -110,9 +110,9 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(meta).toHaveText(afterStep);
 
     await seekTimelineRatio(page, 0.5);
-    await expect(meta).not.toContainText('event 0 /');
+    await expect(meta).not.toContainText('事件 0 /');
     await page.locator('[data-testid="lens-scheduler"]').click();
-    await expect(meta).not.toContainText('event 0 /');
+    await expect(meta).not.toContainText('事件 0 /');
   });
 
   test('E2E-05 prefix cache hit is visible on the Request Inspector', async ({ page }) => {
@@ -124,8 +124,8 @@ test.describe('InferenceLab UI acceptance', () => {
 
     await page.locator('.waterfall-row').nth(1).click();
     const inspector = page.locator('[data-testid="inspector"]');
-    await expect(inspector).toContainText('Cached prefix');
-    await expect(inspector).toContainText('32 tokens');
+    await expect(inspector).toContainText('缓存前缀');
+    await expect(inspector).toContainText('32 个 Token');
     await expect(inspector).toContainText('Prefix Cache 命中 32 tokens');
   });
 
@@ -141,7 +141,7 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(page.locator('.config-panel')).toBeInViewport();
     await page.locator('.drawer-backdrop').click({ position: { x: 1200, y: 700 } });
 
-    await page.getByRole('button', { name: '◧ Inspector' }).click();
+    await page.getByRole('button', { name: '◧ 检查器' }).click();
     await expect(page.locator('[data-testid="inspector"]')).toBeInViewport();
 
     // Reach Run with real Tab presses rather than programmatic focus().
@@ -164,7 +164,7 @@ test.describe('InferenceLab UI acceptance', () => {
     await selectPreset(page, 'budget-8-demo', 4);
     await runExperiment(page);
     await expect(page.locator('.tl-seg').first()).toBeVisible();
-    await expect(page.locator('.tl-meta')).toContainText('event');
+    await expect(page.locator('.tl-meta')).toContainText('事件');
   });
 
   test('E2E-08 PD transfer completes before Decode and Link Inspector shows contention', async ({ page }) => {
@@ -184,22 +184,53 @@ test.describe('InferenceLab UI acceptance', () => {
     await page.locator('[data-testid="lens-metrics"]').click();
     await page.locator('.waterfall-row').first().click();
     const inspector = page.locator('[data-testid="inspector"]');
-    await expect(inspector).toContainText('WAITING_FOR_REMOTE_KV');
-    await expect(inspector).toContainText('Generated');
+    await expect(inspector).toContainText('等待远端 KV');
+    await expect(inspector).toContainText('已生成');
     await expect(inspector).toContainText('0 /');
 
     // After completion: the same request has generated tokens.
     await seekTimelineRatio(page, 0.999);
     await page.locator('.waterfall-row').first().click();
-    await expect(inspector).not.toContainText('WAITING_FOR_REMOTE_KV');
-    await expect(inspector).toContainText('KV transfer');
+    await expect(inspector).not.toContainText('等待远端 KV');
+    await expect(inspector).toContainText('KV 传输');
 
     await page.locator('[data-testid="lens-transport"]').click();
     const card = page.locator('.transfer-card').first();
     await expect(card).toBeVisible();
     await expect(card).toContainText('PD_KV_TRANSFER');
     await card.getByRole('button', { name: /定位链路/ }).click();
-    await expect(inspector).toContainText('Contention domain');
-    await expect(inspector).toContainText('Transfers (run)');
+    await expect(inspector).toContainText('竞争域容量');
+    await expect(inspector).toContainText('传输次数（运行）');
+  });
+
+  test('E2E-18 locale switch updates chrome and persists across reload', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/#/lab');
+    const skip = page.getByRole('button', { name: '跳过' });
+    if (await skip.isVisible().catch(() => false)) await skip.click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+    await expect(page.getByTestId('lens-topology')).toContainText('拓扑');
+    await expect(page.locator('.run-btn')).toContainText('运行实验');
+
+    await page.getByTestId('locale-toggle').click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByTestId('lens-topology')).toContainText('Topology');
+    await expect(page.locator('.run-btn')).toContainText('Run experiment');
+    await expect(page.locator('.panel-label').first()).toContainText('Control panel');
+
+    const stored = await page.evaluate(
+      () => JSON.parse(window.localStorage.getItem('inferencelab.prefs.v1') ?? '{}') as { locale?: string },
+    );
+    expect(stored.locale).toBe('en');
+
+    await page.reload();
+    const skipEn = page.getByRole('button', { name: 'Skip' });
+    if (await skipEn.isVisible().catch(() => false)) await skipEn.click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByTestId('lens-topology')).toContainText('Topology');
+
+    await page.getByTestId('locale-toggle').click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+    await expect(page.getByTestId('lens-topology')).toContainText('拓扑');
   });
 });

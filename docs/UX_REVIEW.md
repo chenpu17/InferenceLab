@@ -11,14 +11,14 @@
   - `1920x1080-default.png`
   - `390x844-mobile.png`、`390x844-config.png`
   - `1440x900-light.png`、`1440x900-reduced-motion.png`
-- Playwright：23 条用例，覆盖 E2E-01…E2E-17、性能与截图；最近一次全部通过。
+- Playwright：24 条用例，覆盖 E2E-01…E2E-18、性能与截图；最近一次全部通过。
 - 性能：`docs/performance-report.json` / `docs/PERFORMANCE.md`。
 
 ## 2. 三个门禁的自测结论
 
 | 门禁 | 结论 | 证据 |
 |---|---|---|
-| 机制 | 通过 | 118 条单元测试；同 seed 确定性、KV 不超额、Prefix Cache 连续命中、PD 传输完成前不 Decode、PP/SP 组结构、MLA/SFA/DSA KV 公式、MTP 接受数、检查点回放等价、校准 scope 与 batch 缩放、Host 在途容量、MoE 副本归属、Agent 路由、拓扑编辑保留/重置、未知容量不伪造、unsupported 投机方法拒绝 |
+| 机制 | 通过 | 124 条单元测试；同 seed 确定性、KV 不超额、Prefix Cache 连续命中、PD 传输完成前不 Decode、PP/SP 组结构、MLA/SFA/DSA KV 公式、MTP 接受数、检查点回放等价、校准 scope 与 batch 缩放、Host 在途容量、MoE 副本归属、Agent 路由、拓扑编辑保留/重置、未知容量不伪造、unsupported 投机方法拒绝 |
 | 交互 | 通过 | E2E-01/02/04/06/08/09/10/11/12/13/14/15/16/17：操作改变 Plan/Run，选择与时间跨 Lens 保留，PP/SP 与投机卡片随预设更新，未知 Plan 需显式同意，错误可恢复 |
 | 视觉 | 通过（Agent 自测） | 1440/1280/1920/390 截图；暗/浅色与 Reduced Motion；主画布为视觉主角，颜色均有文字/图标双编码 |
 

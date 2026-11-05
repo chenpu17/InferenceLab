@@ -15,7 +15,7 @@ async function openLab(page: Page): Promise<void> {
 
 async function selectPreset(page: Page, scenarioId: string, expectedAccelerators: number): Promise<void> {
   await page.selectOption('[data-testid="scenario-select"]', scenarioId);
-  await expect(page.locator('.topology-meta')).toContainText(`${expectedAccelerators} ACCELERATORS`);
+  await expect(page.locator('.topology-meta')).toContainText(`${expectedAccelerators} 加速卡`);
 }
 
 async function runExperiment(page: Page): Promise<void> {
@@ -42,13 +42,13 @@ test.describe('M4/M5 acceptance', () => {
   test('E2E-09 MoE redundancy raises expert residency and exposes hotspot load', async ({ page }) => {
     await openLab(page);
     await selectPreset(page, 'moe-redundant-demo', 4);
-    await expect(page.locator('.topology-meta')).toContainText('EP groups 2');
+    await expect(page.locator('.topology-meta')).toContainText('EP 组 2');
     await expect(page.locator('.device-tags')).toHaveCount(4);
 
     await page.locator('[data-testid="lens-memory"]').click();
     const card = page.locator('.moe-card');
     await expect(card).toBeVisible();
-    await expect(card).toContainText('EP2 · 64 experts · top-4');
+    await expect(card).toContainText('EP2 · 64 个专家 · top-4');
     await expect(card).toContainText('冗余 4');
     await expect(card).toContainText('冗余副本增加 HBM');
     await expect(card).toContainText('运行后更新');
@@ -62,8 +62,8 @@ test.describe('M4/M5 acceptance', () => {
   test('E2E-10 PCP adds ranks while DCP reuses TP ranks', async ({ page }) => {
     await openLab(page);
     await selectPreset(page, 'cp-demo', 4);
-    await expect(page.locator('.topology-meta')).toContainText('PCP groups 1');
-    await expect(page.locator('.topology-meta')).toContainText('DCP groups 2');
+    await expect(page.locator('.topology-meta')).toContainText('PCP 组 1');
+    await expect(page.locator('.topology-meta')).toContainText('DCP 组 2');
     await expect(page.locator('.device-tags').first()).toContainText('PCP');
     await expect(page.locator('.device-tags').first()).toContainText('DCP');
   });
@@ -75,7 +75,7 @@ test.describe('M4/M5 acceptance', () => {
 
     await page.locator('[data-testid="calibration-file"]').setInputFiles(CALIBRATION_FILE);
     await expect(page.locator('.calibration-list')).toContainText('toy4gpu-prefill-bf16-1024');
-    await expect(page.getByText('2 curves')).toBeVisible();
+    await expect(page.getByText('2 条曲线')).toBeVisible();
 
     await backToLab(page);
     await expect(page.locator('.calibration-banner')).toContainText('2 条已导入');
@@ -101,7 +101,7 @@ test.describe('M4/M5 acceptance', () => {
     await openReference(page);
 
     await page.locator('[data-testid="trace-file"]').setInputFiles(TRACE_FILE);
-    await expect(page.locator('.ref-card').filter({ hasText: '标准 Trace' })).toContainText('3 requests · 2 observed');
+    await expect(page.locator('.ref-card').filter({ hasText: '标准 Trace' })).toContainText('3 个请求 · 2 条观测');
     await expect(page.locator('.ref-card').filter({ hasText: '标准 Trace' })).toContainText('仅请求级观测');
 
     await backToLab(page);
@@ -117,8 +117,8 @@ test.describe('M4/M5 acceptance', () => {
     await expect(page.locator('.waterfall-row')).toHaveCount(3);
     const observed = page.locator('.observed-strip');
     await expect(observed).toBeVisible();
-    await expect(observed).toContainText('Observed TTFT P50');
-    await expect(observed).toContainText('Observed TPOT P50');
+    await expect(observed).toContainText('实测 TTFT P50');
+    await expect(observed).toContainText('实测 TPOT P50');
     // Median of the two explicit observed TPOT values (41 and 39 µs).
     await expect(observed).toContainText('40.0 µs');
     await expect(observed.locator('.quality-tag').first()).toHaveText('OBSERVED');
@@ -127,7 +127,7 @@ test.describe('M4/M5 acceptance', () => {
     await expect(page.locator('[data-testid="inspector"]')).toContainText('不参与仿真成本模型拟合');
     await page.locator('.waterfall-row').first().click();
     const inspector = page.locator('[data-testid="inspector"]');
-    await expect(inspector).toContainText('Observed TTFT');
+    await expect(inspector).toContainText('实测 TTFT');
     await expect(inspector).toContainText('5.20 ms · 实测');
     await expect(inspector).toContainText('不混用观测值');
   });
@@ -135,16 +135,16 @@ test.describe('M4/M5 acceptance', () => {
   test('E2E-13 PP adds stages and SP reuses TP ranks', async ({ page }) => {
     await openLab(page);
     await selectPreset(page, 'pp-sp-demo', 4);
-    await expect(page.locator('.topology-meta')).toContainText('PP stages 2');
-    await expect(page.locator('.topology-meta')).toContainText('SP groups 2');
+    await expect(page.locator('.topology-meta')).toContainText('PP Stage 2');
+    await expect(page.locator('.topology-meta')).toContainText('SP 组 2');
     await expect(page.locator('.device-tags').first()).toContainText('PP0');
     await expect(page.locator('.device-tags').first()).toContainText('SP');
 
     await page.locator('[data-testid="lens-memory"]').click();
     const pipeline = page.locator('.pipeline-card');
     await expect(pipeline).toBeVisible();
-    await expect(pipeline).toContainText('PP2 · 2 stages');
-    await expect(pipeline).toContainText('Bubble');
+    await expect(pipeline).toContainText('PP2 · 2 个 Stage');
+    await expect(pipeline).toContainText('气泡');
     await expect(pipeline).toHaveAttribute('data-pp-size', '2');
     const bubble = Number(await pipeline.getAttribute('data-bubble'));
     expect(bubble).toBeGreaterThan(0);
@@ -152,7 +152,7 @@ test.describe('M4/M5 acceptance', () => {
 
     const sp = page.locator('.sp-card');
     await expect(sp).toBeVisible();
-    await expect(sp).toContainText('SP2 · 2 groups');
+    await expect(sp).toContainText('SP2 · 2 个组');
     await expect(sp).toContainText('设备增量');
     await expect(sp).toContainText('Workspace 不随之切分');
     await expect(sp).toHaveAttribute('data-sp-size', '2');
@@ -182,16 +182,16 @@ test.describe('M4/M5 acceptance', () => {
     const card = page.locator('.speculative-card');
     await expect(card).toBeVisible();
     await expect(card).toContainText('MTP');
-    await expect(card).toContainText('4 draft · accept 60%');
+    await expect(card).toContainText('4 个 Draft · 接受率 60%');
     await expect(card).toContainText('3.40');
     await expect(card).toContainText('2.13×');
-    await expect(card).toContainText('Token Budget');
+    await expect(card).toContainText('Token 预算');
     await expect(card).toContainText('+4');
     await expect(card.locator('[data-testid="spec-support"]')).toHaveText('SYNTHETIC');
 
     await runExperiment(page);
     await page.locator('[data-testid="lens-scheduler"]').click();
-    const budget = page.locator('.kpi').filter({ hasText: 'Token Budget' });
+    const budget = page.locator('.kpi').filter({ hasText: 'Token 预算' });
     await expect(budget.locator('.kpi-value')).toContainText('/4096');
     await page.locator('[data-testid="lens-metrics"]').click();
     const finished = page.locator('.kpi').filter({ hasText: '完成 / 总数' });

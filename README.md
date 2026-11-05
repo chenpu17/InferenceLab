@@ -13,14 +13,16 @@ pnpm install
 pnpm dev          # 打开 http://127.0.0.1:5173/#/lab
 ```
 
+界面默认中文；点击 Header 右侧的 `EN` 可切换到 English，偏好会写入 `inferencelab.prefs.v1`。也可以用 `?lang=en` 或 `?lang=zh` 为当前会话强制指定语言。技术标识符、质量标签（`EXACT` / `CALIBRATED` / `SYNTHETIC` / `N/A` / `OBSERVED`）与公式在两种语言下保持不变。
+
 常用命令：
 
 ```bash
-pnpm test         # core + adapters + profiles + web 单元测试（118 条）
+pnpm test         # core + adapters + profiles + web 单元测试（124 条）
 pnpm lint         # ESLint（typescript-eslint flat config）
 pnpm typecheck    # 所有 workspace 的 tsc --noEmit
 pnpm build        # typecheck + Vite 生产构建（静态文件，无后端）
-pnpm e2e          # Playwright：23 条 UI/性能/截图用例
+pnpm e2e          # Playwright：24 条 UI/性能/截图用例
 pnpm audit --audit-level=moderate  # 依赖漏洞检查（CI 同样执行）
 ```
 
@@ -66,6 +68,7 @@ pnpm audit --audit-level=moderate  # 依赖漏洞检查（CI 同样执行）
 - **注意力与投机**：MLA 按 latent + RoPE 布局计 KV；SFA/DSA/HYBRID 要求显式 cache group/storage，缺失布局显示 `unavailable`；MTP/DSpark 以场景给出的 Draft 数、接受率与成本比估算，Draft Token 计入 Token Budget。
 - **数据导入**：标准 JSON Trace（请求级到达/Token/显式 observed 指标）与校准曲线（严格 scope 匹配 + 区间插值；seqLen 按每条序列、batch 按调度步实际序列数匹配）。
 - **五 Lens 单一工作台**：Topology / Memory / Scheduler / Transport / Metrics，共享选择与 virtualTime。
+- **中英文界面**：默认中文，Header 可切换 English；`?lang=en|zh` 覆盖会话语言，偏好持久化；UI chrome 完整翻译，技术标识符与质量标签保持原样。
 
 ## 指标质量
 
@@ -97,6 +100,7 @@ docs/examples/           可直接导入的校准曲线与标准 Trace 样例
 - [docs/DECISIONS.md](docs/DECISIONS.md) · 关键取舍与理由
 - [docs/PERFORMANCE.md](docs/PERFORMANCE.md) · 性能测试方法与结果
 - [docs/UX_REVIEW.md](docs/UX_REVIEW.md) · UI 门禁审核脚本与自测记录
+- [docs/LOCALIZATION.md](docs/LOCALIZATION.md) · 中英文文案、术语表与新增文案流程
 - [docs/UI_SCREEN_MAP.md](docs/UI_SCREEN_MAP.md) · D0 屏幕/状态映射
 - [docs/InferenceLab_Design_v1.1/](docs/InferenceLab_Design_v1.1/) · 原始设计包
 

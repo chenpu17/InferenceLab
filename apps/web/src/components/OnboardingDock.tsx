@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useLabStore } from '../store/useLabStore';
+import { useI18n } from '../i18n';
 
 const STEPS = [
   {
@@ -38,9 +39,11 @@ export function OnboardingDock(): ReactNode {
   const setLens = useLabStore((state) => state.setLens);
   const runNow = useLabStore((state) => state.runNow);
   const planStatus = useLabStore((state) => state.planStatus);
+  const { t } = useI18n();
 
   if (!onboarding.open || onboarding.completed) return null;
   const step = STEPS[Math.min(onboarding.step, STEPS.length - 1)]!;
+  const action = step.action;
   const cards = plan?.totals.acceleratorCount ?? 0;
   const replicas = plan?.totals.replicaCount ?? 0;
 
@@ -52,7 +55,7 @@ export function OnboardingDock(): ReactNode {
     }
     if (onboarding.step === 3) {
       const first = plan?.resolvedRanks[0];
-      if (first) selectEntity({ kind: 'device', id: first.acceleratorId, label: `设备 ${first.acceleratorId}` }, { lens: 'memory', focus: true });
+      if (first) selectEntity({ kind: 'device', id: first.acceleratorId }, { lens: 'memory', focus: true });
       setOnboarding({ step: 4 });
       return;
     }
@@ -64,24 +67,28 @@ export function OnboardingDock(): ReactNode {
   };
 
   return (
-    <div className="onboarding-dock" role="dialog" aria-label="3 分钟引导">
+    <div className="onboarding-dock" role="dialog" aria-label={t('3 分钟引导')}>
       <div className="onboarding-head">
         <span className="onboarding-step">
-          引导 {Math.min(onboarding.step + 1, STEPS.length)}/{STEPS.length}
+          {t('引导 {current}/{total}', { current: Math.min(onboarding.step + 1, STEPS.length), total: STEPS.length })}
         </span>
-        <span className="onboarding-title">{step.title}</span>
+        <span className="onboarding-title">{t(step.title)}</span>
         <button
           className="onboarding-skip"
           onClick={() => setOnboarding({ open: false })}
-          title="跳过引导，之后可从 Header 的 ? 重新打开"
+          title={t('跳过引导，之后可从 Header 的 ? 重新打开')}
         >
-          跳过
+          {t('跳过')}
         </button>
       </div>
       <p className="onboarding-body">
         {onboarding.step === 0 && cards > 0
-          ? `当前 ${cards} 张加速卡被划分成 ${replicas} 个独立调度副本。${step.body}`
-          : step.body}
+          ? t('当前 {cards} 张加速卡被划分成 {replicas} 个独立调度副本。{body}', {
+              cards,
+              replicas,
+              body: t(step.body),
+            })
+          : t(step.body)}
       </p>
       <div className="onboarding-actions">
         <button
@@ -89,15 +96,15 @@ export function OnboardingDock(): ReactNode {
           disabled={onboarding.step === 0}
           onClick={() => setOnboarding({ step: Math.max(0, onboarding.step - 1) })}
         >
-          上一步
+          {t('上一步')}
         </button>
-        {step.action ? (
+        {action ? (
           <button className="btn small primary" onClick={runAction}>
-            {step.action}
+            {t(action)}
           </button>
         ) : (
           <button className="btn small primary" onClick={() => setOnboarding({ step: onboarding.step + 1 })}>
-            下一步
+            {t('下一步')}
           </button>
         )}
       </div>

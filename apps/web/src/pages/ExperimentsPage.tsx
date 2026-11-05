@@ -3,6 +3,7 @@ import type { Metric, SimulationResult } from '@inferencelab/core';
 import { useLabStore, currentParallelismLabel, type ExperimentRecord } from '../store/useLabStore';
 import { formatBytes, formatCount, formatUs, QUALITY_LABEL, qualityClass } from '../lib/format';
 import { hardwareFor, modelFor } from '../lib/scenario';
+import { useI18n } from '../i18n';
 
 function metricOf(result: SimulationResult, key: string): Metric | undefined {
   return result.metrics.find((metric) => metric.key === key);
@@ -23,6 +24,7 @@ function RunCard({
   slot: 'A' | 'B' | null;
   onSetSlot: (slot: 'A' | 'B' | null) => void;
 }): ReactNode {
+  const { t, lt, locale } = useI18n();
   const selectRun = useLabStore((state) => state.selectRun);
   const navigate = useLabStore((state) => state.navigate);
   const scenario = record.scenario;
@@ -43,8 +45,12 @@ function RunCard({
     <article className="run-card">
       <div className="run-card-head">
         <div>
-          <div className="eyebrow">RUN · {new Date(record.createdAt).toLocaleString('zh-CN', { hour12: false })}</div>
-          <h3>{scenario.title}</h3>
+          <div className="eyebrow">
+            {t('运行 · {time}', {
+              time: new Date(record.createdAt).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour12: false }),
+            })}
+          </div>
+          <h3>{lt(scenario.title)}</h3>
           <p className="caption">
             {hardware?.id ?? scenario.hardwareProfileId} · {model?.id ?? scenario.modelProfileId} ·{' '}
             {currentParallelismLabel(scenario)}
@@ -57,7 +63,7 @@ function RunCard({
 
       <div className="run-metrics">
         <div>
-          <span>完成 / 总数</span>
+          <span>{t('完成 / 总数')}</span>
           <b className="mono">{formatCount(finished)} / {formatCount(total)}</b>
         </div>
         <div>
@@ -70,35 +76,40 @@ function RunCard({
           <b className="mono">{valueOf(result, 'tpot.p50', formatUs)}</b>
         </div>
         <div>
-          <span>输出吞吐</span>
+          <span>{t('输出吞吐')}</span>
           <b className="mono">{valueOf(result, 'throughput.outputTokensPerSec', (value) => `${value.toFixed(1)} tok/s`)}</b>
         </div>
         <div>
-          <span>KV 峰值</span>
+          <span>{t('KV 峰值')}</span>
           <b className="mono">{valueOf(result, 'kv.peakBytes', formatBytes)}</b>
         </div>
         <div>
-          <span>抢占 / 事件</span>
+          <span>{t('抢占 / 事件')}</span>
           <b className="mono">{formatCount(preemptions)} / {formatCount(result.events.length)}</b>
         </div>
       </div>
 
       <div className="run-card-foot">
-        <span className="caption mono">revision {record.revision} · {formatUs(result.endedAtUs)} virtual</span>
+        <span className="caption mono">
+          {t('修订 {revision} · {time} 虚拟', {
+            revision: record.revision,
+            time: formatUs(result.endedAtUs),
+          })}
+        </span>
         <div className="related-buttons">
           <button
             className={`btn small ${slot === 'A' ? 'primary' : ''}`}
             onClick={() => onSetSlot(slot === 'A' ? null : 'A')}
-            title="将本次 Run 设为 A/B 对比的 A 侧"
+            title={t('将本次 Run 设为 A/B 对比的 A 侧')}
           >
-            {slot === 'A' ? '✓ A 侧' : '设为 A'}
+            {slot === 'A' ? t('✓ A 侧') : t('设为 A')}
           </button>
           <button
             className={`btn small ${slot === 'B' ? 'primary' : ''}`}
             onClick={() => onSetSlot(slot === 'B' ? null : 'B')}
-            title="将本次 Run 设为 A/B 对比的 B 侧"
+            title={t('将本次 Run 设为 A/B 对比的 B 侧')}
           >
-            {slot === 'B' ? '✓ B 侧' : '设为 B'}
+            {slot === 'B' ? t('✓ B 侧') : t('设为 B')}
           </button>
           <button
             className="btn small"
@@ -107,7 +118,7 @@ function RunCard({
               navigate('lab');
             }}
           >
-            打开回放 →
+            {t('打开回放 →')}
           </button>
         </div>
       </div>
@@ -128,42 +139,44 @@ const COMPARE_ROWS: Array<{ key: string; label: string; format: (value: number) 
 ];
 
 function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): ReactNode {
+  const { t, lt } = useI18n();
   const selectRun = useLabStore((state) => state.selectRun);
   const navigate = useLabStore((state) => state.navigate);
 
   const notes = useMemo(() => {
     const list: string[] = [];
     if (JSON.stringify(a.scenario.workload) !== JSON.stringify(b.scenario.workload)) {
-      list.push('Workload 不同：负载差异会与机制差异混杂，不能直接归因。');
+      list.push(t('Workload 不同：负载差异会与机制差异混杂，不能直接归因。'));
     }
     if (a.scenario.seed !== b.scenario.seed) {
-      list.push(`Seed 不同（${a.scenario.seed} vs ${b.scenario.seed}）：随机到达顺序不同。`);
+      list.push(t('Seed 不同（{a} vs {b}）：随机到达顺序不同。', { a: a.scenario.seed, b: b.scenario.seed }));
     }
     if (a.scenario.hardwareProfileId !== b.scenario.hardwareProfileId) {
-      list.push('硬件 Profile 不同：绝对延迟与容量不可直接比较。');
+      list.push(t('硬件 Profile 不同：绝对延迟与容量不可直接比较。'));
     }
     if (a.scenario.modelProfileId !== b.scenario.modelProfileId) {
-      list.push('模型 Profile 不同：权重与 KV 形状不同。');
+      list.push(t('模型 Profile 不同：权重与 KV 形状不同。'));
     }
     if (a.scenario.frameworkProfileId !== b.scenario.frameworkProfileId) {
-      list.push('框架适配器不同：参数语义与能力矩阵不同。');
+      list.push(t('框架适配器不同：参数语义与能力矩阵不同。'));
     }
     return list;
-  }, [a, b]);
+  }, [a, b, t]);
 
-  const incomparable = notes.some((note) => note.startsWith('Workload') || note.startsWith('Seed'));
+  const incomparable =
+    JSON.stringify(a.scenario.workload) !== JSON.stringify(b.scenario.workload) || a.scenario.seed !== b.scenario.seed;
   const comparable = notes.length === 0;
-  const badge = comparable ? 'COMPARABLE' : incomparable ? 'INCOMPARABLE' : 'PARTIAL';
+  const badge = comparable ? t('可比') : incomparable ? t('不可比') : t('部分可比');
   const badgeClass = comparable ? 'quality-exact' : incomparable ? 'quality-unavailable' : 'quality-assumption';
 
   return (
-    <section className="compare-panel" aria-label="A/B 对比">
+    <section className="compare-panel" aria-label={t('A/B 对比')}>
       <div className="compare-head">
         <div>
-          <div className="eyebrow">A/B SPLIT · FROZEN RUNS</div>
-          <h2>并排对比</h2>
+          <div className="eyebrow">{t('A/B 拆分 · 冻结 Run')}</div>
+          <h2>{t('并排对比')}</h2>
           <p className="caption">
-            A 与 B 各自来自独立冻结的 ExperimentResult；对比只读取事件与指标，不重新仿真。
+            {t('A 与 B 各自来自独立冻结的 ExperimentResult；对比只读取事件与指标，不重新仿真。')}
           </p>
         </div>
         <span className={`quality-tag ${badgeClass}`}>{badge}</span>
@@ -175,15 +188,16 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
             <div className="compare-run-head">
               <span className="compare-slot">{slot}</span>
               <div>
-                <b>{record.scenario.title}</b>
+                <b>{lt(record.scenario.title)}</b>
                 <p className="caption mono">
-                  {record.scenario.hardwareProfileId} · {currentParallelismLabel(record.scenario)} · seed {record.scenario.seed}
+                  {record.scenario.hardwareProfileId} · {currentParallelismLabel(record.scenario)} ·{' '}
+                  {t('Seed {seed}', { seed: record.scenario.seed })}
                 </p>
               </div>
             </div>
             <div className="compare-run-meta">
-              <span>{record.result.events.length} events</span>
-              <span>{formatUs(record.result.endedAtUs)} virtual</span>
+              <span>{t('{count} 个事件', { count: record.result.events.length })}</span>
+              <span>{t('{time} 虚拟', { time: formatUs(record.result.endedAtUs) })}</span>
               <span>{record.result.metrics.some((metric) => metric.quality === 'calibrated') ? 'MEASURED' : 'SYNTHETIC'}</span>
             </div>
             <button
@@ -193,7 +207,7 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
                 navigate('lab');
               }}
             >
-              打开 {slot} 回放 →
+              {t('打开 {slot} 回放 →', { slot })}
             </button>
           </div>
         ))}
@@ -201,7 +215,7 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
 
       {notes.length > 0 && (
         <div className="compare-notes">
-          <b>不可比字段 / 归因限制</b>
+          <b>{t('不可比字段 / 归因限制')}</b>
           {notes.map((note) => (
             <p key={note}>· {note}</p>
           ))}
@@ -211,11 +225,11 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
       <table className="compare-table">
         <thead>
           <tr>
-            <th>指标</th>
+            <th>{t('指标')}</th>
             <th>A</th>
             <th>B</th>
             <th>Δ (B − A)</th>
-            <th>来源</th>
+            <th>{t('来源')}</th>
           </tr>
         </thead>
         <tbody>
@@ -235,7 +249,7 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
             }
             return (
               <tr key={row.key}>
-                <td>{row.label}</td>
+                <td>{t(row.label)}</td>
                 <td className="mono">{valueA === null ? 'N/A' : row.format(valueA)}</td>
                 <td className="mono">{valueB === null ? 'N/A' : row.format(valueB)}</td>
                 <td className="mono">{delta}</td>
@@ -246,13 +260,14 @@ function ComparePanel({ a, b }: { a: ExperimentRecord; b: ExperimentRecord }): R
         </tbody>
       </table>
       <p className="caption">
-        Δ 仅描述两次冻结结果之间的差异；Synthetic/Assumption 指标不能作为真实硬件性能结论。
+        {t('Δ 仅描述两次冻结结果之间的差异；Synthetic/Assumption 指标不能作为真实硬件性能结论。')}
       </p>
     </section>
   );
 }
 
 export function ExperimentsPage(): ReactNode {
+  const { t } = useI18n();
   const runHistory = useLabStore((state) => state.runHistory);
   const navigate = useLabStore((state) => state.navigate);
   const [slotA, setSlotA] = useState<string | null>(null);
@@ -283,27 +298,29 @@ export function ExperimentsPage(): ReactNode {
     <main className="page-shell experiments-page">
       <div className="page-head">
         <div>
-          <div className="eyebrow">EXPERIMENTS</div>
-          <h1>实验记录</h1>
+          <div className="eyebrow">{t('实验')}</div>
+          <h1>{t('实验记录')}</h1>
           <p>
-            每次 Run 都会冻结 Scenario、Plan 与完整事件日志。切换记录只重建回放，不重新仿真；
-            因此同一个 Run 的结果可重复。
+            {t(
+              '每次 Run 都会冻结 Scenario、Plan 与完整事件日志。切换记录只重建回放，不重新仿真； 因此同一个 Run 的结果可重复。',
+            )}
           </p>
         </div>
         <div className="page-actions">
-          <button className="btn" onClick={() => navigate('lab')}>← 回到工作台</button>
-          <button className="btn" disabled={runHistory.length === 0} onClick={exportRuns}>↧ 导出记录 JSON</button>
+          <button className="btn" onClick={() => navigate('lab')}>{t('← 回到工作台')}</button>
+          <button className="btn" disabled={runHistory.length === 0} onClick={exportRuns}>{t('↧ 导出记录 JSON')}</button>
         </div>
       </div>
 
       {runHistory.length === 0 ? (
         <div className="page-empty">
-          <h2>还没有 Run</h2>
+          <h2>{t('还没有 Run')}</h2>
           <p>
-            结构预览不会产生指标。回到工作台选择一个预设（例如 `toy-32gpu-tp16-dp2`），
-            点击 Header 的“运行实验”，事件日志和指标会出现在这里。
+            {t(
+              '结构预览不会产生指标。回到工作台选择一个预设（例如 `toy-32gpu-tp16-dp2`）， 点击 Header 的“运行实验”，事件日志和指标会出现在这里。',
+            )}
           </p>
-          <button className="btn primary" onClick={() => navigate('lab')}>打开工作台</button>
+          <button className="btn primary" onClick={() => navigate('lab')}>{t('打开工作台')}</button>
         </div>
       ) : (
         <>
@@ -332,12 +349,13 @@ export function ExperimentsPage(): ReactNode {
           {recordA && recordB && <ComparePanel a={recordA} b={recordB} />}
           {(!recordA || !recordB) && (
             <p className="caption page-note">
-              A/B 对比：在任意两条 Run 上点击“设为 A”与“设为 B”，即可并排比较指标与不可比字段。
+              {t('A/B 对比：在任意两条 Run 上点击“设为 A”与“设为 B”，即可并排比较指标与不可比字段。')}
             </p>
           )}
           <p className="caption page-note">
-            记录仅保存在当前浏览器会话中，刷新页面后清空；如需长期保存请导出 JSON。
-            所有 TTFT / TPOT / 吞吐都来自标注过的合成成本模型，不是真实硬件实测。
+            {t(
+              '记录仅保存在当前浏览器会话中，刷新页面后清空；如需长期保存请导出 JSON。 所有 TTFT / TPOT / 吞吐都来自标注过的合成成本模型，不是真实硬件实测。',
+            )}
           </p>
         </>
       )}

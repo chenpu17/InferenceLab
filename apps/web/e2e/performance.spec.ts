@@ -25,7 +25,7 @@ test('high-density 48 x 1K keeps the main thread responsive', async ({ page }) =
   await page.setViewportSize({ width: 1440, height: 900 });
   await openLab(page);
   await page.selectOption('[data-testid="scenario-select"]', 'high-density-demo');
-  await expect(page.locator('.topology-meta')).toContainText('32 ACCELERATORS');
+  await expect(page.locator('.topology-meta')).toContainText('32 加速卡');
 
   await page.evaluate(() => {
     const samples: LongTaskSample[] = [];
@@ -77,7 +77,7 @@ test('high-density 48 x 1K keeps the main thread responsive', async ({ page }) =
   });
   const advancedWhilePlaying = await page
     .locator('.tl-meta')
-    .evaluate((node) => !node.textContent?.includes('event 0 /'));
+    .evaluate((node) => !node.textContent?.includes('事件 0 /'));
   if ((await page.locator('.tl-play').getAttribute('aria-label')) === '暂停') {
     await page.locator('.tl-play').click();
   }

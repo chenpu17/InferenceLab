@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useLabStore } from '../store/useLabStore';
+import { useI18n } from '../i18n';
 import { ToolRail } from '../components/ToolRail';
 import { ConfigPanel } from '../components/ConfigPanel';
 import { CanvasPanel } from '../components/CanvasPanel';
@@ -9,6 +10,7 @@ import { Timeline } from '../components/Timeline';
 export function LabPage(): ReactNode {
   const drawers = useLabStore((state) => state.drawers);
   const toggleDrawer = useLabStore((state) => state.toggleDrawer);
+  const { t } = useI18n();
   const closeDrawers = () => {
     const state = useLabStore.getState();
     if (state.drawers.config) state.toggleDrawer('config');
@@ -30,12 +32,12 @@ export function LabPage(): ReactNode {
         <Inspector />
       </div>
       <Timeline />
-      <div className="lab-drawer-tools" aria-label="面板开关">
+      <div className="lab-drawer-tools" aria-label={t('面板开关')}>
         <button className={drawers.config ? 'active' : ''} onClick={() => toggleDrawer('config')} aria-pressed={drawers.config}>
-          ⚙ 配置
+          ⚙ {t('配置')}
         </button>
         <button className={drawers.inspector ? 'active' : ''} onClick={() => toggleDrawer('inspector')} aria-pressed={drawers.inspector}>
-          ◧ Inspector
+          ◧ {t('检查器')}
         </button>
       </div>
       {(drawers.config || drawers.inspector) && (

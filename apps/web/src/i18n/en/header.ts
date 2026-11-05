@@ -1,0 +1,64 @@
+/** Header, navigation, and consent dialog copy. */
+export const header = {
+  '原理探索': 'Explore',
+  '配置实验': 'Experiment',
+  '实测复盘': 'Replay',
+  '导入标准 JSON Trace 后，用真实到达/Token 计数驱动仿真；阶段时序仍标注为推断。':
+    'Import a standard JSON trace to drive the simulation with real arrival and token counts; stage timings remain labelled as inferred.',
+  '至少一项指标来自已校准/实测 Profile；其余指标仍需逐项查看来源。':
+    'At least one metric comes from a calibrated or measured profile; check the provenance of the others individually.',
+  '关键 Profile 或 KV 布局未知；UI 不会显示精确时间或容量结论。':
+    'A key profile or KV layout is unknown; the UI will not show precise timing or capacity conclusions.',
+  '● 结构预览': '● Structure preview',
+  '● 运行中': '● Running',
+  '● 规划中': '● Planning',
+  '● 配置非法': '● Invalid config',
+  '● 未知': '● Unknown',
+  '● Draft · 未运行': '● Draft · not run',
+  '● Run 已冻结': '● Run frozen',
+  '返回工作台': 'Back to workbench',
+  '选择场景预设': 'Choose a scenario preset',
+  '自定义 · {title}': 'Custom · {title}',
+  '一级功能': 'Primary navigation',
+  '工作台': 'Workbench',
+  '实验': 'Experiments',
+  '参考': 'Reference',
+  '工作模式': 'Work mode',
+  '打开配置面板': 'Open configuration panel',
+  '切换到浅色主题': 'Switch to light theme',
+  '切换到深色主题': 'Switch to dark theme',
+  '减少动效已开启：用颜色/数字瞬态替代移动粒子':
+    'Reduced motion is on: colour and numeric changes replace moving particles.',
+  '开启减少动效': 'Enable reduced motion',
+  '切换减少动效': 'Toggle reduced motion',
+  '重新打开 3 分钟引导': 'Reopen the 3-minute guide',
+  '帮助': 'Help',
+  '运行中…': 'Running…',
+  '运行实验': 'Run experiment',
+  '▶ 运行实验': '▶ Run experiment',
+  '当前 Plan 含未知数据': 'This plan contains unknown data',
+  'Plan · 未知': 'PLAN · UNKNOWN',
+  '权重、KV 布局或框架能力中存在未验证项。请选择如何继续；系统不会把猜测当作已验证结果。':
+    'Weights, KV layout, or framework capabilities contain unverified items. Choose how to proceed; guesses are never presented as verified results.',
+  '仅结构查看': 'Structure only',
+  '以场景中标注的合成参数运行；所有时间指标保持 SYNTHETIC。':
+    'Run with the synthetic parameters labelled in the scenario; all timing metrics remain SYNTHETIC.',
+  '当前模板没有可计算的 KV Block，时间仿真无法启动。':
+    'This template has no computable KV blocks, so timing simulation cannot start.',
+  '使用已标注合成参数模拟': 'Simulate with labelled synthetic parameters',
+  '取消': 'Cancel',
+  '该模板缺少可用的 KV 布局，无法建立 KV Block 池；时间仿真会拒绝启动。请先查看结构或补充 Profile。':
+    'This template lacks a usable KV layout, so a KV block pool cannot be created and timing simulation will refuse to start. Inspect the structure or complete the profile first.',
+  '语言': 'Language',
+  '中文': '中文',
+  'English': 'English',
+  '切换到中文': 'Switch to Chinese',
+  '切换到英文': 'Switch to English',
+  'Switch to English': 'Switch to English',
+  'Plan 不可行；请先在配置面板修复错误。': 'The plan is infeasible; fix the errors in the configuration panel first.',
+  '正在生成结构预览…': 'Generating the structural preview…',
+  '仿真正在 Worker 中运行。': 'The simulation is running in the worker.',
+  'Plan 为 unknown；点击后需要显式选择降级方式。':
+    'The plan is unknown; clicking requires an explicit fallback choice.',
+  '冻结当前 Draft，运行离散事件仿真。': 'Freeze the current draft and run the discrete-event simulation.',
+} as const;
