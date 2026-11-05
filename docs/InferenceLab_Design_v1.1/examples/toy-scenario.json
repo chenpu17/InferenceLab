@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "id": "toy-4gpu-batch",
+  "title": "Toy 4-GPU: TP2 DP2 调度教学实验",
+  "seed": 20261105,
+  "accuracyTier": "discrete-event",
+  "hardwareProfileId": "toy-1node-4gpu-v1",
+  "modelProfileId": "toy-dense-gqa-v1",
+  "frameworkProfileId": "vllm-v1-teaching-subset-v1",
+  "deployment": {
+    "engines": [
+      {
+        "id": "engine-dp0",
+        "role": "mixed",
+        "rankIds": [
+          "r0",
+          "r1"
+        ],
+        "schedulerId": "sched-dp0",
+        "cacheManagerId": "cache-dp0"
+      },
+      {
+        "id": "engine-dp1",
+        "role": "mixed",
+        "rankIds": [
+          "r2",
+          "r3"
+        ],
+        "schedulerId": "sched-dp1",
+        "cacheManagerId": "cache-dp1"
+      }
+    ],
+    "placement": {
+      "ranks": [
+        {
+          "rankId": "r0",
+          "engineId": "engine-dp0",
+          "acceleratorId": "toy-gpu0",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r1",
+          "engineId": "engine-dp0",
+          "acceleratorId": "toy-gpu1",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r2",
+          "engineId": "engine-dp1",
+          "acceleratorId": "toy-gpu2",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r3",
+          "engineId": "engine-dp1",
+          "acceleratorId": "toy-gpu3",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        }
+      ]
+    },
+    "logicalParallelism": {
+      "tp": 2,
+      "dp": 2
+    },
+    "routing": {
+      "kind": "fixed",
+      "assignments": {
+        "req-a": "dp0",
+        "req-b": "dp0",
+        "req-c": "dp1"
+      }
+    }
+  },
+  "runtime": {
+    "maxModelLen": 8192,
+    "maxNumSeqs": 4,
+    "maxNumBatchedTokens": 8,
+    "blockSize": 16,
+    "enableChunkedPrefill": true,
+    "enablePrefixCaching": true,
+    "gpuMemoryUtilization": 0.9,
+    "preemptionPolicy": "recompute"
+  },
+  "workload": {
+    "kind": "trace",
+    "requests": [
+      {
+        "id": "req-a",
+        "atUs": 0,
+        "promptTokens": 6,
+        "outputTokens": 4
+      },
+      {
+        "id": "req-b",
+        "atUs": 0,
+        "promptTokens": 6,
+        "outputTokens": 4
+      },
+      {
+        "id": "req-c",
+        "atUs": 50000,
+        "promptTokens": 4,
+        "outputTokens": 2
+      }
+    ]
+  },
+  "assumptions": {
+    "costModel": "toy-instructional",
+    "syntheticHardware": true
+  }
+}

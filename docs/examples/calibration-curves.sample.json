@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "curves": [
+    {
+      "id": "toy4gpu-prefill-bf16-1024",
+      "op": "prefill",
+      "hardwareProfileId": "hw-toy-4gpu",
+      "modelProfileId": "model-toy-dense-4b",
+      "frameworkVersion": "educational-subset/0.1.0",
+      "dtype": "bf16",
+      "batchMin": 1,
+      "batchMax": 8,
+      "seqLenMin": 1,
+      "seqLenMax": 4096,
+      "timeUs": 180,
+      "uncertaintyPct": 8,
+      "sourceUrl": "https://example.invalid/benchmark/teaching-demo",
+      "measuredAt": "2026-11-05",
+      "note": "教学演示曲线，非真实硬件测量；仅用于验证导入与 scope 匹配流程。"
+    },
+    {
+      "id": "toy4gpu-decode-bf16-1024",
+      "op": "decode",
+      "hardwareProfileId": "hw-toy-4gpu",
+      "modelProfileId": "model-toy-dense-4b",
+      "frameworkVersion": "educational-subset/0.1.0",
+      "dtype": "bf16",
+      "batchMin": 1,
+      "batchMax": 8,
+      "seqLenMin": 1,
+      "seqLenMax": 8192,
+      "timeUs": 35,
+      "uncertaintyPct": 12,
+      "sourceUrl": "https://example.invalid/benchmark/teaching-demo",
+      "measuredAt": "2026-11-05",
+      "note": "教学演示曲线，非真实硬件测量。"
+    }
+  ]
+}

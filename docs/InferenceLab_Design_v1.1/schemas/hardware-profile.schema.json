@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inferencelab.local/schema/hardware-profile-1.0.json",
+  "title": "InferenceLab HardwareProfile v1.0 skeleton",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "profileType",
+    "provenance",
+    "nodes",
+    "accelerators",
+    "memoryPools",
+    "resources",
+    "links",
+    "contentionDomains"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profileType": {
+      "enum": [
+        "synthetic-toy",
+        "hardware-measured",
+        "hardware-vendor-spec"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "assumed",
+            "measured",
+            "derived",
+            "estimated",
+            "unknown"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "cpuCores",
+          "dramPoolId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cpuCores": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "dramPoolId": {
+            "type": "string"
+          },
+          "nicIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "numaNodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "accelerators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "nodeId",
+          "vendor",
+          "family",
+          "hbmPoolId",
+          "computeResourceId",
+          "dmaResourceIds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "vendor": {
+            "enum": [
+              "nvidia",
+              "ascend",
+              "amd",
+              "toy"
+            ]
+          },
+          "family": {
+            "type": "string"
+          },
+          "hbmPoolId": {
+            "type": "string"
+          },
+          "computeResourceId": {
+            "type": "string"
+          },
+          "dmaResourceIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "memoryPools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "ownerId",
+          "kind",
+          "capacityBytes",
+          "externalReservedBytes",
+          "alignmentBytes",
+          "readBytesPerSecond",
+          "writeBytesPerSecond"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "HBM",
+              "DRAM",
+              "PINNED",
+              "SSD"
+            ]
+          },
+          "capacityBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "externalReservedBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "alignmentBytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "readBytesPerSecond": {
+            "$ref": "#/$defs/sourced"
+          },
+          "writeBytesPerSecond": {
+            "$ref": "#/$defs/sourced"
+          },
+          "numaNodeId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "assumedTflops": {
+            "type": "number",
+            "minimum": 0
+          },
+          "concurrency": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidence": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "fromId",
+          "toId",
+          "kind",
+          "nominalBitsPerSecond",
+          "effectiveRatio",
+          "latencyUs",
+          "duplex",
+          "contentionDomainId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fromId": {
+            "type": "string"
+          },
+          "toId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "nominalBitsPerSecond": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "effectiveRatio": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "latencyUs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "duplex": {
+            "enum": [
+              "full",
+              "half"
+            ]
+          },
+          "contentionDomainId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "contentionDomains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "capacityBitsPerSecond",
+          "duplex",
+          "arbitration"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "capacityBitsPerSecond": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "duplex": {
+            "enum": [
+              "full",
+              "half"
+            ]
+          },
+          "arbitration": {
+            "enum": [
+              "serialized",
+              "processor-sharing"
+            ]
+          },
+          "provenance": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sourced": {
+      "type": "object",
+      "required": [
+        "value",
+        "evidence"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "evidence": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "assumed",
+                "measured",
+                "derived",
+                "estimated",
+                "unknown"
+              ]
+            },
+            "note": {
+              "type": "string"
+            },
+            "sourceUrl": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

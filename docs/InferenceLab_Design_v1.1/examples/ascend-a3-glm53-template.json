@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "id": "ascend-a3-glm53-pd-unverified-template",
+  "title": "Ascend A3 + GLM-5.3 W4A8C8 / 1P1D（待填写真实资料）",
+  "seed": 20261105,
+  "accuracyTier": "structural",
+  "hardwareProfileId": "ascend-a3-custom-32npu-unverified",
+  "modelProfileId": "glm-5.3-w4a8c8-custom-unverified",
+  "frameworkProfileId": "vllm-ascend-version-to-pin",
+  "deployment": {
+    "engines": [
+      {"id": "prefill", "role": "prefill", "rankIds": [], "schedulerId": "sched-p", "cacheManagerId": "cache-p", "kvTransferStrategyId": "pd-pull"},
+      {"id": "decode", "role": "decode", "rankIds": [], "schedulerId": "sched-d", "cacheManagerId": "cache-d", "kvTransferStrategyId": "pd-pull"}
+    ],
+    "placement": {"ranks": []},
+    "logicalParallelism": {"tp": 16, "dp": 1, "ep": 16, "pdP": 1, "pdD": 1}
+  },
+  "runtime": {
+    "maxModelLen": 131072,
+    "maxNumSeqs": 48,
+    "maxNumBatchedTokens": 16384,
+    "blockSize": 128,
+    "enableChunkedPrefill": true,
+    "enablePrefixCaching": true,
+    "preemptionPolicy": "backend-specific"
+  },
+  "workload": {"kind": "fixed", "count": 48, "promptTokens": 8192, "outputTokens": 1024, "atUs": 0},
+  "assumptions": {
+    "userSpecifiedWorkload": true,
+    "unverifiedModelLayout": true,
+    "unverifiedHardwareBandwidth": true,
+    "incompletePlacement": true,
+    "note": "此文件仅为用户自定义工程场景的空模板。TP/EP/BlockSize/MaxLen 都是可修改的示例值，不是平台兼容性承诺；须填充 Rank 物理映射、模型配置、设备准确容量/带宽及 framework version 后才能运行。"
+  }
+}

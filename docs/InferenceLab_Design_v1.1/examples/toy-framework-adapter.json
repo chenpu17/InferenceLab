@@ -1,0 +1,29 @@
+{
+  "id": "vllm-v1-teaching-subset-v1",
+  "framework": "vllm-v1-inspired-subset",
+  "versionTagOrCommit": "teaching-only-v1",
+  "provenance": {
+    "kind": "assumed",
+    "note": "这是仿真适配器，并非真实 vLLM 当前版本"
+  },
+  "supportedFeatures": {
+    "tp_dp_basic": "supported",
+    "chunked_prefill": "supported",
+    "prefix_caching": "supported",
+    "kv_block_allocator": "supported",
+    "recompute": "supported",
+    "ep": "unknown",
+    "pcp": "unknown",
+    "dcp": "unknown",
+    "pd": "unknown"
+  },
+  "parameterMappings": {
+    "max_num_batched_tokens": "runtime.maxNumBatchedTokens",
+    "max_num_seqs": "runtime.maxNumSeqs",
+    "max_model_len": "runtime.maxModelLen"
+  },
+  "sourceUrls": [
+    "https://docs.vllm.ai/en/latest/design/arch_overview/",
+    "https://docs.vllm.ai/en/stable/design/prefix_caching/"
+  ]
+}

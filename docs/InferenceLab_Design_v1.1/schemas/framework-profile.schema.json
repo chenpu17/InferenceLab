@@ -1,0 +1,14 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "$id":"https://inferencelab.local/schema/framework-profile-1.0.json",
+ "title":"InferenceLab FrameworkProfile v1.0 skeleton",
+ "type":"object","additionalProperties":false,
+ "required":["id","framework","versionTagOrCommit","provenance","supportedFeatures","parameterMappings","sourceUrls"],
+ "properties":{
+  "id":{"type":"string"},"framework":{"type":"string"},"versionTagOrCommit":{"type":"string"},
+  "provenance":{"type":"object","required":["kind"],"properties":{"kind":{"type":"string"},"note":{"type":"string"}}},
+  "supportedFeatures":{"type":"object","additionalProperties":{"enum":["supported","partial","unsupported","unknown"]}},
+  "parameterMappings":{"type":"object","additionalProperties":{"type":"string"}},
+  "sourceUrls":{"type":"array","items":{"type":"string"}}
+ }
+}

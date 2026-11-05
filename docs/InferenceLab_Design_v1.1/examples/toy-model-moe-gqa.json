@@ -1,0 +1,374 @@
+{
+  "id": "toy-moe-gqa-v1",
+  "revision": "synthetic-v1",
+  "profileType": "synthetic-toy",
+  "provenance": {
+    "kind": "assumed",
+    "note": "Toy MoE 结构教学模型；EP 路由仿真直到 M4 才实现；所有数字为合成数据"
+  },
+  "architectureFamily": "moe-decoder-only",
+  "numLayers": 24,
+  "hiddenSize": 4096,
+  "vocabSize": 32000,
+  "attentionLayers": [
+    {
+      "layerIndex": 0,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 1,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 2,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 3,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 4,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 5,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 6,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 7,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 8,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 9,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 10,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 11,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 12,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 13,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 14,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 15,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 16,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 17,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 18,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 19,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 20,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 21,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 22,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 23,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    }
+  ],
+  "tensorInventory": [
+    {
+      "id": "non-expert-tensors",
+      "logicalBytes": 4294967296,
+      "rule": "shard-tp",
+      "scaleAndMetadataBytes": 0,
+      "alignBytes": 256
+    }
+  ],
+  "runtimeAssumptions": {
+    "runtimeBytesPerRank": 1073741824,
+    "workspacePeakBytesPerRank": 536870912,
+    "graphCaptureBytesPerRank": 536870912,
+    "communicationBufferBytesPerRank": 536870912
+  },
+  "latencyAssumptions": {
+    "model": "synthetic-operation-cost",
+    "assumed": true,
+    "note": "不提供 MoE 准确时间模型"
+  },
+  "sourceUrls": [],
+  "moeLayers": [
+    {
+      "layerIndex": 0,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 2,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 4,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 6,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 8,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 10,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 12,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 14,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 16,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 18,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 20,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    },
+    {
+      "layerIndex": 22,
+      "expertCount": 8,
+      "topK": 2,
+      "sharedExpertBytes": 134217728,
+      "expertTensorBytes": 536870912,
+      "expertPlacementRule": "not-modelled-until-M4"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "$id":"https://inferencelab.local/schema/model-profile-1.0.json",
+ "title":"InferenceLab ModelProfile v1.0 skeleton",
+ "type":"object","additionalProperties":false,
+ "required":["id","revision","profileType","provenance","architectureFamily","numLayers","hiddenSize","vocabSize","attentionLayers","tensorInventory","runtimeAssumptions","latencyAssumptions","sourceUrls"],
+ "properties":{
+  "id":{"type":"string"},"revision":{"type":"string"},"profileType":{"type":"string"},
+  "provenance":{"type":"object","required":["kind"],"properties":{"kind":{"type":"string"},"note":{"type":"string"}}},
+  "architectureFamily":{"type":"string"},"numLayers":{"type":"integer","minimum":1},"hiddenSize":{"type":"integer","minimum":1},"vocabSize":{"type":"integer","minimum":1},
+  "attentionLayers":{"type":"array","items":{"type":"object","required":["layerIndex","kind"],"properties":{"layerIndex":{"type":"integer","minimum":0},"kind":{"type":"string"},"nQueryHeads":{"type":"integer","minimum":1},"nKVHeads":{"type":"integer","minimum":1},"headDim":{"type":"integer","minimum":1},"kDtypeBytes":{"type":"number","exclusiveMinimum":0},"vDtypeBytes":{"type":"number","exclusiveMinimum":0},"kvLayout":{"type":"string"},"kvLatentDim":{"type":"integer","minimum":1},"ropeDim":{"type":"integer","minimum":1},"measuredBytesPerTokenPerRank":{"type":"integer","minimum":0}}}},
+  "tensorInventory":{"type":"array","items":{"type":"object","required":["id","logicalBytes","rule"],"properties":{"id":{"type":"string"},"logicalBytes":{"type":"integer","minimum":0},"rule":{"type":"string"},"scaleAndMetadataBytes":{"type":"integer","minimum":0},"alignBytes":{"type":"integer","minimum":1}}}},
+  "moeLayers":{"type":"array","items":{"type":"object","required":["layerIndex","expertCount","topK"],"properties":{"layerIndex":{"type":"integer","minimum":0},"expertCount":{"type":"integer","minimum":1},"topK":{"type":"integer","minimum":1},"sharedExpertBytes":{"type":"integer","minimum":0},"expertTensorBytes":{"type":"integer","minimum":0},"expertPlacementRule":{"type":"string"}}}},
+  "runtimeAssumptions":{"type":"object","additionalProperties":{"type":["number","boolean","string"]}},
+  "latencyAssumptions":{"type":"object","additionalProperties":{"type":["number","boolean","string"]}},
+  "sourceUrls":{"type":"array","items":{"type":"string"}}
+ }
+}

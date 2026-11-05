@@ -1,0 +1,275 @@
+{
+  "id": "toy-dense-gqa-v1",
+  "revision": "synthetic-v1",
+  "profileType": "synthetic-toy",
+  "provenance": {
+    "kind": "assumed",
+    "note": "教学参数，无对应真实模型结构/性能"
+  },
+  "architectureFamily": "dense-decoder-only",
+  "numLayers": 24,
+  "hiddenSize": 4096,
+  "vocabSize": 32000,
+  "attentionLayers": [
+    {
+      "layerIndex": 0,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 1,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 2,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 3,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 4,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 5,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 6,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 7,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 8,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 9,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 10,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 11,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 12,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 13,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 14,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 15,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 16,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 17,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 18,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 19,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 20,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 21,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 22,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    },
+    {
+      "layerIndex": 23,
+      "kind": "GQA",
+      "nQueryHeads": 32,
+      "nKVHeads": 16,
+      "headDim": 128,
+      "kDtypeBytes": 2,
+      "vDtypeBytes": 2,
+      "kvLayout": "head-sharded-tp"
+    }
+  ],
+  "tensorInventory": [
+    {
+      "id": "toy-weights",
+      "logicalBytes": 8589934592,
+      "rule": "shard-tp",
+      "scaleAndMetadataBytes": 0,
+      "alignBytes": 256
+    }
+  ],
+  "runtimeAssumptions": {
+    "runtimeBytesPerRank": 1073741824,
+    "workspacePeakBytesPerRank": 536870912,
+    "graphCaptureBytesPerRank": 536870912,
+    "communicationBufferBytesPerRank": 536870912
+  },
+  "latencyAssumptions": {
+    "model": "synthetic-operation-cost",
+    "assumed": true
+  },
+  "sourceUrls": []
+}

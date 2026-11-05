@@ -1,0 +1,2475 @@
+{
+  "id": "toy-2node-32gpu-v1",
+  "version": "1.0",
+  "profileType": "synthetic-toy",
+  "provenance": {
+    "kind": "assumed",
+    "note": "全部参数为教学合成数据，非真实设备规格"
+  },
+  "nodes": [
+    {
+      "id": "node0",
+      "cpuCores": 32,
+      "dramPoolId": "node0-dram",
+      "nicIds": [
+        "node0-nic"
+      ],
+      "numaNodeIds": [
+        "node0-numa0"
+      ]
+    },
+    {
+      "id": "node1",
+      "cpuCores": 32,
+      "dramPoolId": "node1-dram",
+      "nicIds": [
+        "node1-nic"
+      ],
+      "numaNodeIds": [
+        "node1-numa0"
+      ]
+    }
+  ],
+  "accelerators": [
+    {
+      "id": "node0-gpu0",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu0-hbm",
+      "computeResourceId": "node0-gpu0-compute",
+      "dmaResourceIds": [
+        "node0-gpu0-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu1",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu1-hbm",
+      "computeResourceId": "node0-gpu1-compute",
+      "dmaResourceIds": [
+        "node0-gpu1-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu2",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu2-hbm",
+      "computeResourceId": "node0-gpu2-compute",
+      "dmaResourceIds": [
+        "node0-gpu2-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu3",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu3-hbm",
+      "computeResourceId": "node0-gpu3-compute",
+      "dmaResourceIds": [
+        "node0-gpu3-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu4",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu4-hbm",
+      "computeResourceId": "node0-gpu4-compute",
+      "dmaResourceIds": [
+        "node0-gpu4-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu5",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu5-hbm",
+      "computeResourceId": "node0-gpu5-compute",
+      "dmaResourceIds": [
+        "node0-gpu5-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu6",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu6-hbm",
+      "computeResourceId": "node0-gpu6-compute",
+      "dmaResourceIds": [
+        "node0-gpu6-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu7",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu7-hbm",
+      "computeResourceId": "node0-gpu7-compute",
+      "dmaResourceIds": [
+        "node0-gpu7-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu8",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu8-hbm",
+      "computeResourceId": "node0-gpu8-compute",
+      "dmaResourceIds": [
+        "node0-gpu8-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu9",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu9-hbm",
+      "computeResourceId": "node0-gpu9-compute",
+      "dmaResourceIds": [
+        "node0-gpu9-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu10",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu10-hbm",
+      "computeResourceId": "node0-gpu10-compute",
+      "dmaResourceIds": [
+        "node0-gpu10-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu11",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu11-hbm",
+      "computeResourceId": "node0-gpu11-compute",
+      "dmaResourceIds": [
+        "node0-gpu11-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu12",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu12-hbm",
+      "computeResourceId": "node0-gpu12-compute",
+      "dmaResourceIds": [
+        "node0-gpu12-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu13",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu13-hbm",
+      "computeResourceId": "node0-gpu13-compute",
+      "dmaResourceIds": [
+        "node0-gpu13-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu14",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu14-hbm",
+      "computeResourceId": "node0-gpu14-compute",
+      "dmaResourceIds": [
+        "node0-gpu14-dma"
+      ]
+    },
+    {
+      "id": "node0-gpu15",
+      "nodeId": "node0",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node0-gpu15-hbm",
+      "computeResourceId": "node0-gpu15-compute",
+      "dmaResourceIds": [
+        "node0-gpu15-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu0",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu0-hbm",
+      "computeResourceId": "node1-gpu0-compute",
+      "dmaResourceIds": [
+        "node1-gpu0-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu1",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu1-hbm",
+      "computeResourceId": "node1-gpu1-compute",
+      "dmaResourceIds": [
+        "node1-gpu1-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu2",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu2-hbm",
+      "computeResourceId": "node1-gpu2-compute",
+      "dmaResourceIds": [
+        "node1-gpu2-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu3",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu3-hbm",
+      "computeResourceId": "node1-gpu3-compute",
+      "dmaResourceIds": [
+        "node1-gpu3-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu4",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu4-hbm",
+      "computeResourceId": "node1-gpu4-compute",
+      "dmaResourceIds": [
+        "node1-gpu4-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu5",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu5-hbm",
+      "computeResourceId": "node1-gpu5-compute",
+      "dmaResourceIds": [
+        "node1-gpu5-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu6",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu6-hbm",
+      "computeResourceId": "node1-gpu6-compute",
+      "dmaResourceIds": [
+        "node1-gpu6-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu7",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu7-hbm",
+      "computeResourceId": "node1-gpu7-compute",
+      "dmaResourceIds": [
+        "node1-gpu7-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu8",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu8-hbm",
+      "computeResourceId": "node1-gpu8-compute",
+      "dmaResourceIds": [
+        "node1-gpu8-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu9",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu9-hbm",
+      "computeResourceId": "node1-gpu9-compute",
+      "dmaResourceIds": [
+        "node1-gpu9-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu10",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu10-hbm",
+      "computeResourceId": "node1-gpu10-compute",
+      "dmaResourceIds": [
+        "node1-gpu10-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu11",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu11-hbm",
+      "computeResourceId": "node1-gpu11-compute",
+      "dmaResourceIds": [
+        "node1-gpu11-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu12",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu12-hbm",
+      "computeResourceId": "node1-gpu12-compute",
+      "dmaResourceIds": [
+        "node1-gpu12-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu13",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu13-hbm",
+      "computeResourceId": "node1-gpu13-compute",
+      "dmaResourceIds": [
+        "node1-gpu13-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu14",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu14-hbm",
+      "computeResourceId": "node1-gpu14-compute",
+      "dmaResourceIds": [
+        "node1-gpu14-dma"
+      ]
+    },
+    {
+      "id": "node1-gpu15",
+      "nodeId": "node1",
+      "vendor": "toy",
+      "family": "Toy Accelerator V1",
+      "hbmPoolId": "node1-gpu15-hbm",
+      "computeResourceId": "node1-gpu15-compute",
+      "dmaResourceIds": [
+        "node1-gpu15-dma"
+      ]
+    }
+  ],
+  "memoryPools": [
+    {
+      "id": "node0-dram",
+      "ownerId": "node0",
+      "kind": "DRAM",
+      "capacityBytes": 137438953472,
+      "externalReservedBytes": 8589934592,
+      "alignmentBytes": 4096,
+      "readBytesPerSecond": {
+        "value": 60000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 60000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy BW"
+        }
+      },
+      "numaNodeId": "node0-numa0"
+    },
+    {
+      "id": "node0-gpu0-hbm",
+      "ownerId": "node0-gpu0",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu1-hbm",
+      "ownerId": "node0-gpu1",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu2-hbm",
+      "ownerId": "node0-gpu2",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu3-hbm",
+      "ownerId": "node0-gpu3",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu4-hbm",
+      "ownerId": "node0-gpu4",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu5-hbm",
+      "ownerId": "node0-gpu5",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu6-hbm",
+      "ownerId": "node0-gpu6",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu7-hbm",
+      "ownerId": "node0-gpu7",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu8-hbm",
+      "ownerId": "node0-gpu8",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu9-hbm",
+      "ownerId": "node0-gpu9",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu10-hbm",
+      "ownerId": "node0-gpu10",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu11-hbm",
+      "ownerId": "node0-gpu11",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu12-hbm",
+      "ownerId": "node0-gpu12",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu13-hbm",
+      "ownerId": "node0-gpu13",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu14-hbm",
+      "ownerId": "node0-gpu14",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node0-gpu15-hbm",
+      "ownerId": "node0-gpu15",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-dram",
+      "ownerId": "node1",
+      "kind": "DRAM",
+      "capacityBytes": 137438953472,
+      "externalReservedBytes": 8589934592,
+      "alignmentBytes": 4096,
+      "readBytesPerSecond": {
+        "value": 60000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 60000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy BW"
+        }
+      },
+      "numaNodeId": "node1-numa0"
+    },
+    {
+      "id": "node1-gpu0-hbm",
+      "ownerId": "node1-gpu0",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu1-hbm",
+      "ownerId": "node1-gpu1",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu2-hbm",
+      "ownerId": "node1-gpu2",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu3-hbm",
+      "ownerId": "node1-gpu3",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu4-hbm",
+      "ownerId": "node1-gpu4",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu5-hbm",
+      "ownerId": "node1-gpu5",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu6-hbm",
+      "ownerId": "node1-gpu6",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu7-hbm",
+      "ownerId": "node1-gpu7",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu8-hbm",
+      "ownerId": "node1-gpu8",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu9-hbm",
+      "ownerId": "node1-gpu9",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu10-hbm",
+      "ownerId": "node1-gpu10",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu11-hbm",
+      "ownerId": "node1-gpu11",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu12-hbm",
+      "ownerId": "node1-gpu12",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu13-hbm",
+      "ownerId": "node1-gpu13",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu14-hbm",
+      "ownerId": "node1-gpu14",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    },
+    {
+      "id": "node1-gpu15-hbm",
+      "ownerId": "node1-gpu15",
+      "kind": "HBM",
+      "capacityBytes": 17179869184,
+      "externalReservedBytes": 536870912,
+      "alignmentBytes": 256,
+      "readBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      },
+      "writeBytesPerSecond": {
+        "value": 100000000000,
+        "evidence": {
+          "kind": "assumed",
+          "note": "toy HBM effective BW"
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "node0-gpu0-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu0-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu1-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu1-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu2-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu2-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu3-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu3-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu4-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu4-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu5-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu5-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu6-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu6-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu7-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu7-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu8-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu8-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu9-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu9-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu10-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu10-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu11-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu11-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu12-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu12-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu13-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu13-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu14-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu14-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu15-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node0-gpu15-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu0-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu0-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu1-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu1-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu2-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu2-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu3-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu3-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu4-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu4-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu5-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu5-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu6-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu6-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu7-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu7-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu8-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu8-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu9-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu9-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu10-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu10-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu11-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu11-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu12-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu12-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu13-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu13-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu14-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu14-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu15-compute",
+      "kind": "compute",
+      "assumedTflops": 30,
+      "evidence": {
+        "kind": "assumed"
+      }
+    },
+    {
+      "id": "node1-gpu15-dma",
+      "kind": "dma",
+      "concurrency": 1,
+      "evidence": {
+        "kind": "assumed"
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "node0-gpu0-to-switch",
+      "fromId": "node0-gpu0",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu0-to-dram",
+      "fromId": "node0-gpu0",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu1-to-switch",
+      "fromId": "node0-gpu1",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu1-to-dram",
+      "fromId": "node0-gpu1",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu2-to-switch",
+      "fromId": "node0-gpu2",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu2-to-dram",
+      "fromId": "node0-gpu2",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu3-to-switch",
+      "fromId": "node0-gpu3",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu3-to-dram",
+      "fromId": "node0-gpu3",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu4-to-switch",
+      "fromId": "node0-gpu4",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu4-to-dram",
+      "fromId": "node0-gpu4",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu5-to-switch",
+      "fromId": "node0-gpu5",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu5-to-dram",
+      "fromId": "node0-gpu5",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu6-to-switch",
+      "fromId": "node0-gpu6",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu6-to-dram",
+      "fromId": "node0-gpu6",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu7-to-switch",
+      "fromId": "node0-gpu7",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu7-to-dram",
+      "fromId": "node0-gpu7",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu8-to-switch",
+      "fromId": "node0-gpu8",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu8-to-dram",
+      "fromId": "node0-gpu8",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu9-to-switch",
+      "fromId": "node0-gpu9",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu9-to-dram",
+      "fromId": "node0-gpu9",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu10-to-switch",
+      "fromId": "node0-gpu10",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu10-to-dram",
+      "fromId": "node0-gpu10",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu11-to-switch",
+      "fromId": "node0-gpu11",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu11-to-dram",
+      "fromId": "node0-gpu11",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu12-to-switch",
+      "fromId": "node0-gpu12",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu12-to-dram",
+      "fromId": "node0-gpu12",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu13-to-switch",
+      "fromId": "node0-gpu13",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu13-to-dram",
+      "fromId": "node0-gpu13",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu14-to-switch",
+      "fromId": "node0-gpu14",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu14-to-dram",
+      "fromId": "node0-gpu14",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-gpu15-to-switch",
+      "fromId": "node0-gpu15",
+      "toId": "node0-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node0-switch-domain"
+    },
+    {
+      "id": "node0-gpu15-to-dram",
+      "fromId": "node0-gpu15",
+      "toId": "node0",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node0-host-io"
+    },
+    {
+      "id": "node0-switch-to-nic",
+      "fromId": "node0-switch",
+      "toId": "node0-nic",
+      "kind": "NIC",
+      "nominalBitsPerSecond": 100000000000,
+      "effectiveRatio": 0.75,
+      "latencyUs": 15,
+      "duplex": "full",
+      "contentionDomainId": "node0-uplink"
+    },
+    {
+      "id": "node0-nic-to-wan",
+      "fromId": "node0-nic",
+      "toId": "fabric-switch",
+      "kind": "FABRIC",
+      "nominalBitsPerSecond": 100000000000,
+      "effectiveRatio": 0.7,
+      "latencyUs": 20,
+      "duplex": "full",
+      "contentionDomainId": "inter-node-fabric"
+    },
+    {
+      "id": "node1-gpu0-to-switch",
+      "fromId": "node1-gpu0",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu0-to-dram",
+      "fromId": "node1-gpu0",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu1-to-switch",
+      "fromId": "node1-gpu1",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu1-to-dram",
+      "fromId": "node1-gpu1",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu2-to-switch",
+      "fromId": "node1-gpu2",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu2-to-dram",
+      "fromId": "node1-gpu2",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu3-to-switch",
+      "fromId": "node1-gpu3",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu3-to-dram",
+      "fromId": "node1-gpu3",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu4-to-switch",
+      "fromId": "node1-gpu4",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu4-to-dram",
+      "fromId": "node1-gpu4",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu5-to-switch",
+      "fromId": "node1-gpu5",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu5-to-dram",
+      "fromId": "node1-gpu5",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu6-to-switch",
+      "fromId": "node1-gpu6",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu6-to-dram",
+      "fromId": "node1-gpu6",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu7-to-switch",
+      "fromId": "node1-gpu7",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu7-to-dram",
+      "fromId": "node1-gpu7",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu8-to-switch",
+      "fromId": "node1-gpu8",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu8-to-dram",
+      "fromId": "node1-gpu8",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu9-to-switch",
+      "fromId": "node1-gpu9",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu9-to-dram",
+      "fromId": "node1-gpu9",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu10-to-switch",
+      "fromId": "node1-gpu10",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu10-to-dram",
+      "fromId": "node1-gpu10",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu11-to-switch",
+      "fromId": "node1-gpu11",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu11-to-dram",
+      "fromId": "node1-gpu11",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu12-to-switch",
+      "fromId": "node1-gpu12",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu12-to-dram",
+      "fromId": "node1-gpu12",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu13-to-switch",
+      "fromId": "node1-gpu13",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu13-to-dram",
+      "fromId": "node1-gpu13",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu14-to-switch",
+      "fromId": "node1-gpu14",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu14-to-dram",
+      "fromId": "node1-gpu14",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-gpu15-to-switch",
+      "fromId": "node1-gpu15",
+      "toId": "node1-switch",
+      "kind": "OTHER",
+      "nominalBitsPerSecond": 400000000000,
+      "effectiveRatio": 0.8,
+      "latencyUs": 5,
+      "duplex": "full",
+      "contentionDomainId": "node1-switch-domain"
+    },
+    {
+      "id": "node1-gpu15-to-dram",
+      "fromId": "node1-gpu15",
+      "toId": "node1",
+      "kind": "PCIe",
+      "nominalBitsPerSecond": 160000000000,
+      "effectiveRatio": 0.85,
+      "latencyUs": 10,
+      "duplex": "full",
+      "contentionDomainId": "node1-host-io"
+    },
+    {
+      "id": "node1-switch-to-nic",
+      "fromId": "node1-switch",
+      "toId": "node1-nic",
+      "kind": "NIC",
+      "nominalBitsPerSecond": 100000000000,
+      "effectiveRatio": 0.75,
+      "latencyUs": 15,
+      "duplex": "full",
+      "contentionDomainId": "node1-uplink"
+    },
+    {
+      "id": "node1-nic-to-wan",
+      "fromId": "node1-nic",
+      "toId": "fabric-switch",
+      "kind": "FABRIC",
+      "nominalBitsPerSecond": 100000000000,
+      "effectiveRatio": 0.7,
+      "latencyUs": 20,
+      "duplex": "full",
+      "contentionDomainId": "inter-node-fabric"
+    }
+  ],
+  "contentionDomains": [
+    {
+      "id": "node0-switch-domain",
+      "capacityBitsPerSecond": 3200000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "node0-host-io",
+      "capacityBitsPerSecond": 640000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "node0-uplink",
+      "capacityBitsPerSecond": 100000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "inter-node-fabric",
+      "capacityBitsPerSecond": 100000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "node1-switch-domain",
+      "capacityBitsPerSecond": 3200000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "node1-host-io",
+      "capacityBitsPerSecond": 640000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    },
+    {
+      "id": "node1-uplink",
+      "capacityBitsPerSecond": 100000000000,
+      "duplex": "full",
+      "arbitration": "processor-sharing",
+      "provenance": {
+        "kind": "assumed",
+        "note": "Toy synthetic shared capacity"
+      }
+    }
+  ]
+}

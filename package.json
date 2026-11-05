@@ -1,0 +1,25 @@
+{
+  "name": "inferencelab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.5.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @inferencelab/web dev",
+    "build": "pnpm typecheck && pnpm --filter @inferencelab/web build",
+    "preview": "pnpm --filter @inferencelab/web preview",
+    "test": "pnpm --filter @inferencelab/core test && pnpm --filter @inferencelab/adapters test && pnpm --filter @inferencelab/profiles test && pnpm --filter @inferencelab/web test",
+    "test:core": "pnpm --filter @inferencelab/core test",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "e2e": "pnpm --filter @inferencelab/web e2e"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.72.1"
+  }
+}

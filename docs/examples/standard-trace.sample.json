@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "source": "standard-trace-sample",
+  "requests": [
+    {
+      "id": "trace-r0",
+      "arrivalUs": 0,
+      "promptTokens": 1024,
+      "outputTokens": 128,
+      "observed": { "ttftUs": 5200, "tpotUs": 41 }
+    },
+    {
+      "id": "trace-r1",
+      "arrivalUs": 2500,
+      "promptTokens": 1024,
+      "outputTokens": 128,
+      "prefixBlocks": [
+        { "hash": "trace-system-0", "tokenCount": 16 },
+        { "hash": "trace-system-1", "tokenCount": 16 }
+      ],
+      "observed": { "ttftUs": 4100, "tpotUs": 39 }
+    },
+    {
+      "id": "trace-r2",
+      "arrivalUs": 5000,
+      "promptTokens": 512,
+      "outputTokens": 64
+    }
+  ]
+}

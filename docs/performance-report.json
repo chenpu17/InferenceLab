@@ -1,0 +1,29 @@
+{
+  "scenario": "high-density-demo (48 requests x 8192 prompt / 1000 output)",
+  "generatedAt": "2026-11-05T11:41:14.210Z",
+  "runReadyMs": 2302,
+  "marks": {
+    "il-run-response-received": [
+      1874
+    ],
+    "il-run-state-set": [
+      1875
+    ],
+    "il-timeline-built": [
+      1913,
+      1925
+    ]
+  },
+  "longTaskCount": 4,
+  "longTaskP95Ms": 116,
+  "longTaskMaxMs": 116,
+  "frameCount": 87,
+  "frameP95Ms": 16.800000000000182,
+  "frameMaxMs": 50,
+  "advancedWhilePlaying": true,
+  "seekLatencyMs": 238.39999961853027,
+  "seekChanged": true,
+  "seekBefore": "0.00 µs",
+  "seekAfter": "11.61 s",
+  "note": "Playwright Chromium, local dev server, single worker; values are machine-specific."
+}

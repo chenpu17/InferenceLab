@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inferencelab.local/schema/scenario-1.0.json",
+  "title": "InferenceLab Scenario v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "seed", "accuracyTier", "hardwareProfileId", "modelProfileId", "frameworkProfileId", "deployment", "runtime", "workload", "assumptions"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "title": {"type": "string", "minLength": 1, "maxLength": 200},
+    "seed": {"type": "integer", "minimum": 0},
+    "accuracyTier": {"enum": ["structural", "analytical", "discrete-event", "calibrated"]},
+    "hardwareProfileId": {"type": "string", "minLength": 1},
+    "modelProfileId": {"type": "string", "minLength": 1},
+    "frameworkProfileId": {"type": "string", "minLength": 1},
+    "deployment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["engines", "placement", "logicalParallelism"],
+      "properties": {
+        "engines": {"type": "array", "items": {"type": "object", "required": ["id", "role", "rankIds", "schedulerId", "cacheManagerId"], "properties": {"id": {"type": "string"}, "role": {"enum": ["mixed", "prefill", "decode"]}, "rankIds": {"type": "array", "items": {"type": "string"}}, "schedulerId": {"type": "string"}, "cacheManagerId": {"type": "string"}, "kvTransferStrategyId": {"type": "string"}}, "additionalProperties": false}},
+        "placement": {"type": "object", "required": ["ranks"], "properties": {"ranks": {"type": "array", "items": {"type": "object", "required": ["rankId", "engineId", "acceleratorId", "dpReplicaId"], "properties": {"rankId": {"type": "string"}, "engineId": {"type": "string"}, "acceleratorId": {"type": "string"}, "dpReplicaId": {"type": "string"}, "tpGroupId": {"type": "string"}, "epGroupIds": {"type": "array", "items": {"type": "string"}}, "ppStageId": {"type": "string"}, "pcpGroupId": {"type": "string"}, "dcpGroupId": {"type": "string"}}, "additionalProperties": false}}}, "additionalProperties": false},
+        "logicalParallelism": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+        "routing": {"type": "object"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["maxModelLen", "maxNumSeqs", "maxNumBatchedTokens", "blockSize", "enableChunkedPrefill", "enablePrefixCaching", "preemptionPolicy"],
+      "properties": {
+        "maxModelLen": {"type": "integer", "minimum": 1},
+        "maxNumSeqs": {"type": "integer", "minimum": 1},
+        "maxNumBatchedTokens": {"type": "integer", "minimum": 1},
+        "blockSize": {"type": "integer", "minimum": 1},
+        "enableChunkedPrefill": {"type": "boolean"},
+        "enablePrefixCaching": {"type": "boolean"},
+        "gpuMemoryUtilization": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "kvCacheMemoryBytes": {"type": "integer", "minimum": 0},
+        "preemptionPolicy": {"enum": ["recompute", "none", "backend-specific"]}
+      }
+    },
+    "workload": {"oneOf": [
+      {"type": "object", "required": ["kind", "requests"], "properties": {"kind": {"const": "trace"}, "requests": {"type": "array", "items": {"type": "object", "required": ["id", "atUs", "promptTokens", "outputTokens"], "properties": {"id": {"type": "string"}, "atUs": {"type": "integer", "minimum": 0}, "promptTokens": {"type": "integer", "minimum": 0}, "outputTokens": {"type": "integer", "minimum": 0}, "prefixBlocks": {"type": "array", "items": {"type": "object", "required": ["hash", "tokenCount"], "properties": {"hash": {"type": "string"}, "tokenCount": {"type": "integer", "minimum": 1}}}}, "conversationId": {"type": "string"}, "turnIndex": {"type": "integer", "minimum": 0}, "priority": {"type": "integer"}}}}}, "additionalProperties": false},
+      {"type": "object", "required": ["kind", "count", "promptTokens", "outputTokens", "atUs"], "properties": {"kind": {"const": "fixed"}, "count": {"type": "integer", "minimum": 0}, "promptTokens": {"type": "integer", "minimum": 0}, "outputTokens": {"type": "integer", "minimum": 0}, "atUs": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+      {"type": "object", "required": ["kind", "count", "arrivalRatePerSecond", "promptTokens", "outputTokens"], "properties": {"kind": {"const": "poisson"}, "count": {"type": "integer", "minimum": 0}, "arrivalRatePerSecond": {"type": "number", "exclusiveMinimum": 0}, "promptTokens": {"type": "integer", "minimum": 0}, "outputTokens": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+      {"type": "object", "required": ["kind", "conversations", "turns", "baseSystemTokens", "turnIncrementTokens", "outputTokens", "toolWaitUs"], "properties": {"kind": {"const": "agent"}, "conversations": {"type": "integer", "minimum": 1}, "turns": {"type": "integer", "minimum": 1}, "baseSystemTokens": {"type": "integer", "minimum": 0}, "turnIncrementTokens": {"type": "integer", "minimum": 0}, "outputTokens": {"type": "integer", "minimum": 0}, "toolWaitUs": {"type": "integer", "minimum": 0}}, "additionalProperties": false}
+    ]},
+    "assumptions": {"type": "object", "additionalProperties": {"type": ["number", "boolean", "string"]}}
+  }
+}

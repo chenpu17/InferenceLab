@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "1.0",
+  "id": "toy-32gpu-tp16-dp2",
+  "title": "Toy 双机32卡：TP16×DP2、48路8K/1K Agent式负载",
+  "seed": 20261105,
+  "accuracyTier": "discrete-event",
+  "hardwareProfileId": "toy-2node-32gpu-v1",
+  "modelProfileId": "toy-dense-gqa-v1",
+  "frameworkProfileId": "vllm-v1-teaching-subset-v1",
+  "deployment": {
+    "engines": [
+      {
+        "id": "engine-dp0",
+        "role": "mixed",
+        "rankIds": [
+          "r0",
+          "r1",
+          "r2",
+          "r3",
+          "r4",
+          "r5",
+          "r6",
+          "r7",
+          "r8",
+          "r9",
+          "r10",
+          "r11",
+          "r12",
+          "r13",
+          "r14",
+          "r15"
+        ],
+        "schedulerId": "sched-dp0",
+        "cacheManagerId": "cache-dp0"
+      },
+      {
+        "id": "engine-dp1",
+        "role": "mixed",
+        "rankIds": [
+          "r16",
+          "r17",
+          "r18",
+          "r19",
+          "r20",
+          "r21",
+          "r22",
+          "r23",
+          "r24",
+          "r25",
+          "r26",
+          "r27",
+          "r28",
+          "r29",
+          "r30",
+          "r31"
+        ],
+        "schedulerId": "sched-dp1",
+        "cacheManagerId": "cache-dp1"
+      }
+    ],
+    "placement": {
+      "ranks": [
+        {
+          "rankId": "r0",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu0",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r1",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu1",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r2",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu2",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r3",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu3",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r4",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu4",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r5",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu5",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r6",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu6",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r7",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu7",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r8",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu8",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r9",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu9",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r10",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu10",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r11",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu11",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r12",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu12",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r13",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu13",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r14",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu14",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r15",
+          "engineId": "engine-dp0",
+          "acceleratorId": "node0-gpu15",
+          "dpReplicaId": "dp0",
+          "tpGroupId": "tp0"
+        },
+        {
+          "rankId": "r16",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu0",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r17",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu1",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r18",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu2",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r19",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu3",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r20",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu4",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r21",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu5",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r22",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu6",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r23",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu7",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r24",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu8",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r25",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu9",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r26",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu10",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r27",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu11",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r28",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu12",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r29",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu13",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r30",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu14",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        },
+        {
+          "rankId": "r31",
+          "engineId": "engine-dp1",
+          "acceleratorId": "node1-gpu15",
+          "dpReplicaId": "dp1",
+          "tpGroupId": "tp1"
+        }
+      ]
+    },
+    "logicalParallelism": {
+      "tp": 16,
+      "dp": 2
+    },
+    "routing": {
+      "kind": "round-robin",
+      "stickyConversation": true
+    }
+  },
+  "runtime": {
+    "maxModelLen": 131072,
+    "maxNumSeqs": 32,
+    "maxNumBatchedTokens": 8192,
+    "blockSize": 128,
+    "enableChunkedPrefill": true,
+    "enablePrefixCaching": true,
+    "gpuMemoryUtilization": 0.9,
+    "preemptionPolicy": "recompute"
+  },
+  "workload": {
+    "kind": "fixed",
+    "count": 48,
+    "promptTokens": 8192,
+    "outputTokens": 1024,
+    "atUs": 0
+  },
+  "assumptions": {
+    "syntheticHardware": true,
+    "syntheticModel": true,
+    "costModel": "toy-instructional"
+  }
+}
