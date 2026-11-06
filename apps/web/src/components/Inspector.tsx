@@ -3,12 +3,12 @@ import type {
   KvBlockView,
   Metric,
   RequestView,
-  SimEvent,
 } from '@inferencelab/core';
 import { useLabStore } from '../store/useLabStore';
 import { useI18n } from '../i18n';
 import { hardwareFor, modelFor } from '../lib/scenario';
 import { ENTITY_KIND_LABEL, entityLabel, type EntityRef } from '../lib/entities';
+import { getRunIndex } from '../lib/runIndex';
 import {
   formatBytes,
   formatGbps,
@@ -37,29 +37,6 @@ function SectionBlock({ title, children }: { title: string; children: ReactNode 
       {children}
     </div>
   );
-}
-
-function eventMatches(event: SimEvent, entity: EntityRef): boolean {
-  switch (entity.kind) {
-    case 'device':
-      return event.resourceIds.includes(entity.id) || event.targetId === entity.id;
-    case 'node':
-      return event.resourceIds.some((id) => id.includes(entity.id)) || event.targetId === entity.id;
-    case 'engine':
-      return event.targetId === entity.id || event.resourceIds.includes(entity.id);
-    case 'request':
-      return event.requestId === entity.id;
-    case 'block':
-      return event.detail.blockId === entity.id;
-    case 'link':
-      return event.resourceIds.includes(entity.id) || (event.detail.linkIds as string[] | undefined)?.includes(entity.id) === true;
-    case 'group':
-      return event.resourceIds.some((id) => id.includes(entity.id));
-    case 'metric':
-      return false;
-    default:
-      return false;
-  }
 }
 
 function statusBadge(text: string, tone: string): ReactNode {
@@ -453,7 +430,7 @@ function RequestInspector({ entity }: { entity: EntityRef }): ReactNode {
   const selectEntity = useLabStore((state) => state.selectEntity);
   const setLens = useLabStore((state) => state.setLens);
   const request: RequestView | undefined = viewState?.requests[entity.id];
-  const trace = activeRun?.requests.find((item) => item.id === entity.id);
+  const trace = activeRun ? getRunIndex(activeRun).requestsById.get(entity.id) : undefined;
   if (!request && !trace) return <MissingEntity entity={entity} />;
 
   const engineId = request?.engineId ?? trace?.engineId ?? '';
@@ -462,9 +439,7 @@ function RequestInspector({ entity }: { entity: EntityRef }): ReactNode {
     ? Object.values(viewState.blocks).filter((block) => block.requestId === entity.id)
     : [];
   const firstBlock = blocks[0];
-  const transferEvent = activeRun?.events.find(
-    (event) => event.requestId === entity.id && event.type === 'TRANSFER_STARTED',
-  );
+  const transferEvent = activeRun ? getRunIndex(activeRun).transferByRequest.get(entity.id) : undefined;
   const transferDurationUs = transferEvent ? Number(transferEvent.detail.durationUs ?? 0) : null;
   const transferBytes = trace?.transferBytes ?? (transferEvent ? Number(transferEvent.detail.bytes ?? 0) : 0);
   const waitingReason = request?.waitingReason ?? trace?.waitingReason ?? null;
@@ -702,10 +677,8 @@ function LinkInspector({ entity }: { entity: EntityRef }): ReactNode {
   if (!link) return <MissingEntity entity={entity} />;
   const domain = hardware?.contentionDomains.find((item) => item.id === link.contentionDomainId);
   const peers = hardware?.links.filter((item) => item.contentionDomainId === link.contentionDomainId && item.id !== link.id) ?? [];
-  const transfers = activeRun?.events
-    .filter((event) => event.type === 'TRANSFER_STARTED')
-    .filter((event) => (event.detail.linkIds as string[] | undefined)?.includes(link.id))
-    .map((event) => {
+  const transfers = (activeRun ? getRunIndex(activeRun).transfersByLink.get(link.id) : undefined)
+    ?.map((event) => {
       const start = event.timeUs;
       const end = start + Number(event.detail.durationUs ?? 0);
       return {
@@ -844,12 +817,7 @@ function EventHistory({ entity }: { entity: EntityRef }): ReactNode {
       </SectionBlock>
     );
   }
-  const matches: Array<{ event: SimEvent; index: number }> = [];
-  for (let i = 0; i <= Math.min(eventIndex, activeRun.events.length - 1); i += 1) {
-    const event = activeRun.events[i]!;
-    if (eventMatches(event, entity)) matches.push({ event, index: i });
-  }
-  const recent = matches.slice(-6).reverse();
+  const recent = getRunIndex(activeRun).recentEvents(entity, eventIndex);
   return (
     <SectionBlock title={t('相关事件')}>
       {recent.length === 0 && <p className="na-note">{t('截至 T 尚无关联事件。')}</p>}

@@ -23,6 +23,7 @@ export class ReplayIndex {
   private readonly events: SimEvent[];
   private readonly checkpoints = new Map<number, SimViewState>();
   private readonly checkpointIndices: number[] = [];
+  private cursor: { index: number; state: SimViewState } | null = null;
 
   constructor(events: SimEvent[], plan: PlanResult, checkpoints?: StateSnapshot[]) {
     this.events = events;
@@ -55,8 +56,22 @@ export class ReplayIndex {
       base = createEmptyViewState();
       checkpointIndex = 0;
     }
-    const state = cloneViewState(base, true);
-    for (let i = checkpointIndex; i < target; i += 1) {
+
+    const cursor = this.cursor;
+    if (cursor?.index === target) return cloneViewState(cursor.state, true);
+
+    let state: SimViewState;
+    let startIndex = checkpointIndex;
+    if (cursor && cursor.index < target && cursor.index > checkpointIndex) {
+      // The cached cursor is never exposed to React. Take ownership of it for
+      // this forward pass, then cache a fresh clone before returning.
+      state = cursor.state;
+      startIndex = cursor.index;
+      this.cursor = null;
+    } else {
+      state = cloneViewState(base, true);
+    }
+    for (let i = startIndex; i < target; i += 1) {
       applyEvent(state, this.events[i]!);
       const boundary = i + 1;
       if (boundary % CHECKPOINT_EVERY === 0 && !this.checkpoints.has(boundary)) {
@@ -65,6 +80,7 @@ export class ReplayIndex {
         this.checkpointIndices.sort((a, b) => a - b);
       }
     }
+    this.cursor = { index: target, state: cloneViewState(state, true) };
     return state;
   }
 

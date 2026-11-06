@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { resolveHostCacheBytes, validateScenarioStructure, type Scenario, type ValidationIssue } from '@inferencelab/core';
 import { hardwareProfiles, modelProfiles } from '@inferencelab/profiles';
 import { useLabStore } from '../store/useLabStore';
@@ -13,6 +13,7 @@ import {
 } from '../lib/scenario';
 import { formatBytes, formatCount } from '../lib/format';
 import { readJsonFile } from '../lib/import';
+import { parseNumberInput } from '../lib/numberInput';
 
 function Section({
   index,
@@ -46,18 +47,22 @@ function ParamRow({
   help,
   children,
   quality,
+  controlId,
 }: {
   label: string;
   help?: string;
   children: ReactNode;
   quality?: string;
+  controlId?: string;
 }): ReactNode {
   return (
     <div className="param-row">
       <div className="param-label">
-        <span title={help}>{label}</span>
+        <label htmlFor={controlId} title={help}>
+          {label}
+        </label>
         {help && (
-          <span className="param-help" title={help} aria-label={help}>
+          <span className="param-help" title={help} aria-label={help} tabIndex={0}>
             ?
           </span>
         )}
@@ -74,17 +79,20 @@ function Toggle({
   label,
   disabled,
   why,
+  id,
 }: {
   checked: boolean;
   onChange: (value: boolean) => void;
   label: string;
   disabled?: boolean;
   why?: string;
+  id?: string;
 }): ReactNode {
   const { t } = useI18n();
   return (
     <label className={`toggle ${disabled ? 'disabled' : ''}`} title={why}>
       <input
+        id={id}
         type="checkbox"
         checked={checked}
         disabled={disabled}
@@ -133,6 +141,102 @@ function IssueList({ issues }: { issues: ValidationIssue[] }): ReactNode {
 }
 
 const GB = 1_000_000_000;
+
+function formatNumberDraft(value: number | undefined): string {
+  return typeof value === 'number' && Number.isFinite(value) ? String(value) : '';
+}
+
+function NumberField<T extends number | undefined>({
+  value,
+  onCommit,
+  className,
+  min,
+  max,
+  step = 1,
+  placeholder,
+  id,
+  optional = false,
+  'data-testid': testId,
+  'aria-label': ariaLabel,
+}: {
+  value: T;
+  onCommit: (value: T) => void;
+  className?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  placeholder?: string;
+  id?: string;
+  optional?: boolean;
+  'data-testid'?: string;
+  'aria-label'?: string;
+}): ReactNode {
+  const [draft, setDraft] = useState(formatNumberDraft(value));
+  const editing = useRef(false);
+  const lastCommittedValue = useRef<number | undefined | null>(null);
+  const lastValidValue = useRef<number | undefined>(value);
+
+  useEffect(() => {
+    if (typeof value === 'number' && Number.isFinite(value)) lastValidValue.current = value;
+    if (editing.current && Object.is(value, lastCommittedValue.current)) return;
+    lastCommittedValue.current = null;
+    setDraft(formatNumberDraft(value));
+  }, [value]);
+
+  const commit = (next: number | undefined) => {
+    lastCommittedValue.current = next;
+    if (typeof next === 'number') lastValidValue.current = next;
+    if (!Object.is(value, next)) onCommit(next as T);
+  };
+
+  const settle = () => {
+    const result = parseNumberInput(draft, { min, max, optional });
+    if (result.kind === 'valid') {
+      commit(result.value);
+      setDraft(formatNumberDraft(result.value));
+      return;
+    }
+    const fallback = lastValidValue.current ?? (optional ? undefined : min ?? 0);
+    setDraft(formatNumberDraft(fallback));
+  };
+
+  return (
+    <input
+      id={id}
+      className={className}
+      type="number"
+      min={min}
+      max={max}
+      step={step}
+      placeholder={placeholder}
+      value={draft}
+      data-testid={testId}
+      aria-label={ariaLabel}
+      onFocus={() => {
+        editing.current = true;
+        lastCommittedValue.current = null;
+      }}
+      onChange={(event) => {
+        editing.current = true;
+        const nextDraft = event.target.value;
+        setDraft(nextDraft);
+        const result = parseNumberInput(nextDraft, { min, max, optional });
+        if (result.kind === 'valid') commit(result.value);
+      }}
+      onBlur={() => {
+        editing.current = false;
+        settle();
+        lastCommittedValue.current = null;
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
+}
 
 export function ConfigPanel(): ReactNode {
   const { t, lt } = useI18n();
@@ -196,8 +300,13 @@ export function ConfigPanel(): ReactNode {
       </p>
 
       <Section index="01" title={t('模型与硬件')} defaultOpen>
-        <ParamRow label={t('模型画像')} help={t('模型 Profile 决定权重、KV 布局与专家结构。')}>
+        <ParamRow
+          label={t('模型画像')}
+          help={t('模型 Profile 决定权重、KV 布局与专家结构。')}
+          controlId="model-profile-select"
+        >
           <select
+            id="model-profile-select"
             className="select"
             value={scenario.modelProfileId}
             onChange={(event) => setModel(event.target.value)}
@@ -210,8 +319,13 @@ export function ConfigPanel(): ReactNode {
             ))}
           </select>
         </ParamRow>
-        <ParamRow label={t('硬件拓扑')} help={t('硬件 Profile 决定节点、加速卡、HBM 容量与链路。')}>
+        <ParamRow
+          label={t('硬件拓扑')}
+          help={t('硬件 Profile 决定节点、加速卡、HBM 容量与链路。')}
+          controlId="hardware-profile-select"
+        >
           <select
+            id="hardware-profile-select"
             className="select"
             value={scenario.hardwareProfileId}
             onChange={(event) => setHardware(event.target.value)}
@@ -294,42 +408,51 @@ export function ConfigPanel(): ReactNode {
               <span className="pd-head">TP</span>
               <span className="pd-head">DP</span>
               <span className="pd-label">Prefill</span>
-              <input
+              <NumberField
+                id="pd-prefill-tp"
+                aria-label="Prefill TP"
                 className="number-input"
-                type="number"
                 min={1}
                 max={deviceCount}
                 value={pdDims.prefillTp}
-                onChange={(event) => setPdDims({ prefillTp: Number(event.target.value) })}
+                onCommit={(value) => setPdDims({ prefillTp: value })}
               />
-              <input
+              <NumberField
+                id="pd-prefill-dp"
+                aria-label="Prefill DP"
                 className="number-input"
-                type="number"
                 min={1}
                 max={deviceCount}
                 value={pdDims.prefillDp}
-                onChange={(event) => setPdDims({ prefillDp: Number(event.target.value) })}
+                onCommit={(value) => setPdDims({ prefillDp: value })}
               />
               <span className="pd-label">Decode</span>
-              <input
+              <NumberField
+                id="pd-decode-tp"
+                aria-label="Decode TP"
                 className="number-input"
-                type="number"
                 min={1}
                 max={deviceCount}
                 value={pdDims.decodeTp}
-                onChange={(event) => setPdDims({ decodeTp: Number(event.target.value) })}
+                onCommit={(value) => setPdDims({ decodeTp: value })}
               />
-              <input
+              <NumberField
+                id="pd-decode-dp"
+                aria-label="Decode DP"
                 className="number-input"
-                type="number"
                 min={1}
                 max={deviceCount}
                 value={pdDims.decodeDp}
-                onChange={(event) => setPdDims({ decodeDp: Number(event.target.value) })}
+                onCommit={(value) => setPdDims({ decodeDp: value })}
               />
             </div>
-            <ParamRow label={t('KV Transfer 策略')} help={t('PD_PULL 由 Decode 拉取；LAYERWISE 为同一物理路径的分层推送（当前只按整段计时）；HOST_STAGING 经本地 Host 两段传输。')}>
+            <ParamRow
+              label={t('KV Transfer 策略')}
+              help={t('PD_PULL 由 Decode 拉取；LAYERWISE 为同一物理路径的分层推送（当前只按整段计时）；HOST_STAGING 经本地 Host 两段传输。')}
+              controlId="pd-transfer-strategy"
+            >
               <select
+                id="pd-transfer-strategy"
                 className="select"
                 value={scenario.deployment.kvTransfer?.strategy ?? 'PD_PULL'}
                 onChange={(event) =>
@@ -380,27 +503,39 @@ export function ConfigPanel(): ReactNode {
       </Section>
 
       <Section index="03" title={t('内存与 KV')} defaultOpen>
-        <ParamRow label={t('显式 KV 预算')} help={t('留空表示使用 HBM 预算扣除固定占用后的全部余量。')}>
+        <ParamRow
+          label={t('显式 KV 预算')}
+          help={t('留空表示使用 HBM 预算扣除固定占用后的全部余量。')}
+          controlId="kv-budget-gb"
+        >
           <div className="input-with-unit">
-            <input
+            <NumberField
+              id="kv-budget-gb"
               className="number-input"
-              type="number"
               min={0}
               step={1}
               placeholder={t('自动')}
-              value={scenario.runtime.kvCacheMemoryBytes ? Math.round(scenario.runtime.kvCacheMemoryBytes / GB) : ''}
-              onChange={(event) =>
-                setRuntime({
-                  kvCacheMemoryBytes: event.target.value === '' ? undefined : Number(event.target.value) * GB,
-                })
+              optional
+              value={
+                scenario.runtime.kvCacheMemoryBytes === undefined
+                  ? undefined
+                  : Math.round(scenario.runtime.kvCacheMemoryBytes / GB)
+              }
+              onCommit={(value) =>
+                setRuntime({ kvCacheMemoryBytes: value === undefined ? undefined : value * GB })
               }
             />
             <span>GB</span>
           </div>
         </ParamRow>
-        <ParamRow label={t('GPU 显存利用率')} help={t('HBM 预算 = 容量 × 利用率 − 外部预留。')}>
+        <ParamRow
+          label={t('GPU 显存利用率')}
+          help={t('HBM 预算 = 容量 × 利用率 − 外部预留。')}
+          controlId="gpu-memory-utilization"
+        >
           <div className="range-row">
             <input
+              id="gpu-memory-utilization"
               type="range"
               min={0.1}
               max={1}
@@ -411,8 +546,9 @@ export function ConfigPanel(): ReactNode {
             <span className="mono">{((scenario.runtime.gpuMemoryUtilization ?? 0.9) * 100).toFixed(0)}%</span>
           </div>
         </ParamRow>
-        <ParamRow label={t('KV Block 大小')} help={t('影响 KV 池块数与 Prefix 匹配粒度。')}>
+        <ParamRow label={t('KV Block 大小')} help={t('影响 KV 池块数与 Prefix 匹配粒度。')} controlId="kv-block-size">
           <select
+            id="kv-block-size"
             className="select"
             value={scenario.runtime.blockSize}
             onChange={(event) => setRuntime({ blockSize: Number(event.target.value) })}
@@ -424,36 +560,39 @@ export function ConfigPanel(): ReactNode {
             ))}
           </select>
         </ParamRow>
-        <ParamRow label={t('前缀缓存')} help={t('保留完整块的哈希；只做连续前缀匹配。')}>
+        <ParamRow label={t('前缀缓存')} help={t('保留完整块的哈希；只做连续前缀匹配。')} controlId="prefix-caching">
           <Toggle
+            id="prefix-caching"
             checked={scenario.runtime.enablePrefixCaching}
             onChange={(value) => setRuntime({ enablePrefixCaching: value })}
             label={t('前缀缓存')}
           />
         </ParamRow>
-        <ParamRow label={t('分块 Prefill')} help={t('允许长 Prompt 跨多个调度迭代分块计算。')}>
+        <ParamRow label={t('分块 Prefill')} help={t('允许长 Prompt 跨多个调度迭代分块计算。')} controlId="chunked-prefill">
           <Toggle
+            id="chunked-prefill"
             checked={scenario.runtime.enableChunkedPrefill}
             onChange={(value) => setRuntime({ enableChunkedPrefill: value })}
             label={t('分块 Prefill')}
           />
         </ParamRow>
-        <ParamRow label={t('CPU 卸载')} help={t('M3：完整 Block 的主机驻留/回迁；不做逐层流水。')}>
+        <ParamRow label={t('CPU 卸载')} help={t('M3：完整 Block 的主机驻留/回迁；不做逐层流水。')} controlId="cpu-offload">
           <Toggle
+            id="cpu-offload"
             checked={Boolean(scenario.runtime.enableCpuOffload)}
             onChange={(value) => setRuntime({ enableCpuOffload: value })}
             label={t('CPU 卸载')}
           />
         </ParamRow>
         {scenario.runtime.enableCpuOffload && (
-          <ParamRow label={t('主机缓存')} help={t('主机侧 KV 缓存容量上界。')}>
+          <ParamRow label={t('主机缓存')} help={t('主机侧 KV 缓存容量上界。')} controlId="host-cache-gb">
             <div className="input-with-unit">
-              <input
+              <NumberField
+                id="host-cache-gb"
                 className="number-input"
-                type="number"
                 min={0}
                 value={Math.round(resolveHostCacheBytes(scenario) / GB)}
-                onChange={(event) => setRuntime({ hostCacheBytes: Number(event.target.value) * GB })}
+                onCommit={(value) => setRuntime({ hostCacheBytes: value * GB })}
               />
               <span>GB</span>
             </div>
@@ -468,27 +607,36 @@ export function ConfigPanel(): ReactNode {
       </Section>
 
       <Section index="04" title={t('调度参数')}>
-        <ParamRow label="max_num_batched_tokens" help={t('一次调度迭代可处理的 Prefill + Decode Token 上限。')}>
-          <input
+        <ParamRow
+          label="max_num_batched_tokens"
+          help={t('一次调度迭代可处理的 Prefill + Decode Token 上限。')}
+          controlId="max-num-batched-tokens"
+        >
+          <NumberField
+            id="max-num-batched-tokens"
             className="number-input wide"
-            type="number"
             min={1}
             value={scenario.runtime.maxNumBatchedTokens}
-            onChange={(event) => setRuntime({ maxNumBatchedTokens: Math.max(1, Number(event.target.value)) })}
+            onCommit={(value) => setRuntime({ maxNumBatchedTokens: value })}
             data-testid="token-budget"
           />
         </ParamRow>
-        <ParamRow label="max_num_seqs" help={t('一次迭代可同时调度的序列数上限；不是 TCP 连接数。')}>
-          <input
+        <ParamRow
+          label="max_num_seqs"
+          help={t('一次迭代可同时调度的序列数上限；不是 TCP 连接数。')}
+          controlId="max-num-seqs"
+        >
+          <NumberField
+            id="max-num-seqs"
             className="number-input wide"
-            type="number"
             min={1}
             value={scenario.runtime.maxNumSeqs}
-            onChange={(event) => setRuntime({ maxNumSeqs: Math.max(1, Number(event.target.value)) })}
+            onCommit={(value) => setRuntime({ maxNumSeqs: value })}
           />
         </ParamRow>
-        <ParamRow label={t('抢占策略')} help={t('recompute 会释放受害者 KV 并重算；none 表示 KV 不足时等待/拒绝。')}>
+        <ParamRow label={t('抢占策略')} help={t('recompute 会释放受害者 KV 并重算；none 表示 KV 不足时等待/拒绝。')} controlId="preemption-policy">
           <select
+            id="preemption-policy"
             className="select"
             value={scenario.runtime.preemptionPolicy}
             onChange={(event) =>
@@ -510,31 +658,31 @@ export function ConfigPanel(): ReactNode {
       <Section index="05" title={t('负载')}>
         {fixedWorkload ? (
           <>
-            <ParamRow label={t('请求数')} help={t('同时到达的固定负载请求数。')}>
-              <input
+            <ParamRow label={t('请求数')} help={t('同时到达的固定负载请求数。')} controlId="workload-request-count">
+              <NumberField
+                id="workload-request-count"
                 className="number-input wide"
-                type="number"
                 min={0}
                 value={fixedWorkload.count}
-                onChange={(event) => setWorkloadFixed({ count: Math.max(0, Number(event.target.value)) })}
+                onCommit={(value) => setWorkloadFixed({ count: value })}
               />
             </ParamRow>
-            <ParamRow label={t('输入 Token 数')} help={t('每个请求的输入长度。')}>
-              <input
+            <ParamRow label={t('输入 Token 数')} help={t('每个请求的输入长度。')} controlId="workload-prompt-tokens">
+              <NumberField
+                id="workload-prompt-tokens"
                 className="number-input wide"
-                type="number"
                 min={0}
                 value={fixedWorkload.promptTokens}
-                onChange={(event) => setWorkloadFixed({ promptTokens: Math.max(0, Number(event.target.value)) })}
+                onCommit={(value) => setWorkloadFixed({ promptTokens: value })}
               />
             </ParamRow>
-            <ParamRow label={t('输出 Token 数')} help={t('每个请求的输出长度；≤1 时 TPOT 为 N/A。')}>
-              <input
+            <ParamRow label={t('输出 Token 数')} help={t('每个请求的输出长度；≤1 时 TPOT 为 N/A。')} controlId="workload-output-tokens">
+              <NumberField
+                id="workload-output-tokens"
                 className="number-input wide"
-                type="number"
                 min={0}
                 value={fixedWorkload.outputTokens}
-                onChange={(event) => setWorkloadFixed({ outputTokens: Math.max(0, Number(event.target.value)) })}
+                onCommit={(value) => setWorkloadFixed({ outputTokens: value })}
               />
             </ParamRow>
             <div className="line-field">

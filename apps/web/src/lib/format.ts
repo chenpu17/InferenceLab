@@ -24,9 +24,11 @@ export function formatUs(us: number | null | undefined): string {
   return `${(us / 1_000_000).toFixed(2)} s`;
 }
 
+const COUNT_FORMAT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+
 export function formatCount(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return 'N/A';
-  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
+  return COUNT_FORMAT.format(value);
 }
 
 export function formatPercent(value: number | null | undefined, digits = 0): string {

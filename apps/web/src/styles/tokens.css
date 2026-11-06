@@ -6,7 +6,7 @@
   --border: #2a3c51;
   --text: #e8f0f7;
   --muted: #91a4ba;
-  --faint: #688098;
+  --faint: #7890a8;
   --compute: #68b8fa;
   --kv: #51d6b3;
   --transfer: #f5b46b;
@@ -38,7 +38,7 @@ html[lang='en'] {
   --border: #c9d5e2;
   --text: #14202e;
   --muted: #52667c;
-  --faint: #6f8296;
+  --faint: #5b6d82;
   --compute: #1f6fae;
   --kv: #177f68;
   --transfer: #a45d13;

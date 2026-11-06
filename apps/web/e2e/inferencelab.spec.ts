@@ -143,6 +143,9 @@ test.describe('InferenceLab UI acceptance', () => {
 
     await page.getByRole('button', { name: '◧ 检查器' }).click();
     await expect(page.locator('[data-testid="inspector"]')).toBeInViewport();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-testid="inspector"]')).not.toBeInViewport();
+    await expect(page.getByRole('button', { name: '◧ 检查器' })).toBeFocused();
 
     // Reach Run with real Tab presses rather than programmatic focus().
     let reached = false;
@@ -209,11 +212,13 @@ test.describe('InferenceLab UI acceptance', () => {
     const skip = page.getByRole('button', { name: '跳过' });
     if (await skip.isVisible().catch(() => false)) await skip.click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+    await expect(page).toHaveTitle('InferenceLab · 推理机制实验室');
     await expect(page.getByTestId('lens-topology')).toContainText('拓扑');
     await expect(page.locator('.run-btn')).toContainText('运行实验');
 
     await page.getByTestId('locale-toggle').click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page).toHaveTitle('InferenceLab · LLM Inference Mechanisms');
     await expect(page.getByTestId('lens-topology')).toContainText('Topology');
     await expect(page.locator('.run-btn')).toContainText('Run experiment');
     await expect(page.locator('.panel-label').first()).toContainText('Control panel');

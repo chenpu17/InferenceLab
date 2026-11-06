@@ -2,7 +2,9 @@
 
 .app-shell {
   height: 100vh;
+  height: 100dvh;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -136,7 +138,7 @@ h4 {
 
 .version {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--faint);
   border: 1px solid var(--border);
@@ -274,7 +276,7 @@ h4 {
   border-radius: 999px;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
@@ -357,6 +359,102 @@ h4 {
   display: none;
 }
 
+.header-more-wrap {
+  display: none;
+  position: relative;
+}
+
+.header-more {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+  width: 230px;
+  max-width: calc(100vw - 16px);
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.more-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px;
+}
+
+.more-section + .more-section {
+  border-top: 1px solid var(--border);
+  margin-top: 3px;
+  padding-top: 6px;
+}
+
+.more-section button {
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--muted);
+  padding: 7px 9px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.more-section button:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.more-section button.active,
+.more-section button[aria-pressed='true'] {
+  background: var(--surface-hi);
+  color: var(--text);
+}
+
+.more-settings,
+.more-nav {
+  display: none;
+}
+
+.run-control {
+  position: relative;
+  display: inline-flex;
+}
+
+.run-progress {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: -5px;
+  width: calc(100% - 10px);
+  height: 3px;
+  border: 0;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--surface-hi);
+  color: var(--compute);
+  accent-color: var(--compute);
+  pointer-events: none;
+}
+
+.run-progress::-webkit-progress-bar {
+  background: var(--surface-hi);
+}
+
+.run-progress::-webkit-progress-value {
+  background: var(--compute);
+}
+
+.run-progress::-moz-progress-bar {
+  background: var(--compute);
+}
+
+:root[data-motion='reduced'] .run-icon,
+:root[data-motion='reduced'] .draft-running {
+  animation: none;
+}
+
 /* ---------- Lab layout ---------- */
 
 .lab-layout {
@@ -417,7 +515,7 @@ h4 {
 }
 
 .rail-label {
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0;
   text-transform: uppercase;
   font-weight: 600;
@@ -432,7 +530,7 @@ html[lang='en'] .rail-btn {
 }
 
 html[lang='en'] .rail-label {
-  font-size: 9px;
+  font-size: 10px;
   text-transform: none;
 }
 
@@ -452,7 +550,7 @@ html[lang='en'] .rail-label {
 }
 
 .panel-label {
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
   color: var(--faint);
@@ -527,7 +625,7 @@ html[lang='en'] .rail-label {
   border-radius: 50%;
   border: 1px solid var(--border);
   color: var(--faint);
-  font-size: 8.5px;
+  font-size: 10px;
   display: inline-grid;
   place-items: center;
   cursor: help;
@@ -535,7 +633,7 @@ html[lang='en'] .rail-label {
 
 .param-quality {
   margin-left: auto;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -690,7 +788,7 @@ html[lang='en'] .rail-label {
 
 .toggle-text {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .pd-grid {
@@ -701,7 +799,7 @@ html[lang='en'] .rail-label {
 }
 
 .pd-head {
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--faint);
@@ -741,7 +839,7 @@ html[lang='en'] .rail-label {
 }
 
 .mini-stat small {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   letter-spacing: 0.04em;
 }
@@ -792,7 +890,7 @@ html[lang='en'] .rail-label {
   align-items: center;
   padding: 2px 7px;
   border-radius: 999px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   border: 1px solid var(--border);
@@ -826,7 +924,7 @@ html[lang='en'] .rail-label {
 }
 
 .issue-count {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   border-radius: 4px;
@@ -865,7 +963,7 @@ html[lang='en'] .rail-label {
 
 .issue-code {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -875,7 +973,7 @@ html[lang='en'] .rail-label {
 }
 
 .issue-path {
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
   margin-top: 1px;
 }
@@ -923,7 +1021,7 @@ html[lang='en'] .rail-label {
 }
 
 .panel-footnote {
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.55;
   color: var(--faint);
   margin-top: 12px;
@@ -1002,7 +1100,7 @@ html[lang='en'] .rail-label {
   color: var(--faint);
   padding: 1px 3px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
 }
 
 .breadcrumb-item {
@@ -1060,13 +1158,13 @@ html[lang='en'] .rail-label {
 
 .kpi-value small {
   font-family: var(--font-sans);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
   margin-left: 3px;
 }
 
 .kpi-bottom {
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.35;
   color: var(--faint);
   overflow-wrap: anywhere;
@@ -1131,7 +1229,7 @@ html[lang='en'] .rail-label {
 }
 
 .legend-popover p {
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
   border-top: 1px solid var(--border);
   padding-top: 6px;
@@ -1208,7 +1306,7 @@ html[lang='en'] .rail-label {
   right: 14px;
   bottom: 52px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   background: color-mix(in srgb, var(--bg) 80%, transparent);
   border: 1px solid var(--border);
@@ -1237,7 +1335,7 @@ html[lang='en'] .rail-label {
 }
 
 .onboarding-step {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--compute);
@@ -1256,7 +1354,7 @@ html[lang='en'] .rail-label {
   border: 0;
   background: none;
   color: var(--faint);
-  font-size: 9.5px;
+  font-size: 10px;
 }
 
 .onboarding-body {
@@ -1319,7 +1417,7 @@ html[lang='en'] .rail-label {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   color: var(--faint);
 }
@@ -1364,7 +1462,7 @@ html[lang='en'] .rail-label {
 }
 
 .node-meta {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   font-family: var(--font-mono);
 }
@@ -1414,14 +1512,14 @@ html[lang='en'] .rail-label {
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
   text-align: left;
 }
 
 .group-tag {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 10px;
   color: var(--faint);
   border: 1px solid var(--border);
   border-radius: 3px;
@@ -1475,7 +1573,7 @@ html[lang='en'] .rail-label {
 }
 
 .device-state {
-  font-size: 7px;
+  font-size: 10px;
   color: var(--kv);
 }
 
@@ -1508,7 +1606,7 @@ html[lang='en'] .rail-label {
 }
 
 .fabric-tag {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   white-space: nowrap;
 }
@@ -1614,7 +1712,7 @@ html[lang='en'] .rail-label {
   align-items: center;
   padding: 1px 5px;
   border-radius: 4px;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
   border: 1px solid var(--border);
@@ -1680,7 +1778,7 @@ html[lang='en'] .rail-label {
   grid-template-columns: 8px 1fr auto auto;
   align-items: center;
   gap: 5px;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -1691,13 +1789,13 @@ html[lang='en'] .rail-label {
 }
 
 .legend-row b {
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--text);
   font-weight: 500;
 }
 
 .legend-pct {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   min-width: 30px;
   text-align: right;
@@ -1746,7 +1844,7 @@ html[lang='en'] .rail-label {
 }
 
 .kv-stats span {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1777,7 +1875,7 @@ html[lang='en'] .rail-label {
   background: var(--surface);
   color: var(--faint);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   display: grid;
   place-items: center;
   padding: 0;
@@ -1788,7 +1886,7 @@ html[lang='en'] .rail-label {
   position: absolute;
   top: 0;
   right: 1px;
-  font-size: 6px;
+  font-size: 10px;
   font-style: normal;
   color: var(--text);
 }
@@ -1853,7 +1951,7 @@ html[lang='en'] .rail-label {
 
 .block-free-summary {
   color: var(--faint);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .block-legend {
@@ -1861,7 +1959,7 @@ html[lang='en'] .rail-label {
   flex-wrap: wrap;
   gap: 5px 10px;
   margin-top: 7px;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -1909,7 +2007,7 @@ html[lang='en'] .rail-label {
   border-radius: 5px;
   padding: 3px 7px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1923,7 +2021,7 @@ html[lang='en'] .rail-label {
 
 .engine-role {
   font-family: var(--font-sans);
-  font-size: 7.5px;
+  font-size: 10px;
   color: var(--faint);
   text-transform: uppercase;
 }
@@ -1974,7 +2072,7 @@ html[lang='en'] .rail-label {
   flex-wrap: wrap;
   gap: 4px 10px;
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2015,7 +2113,7 @@ html[lang='en'] .rail-label {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--muted);
@@ -2028,7 +2126,7 @@ html[lang='en'] .rail-label {
 }
 
 .queue-hint {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   line-height: 1.4;
 }
@@ -2046,12 +2144,12 @@ html[lang='en'] .rail-label {
   border-radius: 5px;
   padding: 10px;
   text-align: center;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
 .queue-more {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   text-align: center;
 }
@@ -2096,7 +2194,7 @@ html[lang='en'] .rail-label {
 }
 
 .request-id {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text);
 }
 
@@ -2127,13 +2225,13 @@ html[lang='en'] .rail-label {
 }
 
 .request-tokens {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
 }
 
 .request-reason {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--blocked);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2141,7 +2239,7 @@ html[lang='en'] .rail-label {
 }
 
 .request-preempt {
-  font-size: 7.5px;
+  font-size: 10px;
   color: var(--blocked);
 }
 
@@ -2154,7 +2252,7 @@ html[lang='en'] .rail-label {
   border-radius: 6px;
   background: color-mix(in srgb, var(--panel) 92%, transparent);
   padding: 5px 8px;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -2239,13 +2337,13 @@ html[lang='en'] .rail-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--muted);
   flex-wrap: wrap;
 }
 
 .transfer-status {
-  font-size: 7.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   border-radius: 3px;
@@ -2265,7 +2363,7 @@ html[lang='en'] .rail-label {
 }
 
 .transfer-kind {
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.04em;
   color: var(--transfer);
   border: 1px solid color-mix(in srgb, var(--transfer) 35%, transparent);
@@ -2275,7 +2373,7 @@ html[lang='en'] .rail-label {
 
 .transfer-req {
   margin-left: auto;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2284,13 +2382,13 @@ html[lang='en'] .rail-label {
   align-items: center;
   gap: 3px;
   flex-wrap: wrap;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
 }
 
 .path-node {
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: 10px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 3px;
@@ -2302,7 +2400,7 @@ html[lang='en'] .rail-label {
 }
 
 .path-link {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2310,7 +2408,7 @@ html[lang='en'] .rail-label {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 10px;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2332,12 +2430,12 @@ html[lang='en'] .rail-label {
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .domain-cap {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--transfer);
 }
 
@@ -2346,7 +2444,7 @@ html[lang='en'] .rail-label {
   display: flex;
   flex-wrap: wrap;
   gap: 3px 9px;
-  font-size: 8px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2362,7 +2460,7 @@ html[lang='en'] .rail-label {
   background: color-mix(in srgb, var(--transfer) 7%, var(--panel));
   border-radius: 6px;
   padding: 5px 8px;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -2434,7 +2532,7 @@ html[lang='en'] .rail-label {
 }
 
 .metric-bottom {
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.35;
   color: var(--faint);
   overflow-wrap: anywhere;
@@ -2483,7 +2581,7 @@ html[lang='en'] .rail-label {
 }
 
 .waterfall-label {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2522,7 +2620,7 @@ html[lang='en'] .rail-label {
 }
 
 .waterfall-time {
-  font-size: 8px;
+  font-size: 10px;
   color: var(--faint);
   text-align: right;
 }
@@ -2532,7 +2630,7 @@ html[lang='en'] .rail-label {
   flex-wrap: wrap;
   gap: 4px 10px;
   margin-top: 5px;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2579,7 +2677,7 @@ html[lang='en'] .rail-label {
 }
 
 .series-row span {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2600,7 +2698,7 @@ html[lang='en'] .rail-label {
   height: 30px;
   display: grid;
   place-items: center;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   border: 1px dashed var(--border);
   border-radius: 3px;
@@ -2619,7 +2717,7 @@ html[lang='en'] .rail-label {
 }
 
 .evidence-line {
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1.5;
   color: var(--faint);
   margin-bottom: 2px;
@@ -2662,7 +2760,7 @@ html[lang='en'] .rail-label {
 .entity-status {
   flex: 0 0 auto;
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
   border: 1px solid var(--border);
@@ -2698,7 +2796,7 @@ html[lang='en'] .rail-label {
 }
 
 .inspector-section h3 {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2767,7 +2865,7 @@ html[lang='en'] .rail-label {
   color: var(--muted);
   border-radius: 5px;
   padding: 3px 7px;
-  font-size: 9.5px;
+  font-size: 10px;
   text-align: left;
 }
 
@@ -2791,7 +2889,7 @@ html[lang='en'] .rail-label {
   background: var(--surface);
   border-radius: 4px;
   padding: 2px 4px;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--muted);
   text-align: left;
   min-width: 0;
@@ -2808,7 +2906,7 @@ html[lang='en'] .rail-label {
 }
 
 .event-id {
-  font-size: 7.5px;
+  font-size: 10px;
   color: var(--faint);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2823,7 +2921,7 @@ html[lang='en'] .rail-label {
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -2886,7 +2984,7 @@ html[lang='en'] .rail-label {
 }
 
 .tl-meta {
-  font-size: 8.5px;
+  font-size: 10px;
   color: var(--faint);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2909,7 +3007,7 @@ html[lang='en'] .rail-label {
   background: var(--surface);
   color: var(--muted);
   border-radius: 4px;
-  font-size: 9px;
+  font-size: 10px;
   padding: 0;
 }
 
@@ -2929,7 +3027,7 @@ html[lang='en'] .rail-label {
   background: var(--surface);
   color: var(--muted);
   border-radius: 4px;
-  font-size: 9px;
+  font-size: 10px;
   padding: 0 3px;
 }
 
@@ -2972,7 +3070,7 @@ html[lang='en'] .rail-label {
   position: absolute;
   right: 4px;
   top: -1px;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   pointer-events: none;
 }
@@ -2998,7 +3096,7 @@ html[lang='en'] .rail-label {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--faint);
   min-width: 0;
 }
@@ -3018,7 +3116,7 @@ html[lang='en'] .rail-label {
 
 .tl-track-label b {
   margin-left: auto;
-  font-size: 7.5px;
+  font-size: 10px;
   font-weight: 400;
 }
 
@@ -3041,7 +3139,8 @@ html[lang='en'] .rail-label {
   overflow: hidden;
   color: #071019;
   font-family: var(--font-mono);
-  font-size: 6.5px;
+  font-size: 10px;
+  line-height: 12px;
   text-align: left;
   white-space: nowrap;
   opacity: 0.85;
@@ -3097,7 +3196,8 @@ html[lang='en'] .rail-label {
   position: absolute;
   right: 3px;
   bottom: 1px;
-  font-size: 7px;
+  font-size: 10px;
+  line-height: 10px;
   color: var(--faint);
   pointer-events: none;
 }
@@ -3107,7 +3207,7 @@ html[lang='en'] .rail-label {
   align-items: center;
   flex-wrap: wrap;
   gap: 3px 10px;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   flex: 0 0 auto;
 }
@@ -3128,7 +3228,7 @@ html[lang='en'] .rail-label {
 
 .tl-foot-note {
   margin-left: auto;
-  font-size: 8px;
+  font-size: 10px;
   color: var(--faint);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3244,7 +3344,7 @@ html[lang='en'] .rail-label {
 }
 
 .run-metrics span {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -3317,8 +3417,8 @@ html[lang='en'] .rail-label {
   display: grid;
   place-items: center;
   border-radius: 4px;
-  background: var(--accent);
-  color: var(--accent-contrast, #081016);
+  background: color-mix(in srgb, var(--compute) 18%, var(--surface));
+  color: var(--compute);
   font-size: 11px;
   font-weight: 700;
 }
@@ -3364,7 +3464,7 @@ html[lang='en'] .rail-label {
 
 .compare-table th {
   text-align: left;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--faint);
@@ -3485,7 +3585,7 @@ html[lang='en'] .rail-label {
 
 .ref-th {
   background: var(--surface);
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--faint);
@@ -3524,7 +3624,7 @@ html[lang='en'] .rail-label {
 }
 
 .preset-row .mono {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--faint);
 }
 
@@ -3564,6 +3664,10 @@ html[lang='en'] .rail-label {
 
   .mode-switch {
     display: none;
+  }
+
+  .header-more-wrap {
+    display: block;
   }
 
   .metric-grid {
@@ -3699,6 +3803,10 @@ html[lang='en'] .rail-label {
   .icon-btn.help-btn {
     display: none;
   }
+
+  .more-settings {
+    display: flex;
+  }
 }
 
 @media (max-width: 900px) {
@@ -3761,8 +3869,13 @@ html[lang='en'] .rail-label {
   }
 
   .icon-btn.mobile-only,
-  .icon-btn.lang-btn {
+  .icon-btn.lang-btn,
+  .icon-btn.more-trigger {
     display: inline-grid;
+  }
+
+  .more-nav {
+    display: flex;
   }
 
   .run-btn {
@@ -3818,7 +3931,7 @@ html[lang='en'] .rail-label {
   }
 
   .tl-track-label span {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .tl-meta-end {
@@ -3959,11 +4072,11 @@ html[lang='en'] .rail-label {
   gap: 8px;
   margin: 8px 0 0;
   padding: 8px 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   border-left: 3px solid var(--transfer);
   background: var(--surface);
   font-size: 12px;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .trace-banner b {
@@ -3996,20 +4109,20 @@ html[lang='en'] .rail-label {
   flex-direction: column;
   gap: 2px;
   padding: 6px 8px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   background: var(--surface);
   font-size: 11px;
 }
 
 .calibration-row .mono {
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .import-issues {
   margin: 10px 0 0;
   padding-left: 18px;
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .import-issues .error {
@@ -4032,11 +4145,11 @@ html[lang='en'] .rail-label {
 
 .mini-badge {
   padding: 2px 6px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   background: var(--surface);
   font-size: 11px;
-  font-family: var(--mono);
-  color: var(--text-dim);
+  font-family: var(--font-mono);
+  color: var(--muted);
 }
 
 .device-tags {
@@ -4050,7 +4163,7 @@ html[lang='en'] .rail-label {
 .device-tags i {
   padding: 0 2px;
   font-style: normal;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 11px;
   color: var(--transfer);
   background: color-mix(in srgb, var(--transfer) 16%, transparent);
@@ -4189,7 +4302,7 @@ html[lang='en'] .rail-label {
   /* Reclaim a few pixels from the badge so the scenario picker can show more
      of the preset name instead of a hard ellipsis. */
   .quality-pill {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.04em;
   }
 

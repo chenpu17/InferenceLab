@@ -32,7 +32,11 @@ import {
   withRuntime,
 } from '../lib/scenario';
 import { simulationClient } from '../worker/client';
+import type { RunProgress } from '../worker/client';
+import { translate } from '../i18n/core';
 import type { Locale } from '../i18n/types';
+
+export type { RunPhase, RunProgress } from '../worker/client';
 
 export type Route = 'lab' | 'experiments' | 'reference';
 export type Lens = 'topology' | 'memory' | 'scheduler' | 'transport' | 'metrics';
@@ -89,6 +93,7 @@ interface LabState {
   locale: Locale;
   reducedMotion: boolean;
   running: boolean;
+  runProgress: RunProgress;
   runError: string | null;
   runErrorCode: string | null;
   onboarding: OnboardingState;
@@ -163,19 +168,27 @@ function loadPersistedDraft(): Scenario | null {
   }
 }
 
-function loadPreferences(): { theme: Theme; reducedMotion: boolean; locale: Locale } {
+interface Preferences {
+  theme: Theme;
+  reducedMotion: boolean;
+  locale: Locale;
+  onboardingSeen: boolean;
+}
+
+function loadPreferences(): Preferences {
   const media = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   const queryLocale = new URLSearchParams(window.location.search).get('lang');
   try {
     const raw = window.localStorage.getItem(PREF_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as { theme?: Theme; reducedMotion?: boolean; locale?: Locale };
+      const parsed = JSON.parse(raw) as Partial<Preferences>;
       return {
         theme: parsed.theme === 'light' ? 'light' : 'dark',
         reducedMotion: typeof parsed.reducedMotion === 'boolean' ? parsed.reducedMotion : media,
         locale: queryLocale === 'en' || queryLocale === 'zh'
           ? queryLocale
           : parsed.locale === 'en' ? 'en' : 'zh',
+        onboardingSeen: parsed.onboardingSeen === true,
       };
     }
   } catch {
@@ -185,12 +198,13 @@ function loadPreferences(): { theme: Theme; reducedMotion: boolean; locale: Loca
     theme: 'dark',
     reducedMotion: media,
     locale: queryLocale === 'en' || queryLocale === 'zh' ? queryLocale : 'zh',
+    onboardingSeen: false,
   };
 }
 
-function savePreferences(theme: Theme, reducedMotion: boolean, locale: Locale): void {
+function savePreferences(preferences: Preferences): void {
   try {
-    window.localStorage.setItem(PREF_KEY, JSON.stringify({ theme, reducedMotion, locale }));
+    window.localStorage.setItem(PREF_KEY, JSON.stringify(preferences));
   } catch {
     // ignore
   }
@@ -244,6 +258,15 @@ function makeRunId(): string {
 const persisted = loadPersistedDraft();
 const preferences = loadPreferences();
 const initialScenario = persisted ?? createInitialScenario();
+const DOCUMENT_TITLE = 'InferenceLab · 推理机制实验室';
+const IDLE_RUN_PROGRESS: RunProgress = {
+  phase: 'idle',
+  receivedChunks: 0,
+  totalChunks: 0,
+  receivedCheckpoints: 0,
+  totalCheckpoints: 0,
+};
+let onboardingSeen = preferences.onboardingSeen;
 
 export const useLabStore = create<LabState>((set, get) => ({
   route: readRoute(),
@@ -271,9 +294,10 @@ export const useLabStore = create<LabState>((set, get) => ({
   locale: preferences.locale,
   reducedMotion: preferences.reducedMotion,
   running: false,
+  runProgress: { ...IDLE_RUN_PROGRESS },
   runError: null,
   runErrorCode: null,
-  onboarding: { open: true, step: 0, completed: false },
+  onboarding: { open: !preferences.onboardingSeen, step: 0, completed: false },
   drawers: { config: false, inspector: false, timeline: false },
   showLegend: false,
   calibrationCurves: [],
@@ -477,15 +501,25 @@ export const useLabStore = create<LabState>((set, get) => ({
       set({ scenario, draftDirty: true });
     }
     const revision = get().draftRevision;
-    set({ running: true, playing: false, runError: null, runErrorCode: null });
+    set({
+      running: true,
+      runProgress: { phase: 'simulating', receivedChunks: 0, totalChunks: 0, receivedCheckpoints: 0, totalCheckpoints: 0 },
+      playing: false,
+      runError: null,
+      runErrorCode: null,
+    });
     try {
-      const result = await simulationClient.run(scenario, {
-        calibrationCurves: get().calibrationCurves.length > 0 ? get().calibrationCurves : undefined,
-      });
+      const result = await simulationClient.run(
+        scenario,
+        {
+          calibrationCurves: get().calibrationCurves.length > 0 ? get().calibrationCurves : undefined,
+        },
+        (runProgress) => set({ runProgress }),
+      );
       performance.mark('il-run-response-received');
       const record: ExperimentRecord = {
         id: makeRunId(),
-        label: `${result.scenario.title} · ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`,
+        label: result.scenario.title,
         createdAt: new Date().toISOString(),
         scenario: cloneScenario(result.scenario),
         result,
@@ -513,6 +547,7 @@ export const useLabStore = create<LabState>((set, get) => ({
         viewState: createEmptyViewState(result.plan),
         playing: !get().reducedMotion,
         running: false,
+        runProgress: { ...IDLE_RUN_PROGRESS },
         mode: 'experiment',
         qualityTier: deriveQualityTier(scenario, result.plan, result),
         selectedEntity: get().selectedEntity ?? defaultSelection(result),
@@ -522,6 +557,7 @@ export const useLabStore = create<LabState>((set, get) => ({
       const code = (error as Error & { code?: string }).code ?? null;
       set({
         running: false,
+        runProgress: { ...IDLE_RUN_PROGRESS },
         runError: error instanceof Error ? error.message : String(error),
         runErrorCode: code,
       });
@@ -626,7 +662,7 @@ export const useLabStore = create<LabState>((set, get) => ({
 
   setTheme: (theme) => {
     set({ theme });
-    savePreferences(theme, get().reducedMotion, get().locale);
+    savePreferences({ theme, reducedMotion: get().reducedMotion, locale: get().locale, onboardingSeen });
   },
 
   toggleTheme: () => {
@@ -636,13 +672,14 @@ export const useLabStore = create<LabState>((set, get) => ({
 
   setLocale: (locale) => {
     set({ locale });
-    savePreferences(get().theme, get().reducedMotion, locale);
+    savePreferences({ theme: get().theme, reducedMotion: get().reducedMotion, locale, onboardingSeen });
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+    document.title = translate(DOCUMENT_TITLE, locale);
   },
 
   setReducedMotion: (value) => {
     set({ reducedMotion: value, playing: value ? false : get().playing });
-    savePreferences(get().theme, value, get().locale);
+    savePreferences({ theme: get().theme, reducedMotion: value, locale: get().locale, onboardingSeen });
   },
 
   toggleDrawer: (drawer) => {
@@ -651,7 +688,19 @@ export const useLabStore = create<LabState>((set, get) => ({
 
   toggleLegend: () => set({ showLegend: !get().showLegend }),
 
-  setOnboarding: (patch) => set({ onboarding: { ...get().onboarding, ...patch } }),
+  setOnboarding: (patch) => {
+    const onboarding = { ...get().onboarding, ...patch };
+    set({ onboarding });
+    if (patch.open === false || patch.completed === true) {
+      onboardingSeen = true;
+      savePreferences({
+        theme: get().theme,
+        reducedMotion: get().reducedMotion,
+        locale: get().locale,
+        onboardingSeen,
+      });
+    }
+  },
 
   resetOnboarding: () => set({ onboarding: { open: true, step: 0, completed: false } }),
 

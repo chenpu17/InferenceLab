@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { resolveHostCacheBytes, type RankPlan } from '@inferencelab/core';
+import { resolveHostCacheBytes, type KvBlockView, type RankPlan } from '@inferencelab/core';
 import { useLabStore } from '../../store/useLabStore';
 import {
   formatBytes,
@@ -135,18 +135,25 @@ export function MemoryLens(): ReactNode {
 
   const engine = plan.engines.find((item) => item.id === selectedRank.engineId);
   const engineView = engine && viewState ? viewState.engines[engine.id] : null;
-  const blocks = engineView
-    ? Object.values(viewState?.blocks ?? {}).filter((block) => block.engineId === engine?.id)
-    : [];
-  const sortedBlocks = [...blocks].sort((a, b) => a.blockIndex - b.blockIndex);
+  const blocks: KvBlockView[] = [];
+  const hostBlocks: KvBlockView[] = [];
+  if (engine) {
+    for (const block of Object.values(viewState?.blocks ?? {})) {
+      if (block.engineId !== engine.id) continue;
+      if (engineView) blocks.push(block);
+      if (block.location === 'DRAM') hostBlocks.push(block);
+    }
+  }
+  const sortedBlocks = blocks.sort((a, b) => a.blockIndex - b.blockIndex);
+  const hiddenNonFreeBlocks = sortedBlocks.slice(160).reduce(
+    (count, block) => count + (block.state === 'FREE' ? 0 : 1),
+    0,
+  );
   const usedBlocks = engineView?.kvBlocksUsed ?? 0;
   const totalBlocks = engineView?.kvBlocksTotal ?? engine?.maxKvBlocksPerRank ?? selectedRank.maxKvBlocks;
   const freeBlocks = Math.max(0, totalBlocks - usedBlocks);
   const kvUsed = engineView?.kvPoolBytesUsed ?? 0;
   const kvTotal = selectedRank.kvPoolReservedBytes;
-  const hostBlocks = Object.values(viewState?.blocks ?? {}).filter(
-    (block) => block.engineId === engine?.id && block.location === 'DRAM',
-  );
   const hostBytes = resolveHostCacheBytes(scenario);
   const hostUsedBytes = hostBlocks.reduce((sum, block) => sum + block.bytes, 0);
   const selectedBlockId = selectedEntity?.kind === 'block' ? selectedEntity.id : null;
@@ -308,6 +315,7 @@ export function MemoryLens(): ReactNode {
                       +{freeBlocks}
                     </div>
                   )}
+                  {hiddenNonFreeBlocks > 0 && <div className="queue-more">{t('+{count} 条', { count: hiddenNonFreeBlocks })}</div>}
                   {sortedBlocks.length === 0 && freeBlocks === 0 && (
                     <p className="na-note">{t('KV 池为空：block_size 或显式预算不足以容纳一个 Block。')}</p>
                   )}

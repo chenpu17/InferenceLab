@@ -5,6 +5,7 @@ import { useLabStore, type Route } from './store/useLabStore';
 import { LabPage } from './pages/LabPage';
 import { ExperimentsPage } from './pages/ExperimentsPage';
 import { ReferencePage } from './pages/ReferencePage';
+import { t } from './i18n';
 
 function routeFromHash(): Route {
   const hash = window.location.hash.replace(/^#\/?/, '');
@@ -27,6 +28,7 @@ export function App(): ReactNode {
     root.dataset.motion = reducedMotion ? 'reduced' : 'full';
     root.lang = locale === 'zh' ? 'zh-CN' : 'en';
     root.style.colorScheme = theme;
+    document.title = t('InferenceLab · 推理机制实验室', undefined, locale);
   }, [theme, locale, reducedMotion]);
 
   useEffect(() => {

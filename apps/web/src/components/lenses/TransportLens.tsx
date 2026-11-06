@@ -1,8 +1,11 @@
 import { useMemo, type ReactNode } from 'react';
 import { useLabStore } from '../../store/useLabStore';
 import { hardwareFor } from '../../lib/scenario';
+import { getRunIndex } from '../../lib/runIndex';
 import { formatBytes, formatGbps, formatUs } from '../../lib/format';
 import { useI18n } from '../../i18n';
+
+type TransferStatus = 'pending' | 'active' | 'done';
 
 interface TransferView {
   eventId: string;
@@ -16,7 +19,10 @@ interface TransferView {
   durationUs: number;
   linkIds: string[];
   domains: string[];
-  status: 'pending' | 'active' | 'done';
+}
+
+function transferStatus(transfer: TransferView, timeUs: number): TransferStatus {
+  return timeUs < transfer.startUs ? 'pending' : timeUs < transfer.endUs ? 'active' : 'done';
 }
 
 const ARBITRATION_LABEL: Record<string, string> = {
@@ -40,29 +46,26 @@ export function TransportLens(): ReactNode {
 
   const transfers = useMemo<TransferView[]>(() => {
     if (!activeRun) return [];
-    return activeRun.events
-      .filter((event) => event.type === 'TRANSFER_STARTED')
-      .map((event) => {
-        const detail = event.detail;
-        const startUs = event.timeUs;
-        const durationUs = Number(detail.durationUs ?? 0);
-        const endUs = startUs + durationUs;
-        return {
-          eventId: event.id,
-          requestId: event.requestId,
-          kind: String(detail.kind ?? 'PD_KV_TRANSFER'),
-          fromId: String(detail.fromId ?? ''),
-          toId: String(detail.toId ?? ''),
-          bytes: Number(detail.bytes ?? 0),
-          startUs,
-          endUs,
-          durationUs,
-          linkIds: (detail.linkIds as string[] | undefined) ?? [],
-          domains: (detail.contentionDomainIds as string[] | undefined) ?? [],
-          status: virtualTimeUs < startUs ? 'pending' : virtualTimeUs < endUs ? 'active' : 'done',
-        };
-      });
-  }, [activeRun, virtualTimeUs]);
+    return getRunIndex(activeRun).transfers.map((event) => {
+      const detail = event.detail;
+      const startUs = event.timeUs;
+      const durationUs = Number(detail.durationUs ?? 0);
+      const endUs = startUs + durationUs;
+      return {
+        eventId: event.id,
+        requestId: event.requestId,
+        kind: String(detail.kind ?? 'PD_KV_TRANSFER'),
+        fromId: String(detail.fromId ?? ''),
+        toId: String(detail.toId ?? ''),
+        bytes: Number(detail.bytes ?? 0),
+        startUs,
+        endUs,
+        durationUs,
+        linkIds: (detail.linkIds as string[] | undefined) ?? [],
+        domains: (detail.contentionDomainIds as string[] | undefined) ?? [],
+      };
+    });
+  }, [activeRun]);
 
   const selectedLinkId = selectedEntity?.kind === 'link' ? selectedEntity.id : null;
   const selectedLink = hardware?.links.find((link) => link.id === selectedLinkId) ?? null;
@@ -70,13 +73,29 @@ export function TransportLens(): ReactNode {
 
   const domainSummary = useMemo(() => {
     if (!hardware) return [];
-    return hardware.contentionDomains.map((domain) => {
-      const links = hardware.links.filter((link) => link.contentionDomainId === domain.id);
-      const active = transfers.filter((transfer) => transfer.domains.includes(domain.id) && transfer.status === 'active').length;
-      const completed = transfers.filter((transfer) => transfer.domains.includes(domain.id) && transfer.status === 'done').length;
-      return { domain, links, active, completed };
-    });
-  }, [hardware, transfers]);
+    const linksByDomain = new Map<string, typeof hardware.links>();
+    for (const link of hardware.links) {
+      const links = linksByDomain.get(link.contentionDomainId);
+      if (links) links.push(link);
+      else linksByDomain.set(link.contentionDomainId, [link]);
+    }
+    const counts = new Map<string, { active: number; completed: number }>();
+    for (const transfer of transfers) {
+      for (const domainId of new Set(transfer.domains)) {
+        const count = counts.get(domainId) ?? { active: 0, completed: 0 };
+        const status = transferStatus(transfer, virtualTimeUs);
+        if (status === 'active') count.active += 1;
+        else if (status === 'done') count.completed += 1;
+        counts.set(domainId, count);
+      }
+    }
+    return hardware.contentionDomains.map((domain) => ({
+      domain,
+      links: linksByDomain.get(domain.id) ?? [],
+      active: counts.get(domain.id)?.active ?? 0,
+      completed: counts.get(domain.id)?.completed ?? 0,
+    }));
+  }, [hardware, transfers, virtualTimeUs]);
 
   if (!hardware) {
     return (
@@ -123,10 +142,12 @@ export function TransportLens(): ReactNode {
               </p>
             </div>
           )}
-          {transfers.slice(0, 12).map((transfer) => (
-            <div key={transfer.eventId} className={`transfer-card transfer-${transfer.status}`}>
+          {transfers.slice(0, 12).map((transfer) => {
+            const status = transferStatus(transfer, virtualTimeUs);
+            return (
+            <div key={transfer.eventId} className={`transfer-card transfer-${status}`}>
               <div className="transfer-head">
-                <span className={`transfer-status ${transfer.status}`}>{lt(transfer.status.toUpperCase())}</span>
+                <span className={`transfer-status ${status}`}>{lt(status.toUpperCase())}</span>
                 <span className="transfer-kind mono">{transfer.kind}</span>
                 <span className="mono">
                   {transfer.fromId} → {transfer.toId}
@@ -158,7 +179,9 @@ export function TransportLens(): ReactNode {
                 {t('定位链路 / 请求 →')}
               </button>
             </div>
-          ))}
+            );
+          })}
+          {transfers.length > 12 && <div className="queue-more">{t('+{count} 条', { count: transfers.length - 12 })}</div>}
         </div>
 
         <div className="transport-domains">

@@ -146,12 +146,11 @@ export function SchedulerLens(): ReactNode {
 
   return (
     <div className="scheduler-lens">
-      <div className="engine-tabs" role="tablist" aria-label={t('Engine 选择')}>
+      <div className="engine-tabs" role="group" aria-label={t('Engine 选择')}>
         {engines.map((item) => (
           <button
             key={item.id}
-            role="tab"
-            aria-selected={item.id === engine.id}
+            aria-pressed={item.id === engine.id}
             className={item.id === engine.id ? 'active' : ''}
             onClick={() => selectEntity({ kind: 'engine', id: item.id })}
           >

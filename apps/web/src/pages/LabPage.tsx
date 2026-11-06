@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useLabStore } from '../store/useLabStore';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useI18n } from '../i18n';
 import { ToolRail } from '../components/ToolRail';
 import { ConfigPanel } from '../components/ConfigPanel';
@@ -11,14 +12,43 @@ export function LabPage(): ReactNode {
   const drawers = useLabStore((state) => state.drawers);
   const toggleDrawer = useLabStore((state) => state.toggleDrawer);
   const { t } = useI18n();
+  const layoutRef = useRef<HTMLDivElement>(null);
+  const configDrawerRef = useRef<HTMLElement>(null);
+  const inspectorDrawerRef = useRef<HTMLElement>(null);
+  const [drawerMode, setDrawerMode] = useState(() => window.matchMedia('(max-width: 1280px)').matches);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1280px)');
+    const onChange = (event: MediaQueryListEvent) => setDrawerMode(event.matches);
+    setDrawerMode(media.matches);
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+
   const closeDrawers = () => {
     const state = useLabStore.getState();
     if (state.drawers.config) state.toggleDrawer('config');
     if (state.drawers.inspector) state.toggleDrawer('inspector');
   };
 
+  useLayoutEffect(() => {
+    configDrawerRef.current = layoutRef.current?.querySelector<HTMLElement>('[data-testid="config-panel"]') ?? null;
+    inspectorDrawerRef.current = layoutRef.current?.querySelector<HTMLElement>('[data-testid="inspector"]') ?? null;
+    for (const [drawer, open] of [
+      [configDrawerRef.current, drawers.config],
+      [inspectorDrawerRef.current, drawers.inspector],
+    ] as const) {
+      if (!drawer) continue;
+      drawer.inert = drawerMode && !open;
+    }
+  }, [drawerMode, drawers.config, drawers.inspector]);
+
+  useFocusTrap(drawerMode && drawers.config, configDrawerRef, closeDrawers);
+  useFocusTrap(drawerMode && drawers.inspector, inspectorDrawerRef, closeDrawers);
+
   return (
     <div
+      ref={layoutRef}
       className={[
         'lab-layout',
         drawers.config ? 'drawer-config-open' : '',

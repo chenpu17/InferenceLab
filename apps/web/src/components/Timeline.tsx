@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react';
+import { memo, useCallback, useMemo, type ReactNode } from 'react';
 import { useLabStore } from '../store/useLabStore';
 import { buildTimeline, type TimelineSegment, type TimelineTrack } from '../lib/timeline';
 import { formatClock, formatCount, formatUs, percentOf } from '../lib/format';
@@ -21,6 +21,10 @@ function TrackRow({
   const visibleLanes = Math.min(track.laneCount, 4);
   const hidden = track.laneCount - visibleLanes;
   const seekBy = (delta: number) => onSeekTime(Math.min(totalUs, Math.max(0, virtualTimeUs + delta)));
+  const selectSegment = useCallback(
+    (target: TimelineSegment) => onSeekTime((target.startUs + target.endUs) / 2),
+    [onSeekTime],
+  );
   return (
     <div className="tl-track">
       <div className="tl-track-label">
@@ -55,16 +59,13 @@ function TrackRow({
           }
         }}
       >
-        {track.segments.slice(0, 500).map((segment) => (
-          <Segment
-            key={segment.id}
-            segment={segment}
-            totalUs={totalUs}
-            lane={segment.lane % visibleLanes}
-            active={selectedEventIndex >= segment.eventIndex && selectedEventIndex <= segment.eventIndex + 1}
-            onSelect={(target) => onSeekTime((target.startUs + target.endUs) / 2)}
-          />
-        ))}
+        <TrackSegments
+          track={track}
+          totalUs={totalUs}
+          visibleLanes={visibleLanes}
+          selectedEventIndex={selectedEventIndex}
+          onSelect={selectSegment}
+        />
         <span className="tl-playhead" style={{ left: `${percentOf(virtualTimeUs, totalUs) * 100}%` }} />
         {hidden > 0 && <span className="tl-more">{t('+{count} 条泳道', { count: hidden })}</span>}
       </div>
@@ -72,7 +73,7 @@ function TrackRow({
   );
 }
 
-function Segment({
+const Segment = memo(function Segment({
   segment,
   totalUs,
   lane,
@@ -105,7 +106,39 @@ function Segment({
       <span>{lt(segment.label)}</span>
     </button>
   );
-}
+});
+
+const TrackSegments = memo(function TrackSegments({
+  track,
+  totalUs,
+  visibleLanes,
+  selectedEventIndex,
+  onSelect,
+}: {
+  track: TimelineTrack;
+  totalUs: number;
+  visibleLanes: number;
+  selectedEventIndex: number;
+  onSelect: (segment: TimelineSegment) => void;
+}): ReactNode {
+  const { t } = useI18n();
+  const hiddenSegments = Math.max(0, track.segments.length - 500);
+  return (
+    <>
+      {track.segments.slice(0, 500).map((segment) => (
+        <Segment
+          key={segment.id}
+          segment={segment}
+          totalUs={totalUs}
+          lane={segment.lane % visibleLanes}
+          active={selectedEventIndex >= segment.eventIndex && selectedEventIndex <= segment.eventIndex + 1}
+          onSelect={onSelect}
+        />
+      ))}
+      {hiddenSegments > 0 && <span className="queue-more tl-more">{t('+{count} 条', { count: hiddenSegments })}</span>}
+    </>
+  );
+});
 
 export function Timeline(): ReactNode {
   const activeRun = useLabStore((state) => state.activeRun);

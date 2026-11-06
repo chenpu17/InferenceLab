@@ -3,6 +3,7 @@ import { scenarioPresets } from '@inferencelab/profiles';
 import { useLabStore, type Mode } from '../store/useLabStore';
 import { QUALITY_TITLE } from '../lib/format';
 import { useI18n } from '../i18n';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 const MODES: Array<{ id: Mode; label: string; title?: string; disabled?: boolean }> = [
   { id: 'explore', label: '原理探索' },
@@ -29,13 +30,25 @@ function QualityBadge(): ReactNode {
 
 function DraftBadge(): ReactNode {
   const running = useLabStore((state) => state.running);
+  const runProgress = useLabStore((state) => state.runProgress);
   const activeRun = useLabStore((state) => state.activeRun);
   const draftDirty = useLabStore((state) => state.draftDirty);
   const planStatus = useLabStore((state) => state.planStatus);
   const { t } = useI18n();
   let label = '● 结构预览';
+  let labelParams: { received: number; total: number } | undefined;
   let tone = 'neutral';
-  if (running) {
+  if (running && runProgress.phase === 'receiving') {
+    label = '● 接收结果 {received}/{total}';
+    labelParams = {
+      received: runProgress.receivedChunks,
+      total: runProgress.totalChunks,
+    };
+    tone = 'running';
+  } else if (running && runProgress.phase === 'assembling') {
+    label = '● 组装结果…';
+    tone = 'running';
+  } else if (running) {
     label = '● 运行中';
     tone = 'running';
   } else if (planStatus === 'planning') {
@@ -54,8 +67,8 @@ function DraftBadge(): ReactNode {
     tone = 'ready';
   }
   return (
-    <span className={`draft-pill draft-${tone}`} data-testid="draft-state">
-      {t(label)}
+    <span className={`draft-pill draft-${tone}`} data-testid="draft-state" aria-live="polite">
+      {t(label, labelParams)}
     </span>
   );
 }
@@ -71,6 +84,7 @@ export function Header(): ReactNode {
   const planStatus = useLabStore((state) => state.planStatus);
   const planPreview = useLabStore((state) => state.planPreview);
   const running = useLabStore((state) => state.running);
+  const runProgress = useLabStore((state) => state.runProgress);
   const runNow = useLabStore((state) => state.runNow);
   const setLens = useLabStore((state) => state.setLens);
   const theme = useLabStore((state) => state.theme);
@@ -81,24 +95,68 @@ export function Header(): ReactNode {
   const toggleDrawer = useLabStore((state) => state.toggleDrawer);
   const { t, lt, locale, setLocale } = useI18n();
   const [consentOpen, setConsentOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const consentDialogRef = useRef<HTMLDivElement>(null);
   const consentFirstRef = useRef<HTMLButtonElement>(null);
+  const moreWrapRef = useRef<HTMLDivElement>(null);
+  const moreFirstRef = useRef<HTMLButtonElement>(null);
+
+  useFocusTrap(consentOpen, consentDialogRef, () => setConsentOpen(false), consentFirstRef);
 
   useEffect(() => {
-    if (consentOpen) consentFirstRef.current?.focus();
-  }, [consentOpen]);
+    if (!moreOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    moreFirstRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMoreOpen(false);
+      }
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && !moreWrapRef.current?.contains(event.target)) setMoreOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('pointerdown', onPointerDown);
+      previousFocus?.focus({ preventScroll: true });
+    };
+  }, [moreOpen]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1440px)');
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setMoreOpen(false);
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
 
   const canRunSynthetic = planPreview?.engines.some((engine) => engine.maxKvBlocksPerRank > 0) ?? false;
   const unknownWarnings = planPreview?.issues.filter((issue) => issue.severity === 'warning').slice(0, 3) ?? [];
 
   const presetValue = presetId ?? (scenarioPresets.some((preset) => preset.scenario.id === scenario.id) ? scenario.id : '');
   const runDisabled = running || planStatus === 'planning' || planStatus === 'idle' || planStatus === 'invalid';
+  const runLabel = !running
+    ? t('运行实验')
+    : runProgress.phase === 'receiving'
+      ? t('接收结果 {received}/{total}', {
+          received: runProgress.receivedChunks,
+          total: runProgress.totalChunks,
+        })
+      : runProgress.phase === 'assembling'
+        ? t('组装结果…')
+        : t('运行中…');
+  const determinateProgress = running && runProgress.phase === 'receiving' && runProgress.totalChunks > 0;
   const runTitle =
     planStatus === 'invalid'
       ? t('Plan 不可行；请先在配置面板修复错误。')
       : planStatus === 'planning'
         ? t('正在生成结构预览…')
         : running
-          ? t('仿真正在 Worker 中运行。')
+          ? runLabel
           : planStatus === 'unknown'
             ? t('Plan 为 unknown；点击后需要显式选择降级方式。')
             : t('冻结当前 Draft，运行离散事件仿真。');
@@ -167,6 +225,86 @@ export function Header(): ReactNode {
         >
           {locale === 'zh' ? 'EN' : '中'}
         </button>
+        <div className="header-more-wrap" ref={moreWrapRef}>
+          <button
+            className="icon-btn more-trigger"
+            data-testid="header-more-trigger"
+            title={t('更多操作')}
+            aria-label={t('更多操作')}
+            aria-expanded={moreOpen}
+            aria-controls="header-more-popover"
+            onClick={() => setMoreOpen((open) => !open)}
+          >
+            ⋯
+          </button>
+          {moreOpen && (
+            <div className="header-more" id="header-more-popover" data-testid="header-more" aria-label={t('更多操作')}>
+              <div className="more-section more-modes" role="group" aria-label={t('工作模式')}>
+                {MODES.map((item, index) => (
+                  <button
+                    key={item.id}
+                    ref={index === 0 ? moreFirstRef : undefined}
+                    className={mode === item.id ? 'active' : ''}
+                    disabled={item.disabled}
+                    title={item.title ? t(item.title) : undefined}
+                    aria-pressed={mode === item.id}
+                    onClick={() => {
+                      setMode(item.id);
+                      setMoreOpen(false);
+                    }}
+                  >
+                    {t(item.label)}
+                  </button>
+                ))}
+              </div>
+              <div className="more-section more-settings" role="group" aria-label={t('显示与帮助')}>
+                <button onClick={toggleTheme}>
+                  {theme === 'dark' ? t('切换到浅色主题') : t('切换到深色主题')}
+                </button>
+                <button aria-pressed={reducedMotion} onClick={() => setReducedMotion(!reducedMotion)}>
+                  {reducedMotion ? t('关闭减少动效') : t('开启减少动效')}
+                </button>
+                <button
+                  onClick={() => {
+                    resetOnboarding();
+                    setMoreOpen(false);
+                  }}
+                >
+                  {t('帮助')}
+                </button>
+              </div>
+              <nav className="more-section more-nav" aria-label={t('一级功能')}>
+                <button
+                  className={route === 'lab' ? 'active' : ''}
+                  onClick={() => {
+                    navigate('lab');
+                    setMoreOpen(false);
+                  }}
+                >
+                  {t('工作台')}
+                </button>
+                <button
+                  className={route === 'experiments' ? 'active' : ''}
+                  onClick={() => {
+                    navigate('experiments');
+                    setMoreOpen(false);
+                  }}
+                >
+                  {t('实验')}
+                </button>
+                <button
+                  className={route === 'reference' ? 'active' : ''}
+                  onClick={() => {
+                    navigate('reference');
+                    setMoreOpen(false);
+                  }}
+                >
+                  {t('参考')}
+                </button>
+              </nav>
+            </div>
+          )}
+        </div>
         <button
           className="icon-btn mobile-only"
           title={t('打开配置面板')}
@@ -199,19 +337,29 @@ export function Header(): ReactNode {
         <button className="icon-btn help-btn" title={t('重新打开 3 分钟引导')} aria-label={t('帮助')} onClick={resetOnboarding}>
           ?
         </button>
-        <button
-          className="run-btn"
-          disabled={runDisabled}
-          title={runTitle}
-          aria-label={running ? t('运行中…') : t('运行实验')}
-          onClick={() => {
-            if (planStatus === 'unknown') setConsentOpen(true);
-            else void runNow(false);
-          }}
-        >
-          <span className="run-icon" aria-hidden="true">{running ? '◌' : '▶'}</span>
-          <span className="run-text">{running ? t('运行中…') : t('运行实验')}</span>
-        </button>
+        <div className="run-control">
+          <button
+            className="run-btn"
+            disabled={runDisabled}
+            title={runTitle}
+            aria-label={runLabel}
+            onClick={() => {
+              if (planStatus === 'unknown') setConsentOpen(true);
+              else void runNow(false);
+            }}
+          >
+            <span className="run-icon" aria-hidden="true">{running ? (reducedMotion ? '●' : '◌') : '▶'}</span>
+            <span className="run-text">{runLabel}</span>
+          </button>
+          {running && (
+            <progress
+              className="run-progress"
+              aria-label={runLabel}
+              max={determinateProgress ? runProgress.totalChunks : undefined}
+              value={determinateProgress ? Math.min(runProgress.receivedChunks, runProgress.totalChunks) : undefined}
+            />
+          )}
+        </div>
       </div>
 
       {consentOpen && (
@@ -222,13 +370,12 @@ export function Header(): ReactNode {
           }}
         >
           <div
+            ref={consentDialogRef}
             className="consent-dialog"
             role="dialog"
             aria-modal="true"
             aria-labelledby="unknown-consent-title"
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') setConsentOpen(false);
-            }}
+            tabIndex={-1}
           >
             <div className="eyebrow">{t('Plan · 未知')}</div>
             <h2 id="unknown-consent-title">{t('当前 Plan 含未知数据')}</h2>

@@ -3,6 +3,7 @@
  * worker-failure issues). Keys are Chinese source strings.
  */
 export const store = {
+  'InferenceLab · 推理机制实验室': 'InferenceLab · LLM Inference Mechanisms',
   '刷新页面；若仍失败，检查浏览器是否支持 module Worker。':
     'Refresh the page; if it still fails, check whether the browser supports module Workers.',
   '当前 Plan 不可行，请先修复错误后再运行。':

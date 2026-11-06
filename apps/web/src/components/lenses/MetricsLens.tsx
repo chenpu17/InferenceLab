@@ -210,6 +210,7 @@ export function MetricsLens(): ReactNode {
                 </button>
               );
             })}
+            {activeRun.requests.length > 24 && <div className="queue-more">{t('+{count} 条', { count: activeRun.requests.length - 24 })}</div>}
           </div>
           <div className="waterfall-legend">
             <span><i className="wf-wait" /> {t('排队 / 等待')}</span>

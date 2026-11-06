@@ -80,8 +80,14 @@ test.describe('UI screenshot baseline', () => {
     await openLab(page);
     await selectPreset(page, 'toy-32gpu-tp16-dp2');
     await page.screenshot({ path: path.join(OUT, '1280x800-default.png') });
+    await page.getByTestId('header-more-trigger').click();
+    await expect(page.getByTestId('header-more')).toBeVisible();
+    await page.screenshot({ path: path.join(OUT, '1280x800-more.png'), animations: 'disabled' });
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('header-more')).toHaveCount(0);
     await page.getByRole('button', { name: '打开配置面板' }).click();
-    await page.screenshot({ path: path.join(OUT, '1280x800-drawer.png') });
+    await expect(page.locator('.config-panel')).toBeInViewport({ ratio: 1 });
+    await page.screenshot({ path: path.join(OUT, '1280x800-drawer.png'), animations: 'disabled' });
 
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.reload();
@@ -100,8 +106,14 @@ test.describe('UI screenshot baseline', () => {
     await expect(page.locator('.quality-pill')).toBeVisible();
     await expect(page.locator('.mobile-hint')).toBeVisible();
     await page.screenshot({ path: path.join(OUT, '390x844-mobile.png') });
+    await page.getByTestId('header-more-trigger').click();
+    await expect(page.getByTestId('header-more')).toBeVisible();
+    await page.screenshot({ path: path.join(OUT, '390x844-more.png'), animations: 'disabled' });
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('header-more')).toHaveCount(0);
     await page.getByRole('button', { name: '打开配置面板' }).click();
-    await page.screenshot({ path: path.join(OUT, '390x844-config.png') });
+    await expect(page.locator('.config-panel')).toBeInViewport({ ratio: 1 });
+    await page.screenshot({ path: path.join(OUT, '390x844-config.png'), animations: 'disabled' });
   });
 
   test('light theme and reduced motion', async ({ page }) => {

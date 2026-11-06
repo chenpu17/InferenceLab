@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from 'react';
 import { useLabStore, type Lens } from '../store/useLabStore';
 import { formatBytes, formatCount, formatUs } from '../lib/format';
 import { entityLabel } from '../lib/entities';
+import { getRunIndex } from '../lib/runIndex';
 import { TopologyLens } from './lenses/TopologyLens';
 import { MemoryLens } from './lenses/MemoryLens';
 import { SchedulerLens } from './lenses/SchedulerLens';
@@ -93,7 +94,7 @@ export function CanvasPanel(): ReactNode {
   const running = engines.reduce((sum, engine) => sum + engine.running.length, 0);
   const preemptions = activeRun?.metrics.find((metric) => metric.key === 'scheduler.preemptions')?.value ?? null;
   const transfers = useMemo(
-    () => activeRun?.events.filter((event) => event.type === 'TRANSFER_STARTED') ?? [],
+    () => activeRun ? getRunIndex(activeRun).transfers : [],
     [activeRun],
   );
 
@@ -234,7 +235,7 @@ export function CanvasPanel(): ReactNode {
           </>
         );
       case 'transport': {
-        const domains = activeRun?.events.filter((event) => event.type === 'TRANSFER_STARTED').flatMap((event) => event.detail.contentionDomainIds as string[] | undefined ?? []) ?? [];
+        const domains = transfers.flatMap((event) => event.detail.contentionDomainIds as string[] | undefined ?? []);
         return (
           <>
             <Kpi
@@ -284,7 +285,7 @@ export function CanvasPanel(): ReactNode {
       const request = activeRun?.requests.find((item) => item.status === 'WAITING' || item.status === 'PREEMPTED') ?? activeRun?.requests[0];
       if (request) selectEntity({ kind: 'request', id: request.id }, { focus: true });
     } else if (activeLens === 'transport' && activeRun) {
-      const event = activeRun.events.find((item) => item.type === 'TRANSFER_STARTED');
+      const event = transfers[0];
       const linkId = event?.detail.linkIds as string[] | undefined;
       if (linkId?.[0]) selectEntity({ kind: 'link', id: linkId[0] }, { focus: true });
     } else if (activeLens === 'metrics' && activeRun?.metrics[0]) {
