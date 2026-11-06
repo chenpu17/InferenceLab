@@ -107,6 +107,7 @@ class SimulationClient {
     run.resolve({
       ...header,
       events: run.chunks.flat(),
+      snapshots: [],
       replayCheckpoints: run.checkpoints,
     });
   }

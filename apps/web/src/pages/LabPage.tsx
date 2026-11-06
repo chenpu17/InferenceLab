@@ -7,6 +7,7 @@ import { ConfigPanel } from '../components/ConfigPanel';
 import { CanvasPanel } from '../components/CanvasPanel';
 import { Inspector } from '../components/Inspector';
 import { Timeline } from '../components/Timeline';
+import { Icon } from '../components/ui/Icon';
 
 export function LabPage(): ReactNode {
   const drawers = useLabStore((state) => state.drawers);
@@ -64,10 +65,10 @@ export function LabPage(): ReactNode {
       <Timeline />
       <div className="lab-drawer-tools" aria-label={t('面板开关')}>
         <button className={drawers.config ? 'active' : ''} onClick={() => toggleDrawer('config')} aria-pressed={drawers.config}>
-          ⚙ {t('配置')}
+          <Icon name="settings" /> {t('配置')}
         </button>
         <button className={drawers.inspector ? 'active' : ''} onClick={() => toggleDrawer('inspector')} aria-pressed={drawers.inspector}>
-          ◧ {t('检查器')}
+          <Icon name="inspector" /> {t('检查器')}
         </button>
       </div>
       {(drawers.config || drawers.inspector) && (

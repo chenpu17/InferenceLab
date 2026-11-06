@@ -1,54 +1,108 @@
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+
 :root {
-  --bg: #080f19;
-  --panel: #111c2b;
-  --surface: #172539;
-  --surface-hi: #1e3046;
-  --border: #2a3c51;
-  --text: #e8f0f7;
-  --muted: #91a4ba;
-  --faint: #7890a8;
-  --compute: #68b8fa;
-  --kv: #51d6b3;
-  --transfer: #f5b46b;
-  --wait: #a5b3c4;
-  --blocked: #f17e89;
-  --unknown: #c19beb;
-  --header: #0d1724;
-  --rail: #0d1724;
-  --grid: rgba(24, 35, 52, 0.55);
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-  --radius: 12px;
-  --radius-sm: 8px;
-  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --rail-w: 56px;
+  /* Graphite is the substrate; signal colors belong to data, not decoration. */
+  --bg: #0a0e11;
+  --panel: #11171b;
+  --surface: #171e23;
+  --surface-hi: #1d272d;
+  --border: #2b373d;
+  --border-strong: #3a4a52;
+  --text: #edf3f2;
+  --muted: #a2b1b4;
+  --faint: #84969c;
+  --compute: #61ddc8;
+  --compute-rgb: 97, 221, 200;
+  --kv: #91dfc0;
+  --transfer: #efb66c;
+  --wait: #91a2aa;
+  --blocked: #ff887e;
+  --unknown: #baa9dc;
+  --on-accent: #071310;
+  --header: #0e1418;
+  --rail: #0d1215;
+  --grid: rgba(132, 158, 164, 0.075);
+  --grid-major: rgba(132, 158, 164, 0.12);
+  --scanline: rgba(210, 235, 232, 0.018);
+  --panel-highlight: rgba(255, 255, 255, 0.025);
+  --shadow: 0 16px 42px rgba(0, 0, 0, 0.34), 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-inset: inset 0 1px 0 var(--panel-highlight);
+  --glow-compute: 0 0 18px rgba(var(--compute-rgb), 0.15);
+  --radius: 8px;
+  --radius-sm: 5px;
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', 'PingFang SC', 'Microsoft YaHei', monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 15px;
+  --text-xl: 20px;
+  --text-2xl: 28px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --header-h: 60px;
+  --timeline-h: 224px;
+  --timeline-collapsed-h: 36px;
+  --timeline-empty-h: 128px;
+  --rail-w: 64px;
+  --mobile-rail-h: 58px;
+  --config-w: 304px;
+  --inspector-w: 320px;
+  --dock-gap: 12px;
+  --control-h: 32px;
+  --z-canvas: 1;
+  --z-timeline: 10;
+  --z-header: 40;
+  --z-dock: 45;
+  --z-backdrop: 50;
+  --z-drawer: 60;
+  --z-popover: 70;
+  --z-modal: 100;
   color-scheme: dark;
 }
 
 /* English rail captions are longer; give them a little more room. */
 html[lang='en'] {
-  --rail-w: 64px;
+  --rail-w: 68px;
 }
 
 :root[data-theme='light'] {
-  --bg: #f2f5f9;
-  --panel: #ffffff;
-  --surface: #f6f8fb;
-  --surface-hi: #e9eff6;
-  --border: #c9d5e2;
-  --text: #14202e;
-  --muted: #52667c;
-  --faint: #5b6d82;
-  --compute: #1f6fae;
-  --kv: #177f68;
-  --transfer: #a45d13;
-  --wait: #5f6f80;
-  --blocked: #b53845;
-  --unknown: #7247a8;
-  --header: #ffffff;
-  --rail: #ffffff;
-  --grid: rgba(88, 112, 138, 0.18);
-  --shadow: 0 8px 24px rgba(31, 45, 61, 0.12);
+  --bg: #e9edec;
+  --panel: #f8faf9;
+  --surface: #edf1f0;
+  --surface-hi: #e1e8e6;
+  --border: #bcc9c6;
+  --border-strong: #93a5a1;
+  --text: #172421;
+  --muted: #465d58;
+  --faint: #566c67;
+  --compute: #087d6c;
+  --compute-rgb: 8, 125, 108;
+  --kv: #16765c;
+  --transfer: #97590b;
+  --wait: #526770;
+  --blocked: #bd4038;
+  --unknown: #6e4c99;
+  --on-accent: #f4fffc;
+  --header: #f4f7f6;
+  --rail: #eef2f1;
+  --grid: rgba(56, 86, 80, 0.09);
+  --grid-major: rgba(56, 86, 80, 0.15);
+  --scanline: rgba(23, 36, 33, 0.018);
+  --panel-highlight: rgba(255, 255, 255, 0.72);
+  --shadow: 0 16px 36px rgba(28, 48, 43, 0.12), 0 2px 6px rgba(28, 48, 43, 0.08);
+  --shadow-inset: inset 0 1px 0 var(--panel-highlight);
+  --glow-compute: 0 0 14px rgba(var(--compute-rgb), 0.1);
   color-scheme: light;
 }
 
@@ -61,48 +115,76 @@ body,
 #root {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 body {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-md);
   line-height: 1.5;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
 
 button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--compute);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 0.42;
 }
 
 a {
   color: var(--compute);
+  text-underline-offset: 3px;
+}
+
+::selection {
+  color: var(--text);
+  background: color-mix(in srgb, var(--compute) 28%, transparent);
+}
+
+.mono,
+.kpi-value,
+.metric-value,
+.tl-title b,
+.data-row b,
+.run-metrics b {
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .mono {
   font-family: var(--font-mono);
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: -0.125em;
 }
 
 .sr-only {
@@ -121,8 +203,17 @@ a {
   *,
   *::before,
   *::after {
+    scroll-behavior: auto !important;
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after {
+  scroll-behavior: auto !important;
+  animation: none !important;
+  transition: none !important;
 }

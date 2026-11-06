@@ -54,6 +54,12 @@ export const presets = {
   'Ascend A3 · GLM-5.3 结构模板': 'Ascend A3 · GLM-5.3 structure template',
   '仅导入结构：算力/HBM 带宽/SFA KV 布局均为 unknown；不允许伪造时间与容量结论。':
     'Structure import only: compute, HBM bandwidth, and SFA KV layout are all unknown; fabricating timing or capacity conclusions is not allowed.',
+  'Ascend A3 · 910C × 384 · MoE/EP': 'Ascend A3 · 910C × 384 · MoE/EP',
+  '48 节点 × 8 NPU，TP16 × DP24 = 384 Rank；EP8 按 DP 副本分组。观察 24 个 Engine 的请求路由、专家驻留与每 NPU 独立 UB 上行竞争域。':
+    '48 nodes × 8 NPUs, TP16 × DP24 = 384 ranks; EP8 groups across DP replicas. Watch request routing across 24 engines, expert residency, and per-NPU UB uplink contention.',
+  'Ascend 950DT · 64 卡 PD + MLA + MTP': 'Ascend 950DT · 64-NPU PD + MLA + MTP',
+  '单机柜 8 节点 × 8 NPU；P/D 各 TP8 × DP4（各 32 卡），PD_PULL 跨节点传输 KV；MLA latent 缓存与 MTP Draft 4 / 接受率 0.6 均显式为假设。':
+    'One rack of 8 nodes × 8 NPUs; Prefill and Decode each run TP8 × DP4 (32 NPUs each), PD_PULL transfers KV across nodes, and MLA latent cache plus MTP Draft 4 / acceptance 0.6 are explicit assumptions.',
 
   // Tags — canonical protocol/quality identifiers stay identical.
   // '调度' and '假设' are already owned by the lenses fragment; adding them
@@ -85,6 +91,11 @@ export const presets = {
   'DSA': 'DSA',
   'Agent': 'Agent',
   'Ascend': 'Ascend',
+  '910C': '910C',
+  '950DT': '950DT',
+  'A3': 'A3',
+  'A5': 'A5',
+  'UB': 'UB',
   'GLM-5.3': 'GLM-5.3',
   'KV Cache': 'KV Cache',
   'Prefix': 'Prefix',

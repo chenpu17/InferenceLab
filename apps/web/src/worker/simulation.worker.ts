@@ -24,7 +24,7 @@ export type RunResponse =
   | { ok: true; result: SimulationResult }
   | { ok: false; message: string; code?: string; issues?: ValidationIssue[] };
 
-export type RunHeader = Omit<SimulationResult, 'events' | 'replayCheckpoints'> & {
+export type RunHeader = Omit<SimulationResult, 'events' | 'replayCheckpoints' | 'snapshots'> & {
   eventCount: number;
   checkpointCount: number;
 };
@@ -113,9 +113,12 @@ scope.onmessage = (event: MessageEvent<WorkerRequest>) => {
     scope.postMessage({ id: request.id, kind: 'run', ...response });
     return;
   }
-  const { events, replayCheckpoints, ...rest } = response.result;
+  const { events, replayCheckpoints, snapshots: _snapshots, ...rest } = response.result;
   const checkpoints = replayCheckpoints ?? [];
   const totalChunks = Math.max(1, Math.ceil(events.length / RUN_CHUNK_EVENTS));
+  // Timeline snapshots are only used inside the simulator. Replay needs the
+  // event log and sparse replay checkpoints, so do not clone snapshots to the
+  // main thread or retain them in every run-history entry.
   const header: RunHeader = { ...rest, eventCount: events.length, checkpointCount: checkpoints.length };
   scope.postMessage({ id: request.id, kind: 'run-header', ok: true, header, totalChunks });
   for (let index = 0; index < totalChunks; index += 1) {

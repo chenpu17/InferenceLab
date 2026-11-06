@@ -1,6 +1,7 @@
 /** English copy for the mechanism reference page. Keys are Chinese source strings. */
 export const reference = {
   '机制参考': 'Mechanism reference',
+  '参考章节导航': 'Reference section navigation',
   'InferenceLab 是纯前端、无后端的推理机制实验台。它把“放置 → 容量 → 调度 → KV → 传输 → 指标” 串成一条可回放的事件链，并明确标注每个数字的来源。':
     'InferenceLab is a fully client-side inference mechanics lab with no backend. It chains placement → capacity → scheduling → KV → transport → metrics into one replayable event chain and labels the provenance of every number.',
   '← 回到工作台': '← Back to workbench',

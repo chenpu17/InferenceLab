@@ -87,7 +87,7 @@ Trace 中显式提供的 `observed.ttftUs/tpotUs` 会在 Metrics Lens 的 `OBSER
 ```
 apps/web                 React 19 + Vite + Zustand + Web Worker UI
 packages/core            领域类型、校验、放置/内存规划、事件引擎、回放视图
-packages/profiles        Toy 硬件/模型/框架 Profile 与场景预设
+packages/profiles        Toy / Ascend 硬件、模型、框架 Profile 与场景预设
 packages/adapters        Trace 适配器与校准曲线 bundle 解析
 docs/                    设计包、截图、性能报告、决策与限制
 docs/examples/           可直接导入的校准曲线与标准 Trace 样例

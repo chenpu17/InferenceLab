@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useLabStore } from '../store/useLabStore';
 import { useI18n } from '../i18n';
 
@@ -40,8 +40,31 @@ export function OnboardingDock(): ReactNode {
   const runNow = useLabStore((state) => state.runNow);
   const planStatus = useLabStore((state) => state.planStatus);
   const { t } = useI18n();
+  const dockRef = useRef<HTMLDivElement>(null);
+  const visible = onboarding.open && !onboarding.completed;
 
-  if (!onboarding.open || onboarding.completed) return null;
+  useEffect(() => {
+    if (!visible) return;
+    const dock = dockRef.current;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      const state = useLabStore.getState();
+      if (state.drawers.config || state.drawers.inspector || document.querySelector('[aria-modal="true"]')) return;
+      event.preventDefault();
+      setOnboarding({ open: false });
+    };
+    document.addEventListener('keydown', onEscape);
+    return () => {
+      document.removeEventListener('keydown', onEscape);
+      const focusWasInside = dock?.contains(document.activeElement) ?? false;
+      if (previousFocus?.isConnected && (focusWasInside || document.activeElement === document.body)) {
+        previousFocus.focus({ preventScroll: true });
+      }
+    };
+  }, [visible, setOnboarding]);
+
+  if (!visible) return null;
   const step = STEPS[Math.min(onboarding.step, STEPS.length - 1)]!;
   const action = step.action;
   const cards = plan?.totals.acceleratorCount ?? 0;
@@ -67,7 +90,13 @@ export function OnboardingDock(): ReactNode {
   };
 
   return (
-    <div className="onboarding-dock" role="dialog" aria-label={t('3 分钟引导')}>
+    <div
+      ref={dockRef}
+      className="onboarding-dock"
+      role="region"
+      aria-label={t('3 分钟引导')}
+      aria-describedby="onboarding-description"
+    >
       <div className="onboarding-head">
         <span className="onboarding-step">
           {t('引导 {current}/{total}', { current: Math.min(onboarding.step + 1, STEPS.length), total: STEPS.length })}
@@ -81,7 +110,7 @@ export function OnboardingDock(): ReactNode {
           {t('跳过')}
         </button>
       </div>
-      <p className="onboarding-body">
+      <p className="onboarding-body" id="onboarding-description">
         {onboarding.step === 0 && cards > 0
           ? t('当前 {cards} 张加速卡被划分成 {replicas} 个独立调度副本。{body}', {
               cards,

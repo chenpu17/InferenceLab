@@ -150,9 +150,9 @@ export function ReferencePage(): ReactNode {
 
   return (
     <main className="page-shell reference-page">
-      <div className="page-head">
+      <div className="page-head page-masthead">
         <div>
-          <div className="eyebrow">{t('参考')}</div>
+          <div className="eyebrow">{t('参考')} · MECHANISM MANUAL</div>
           <h1>{t('机制参考')}</h1>
           <p>
             {t(
@@ -165,7 +165,28 @@ export function ReferencePage(): ReactNode {
         </div>
       </div>
 
-      <section className="ref-section">
+      <nav className="reference-section-nav" aria-label={t('参考章节导航')}>
+        {[
+          ['01', '三个核心区分'],
+          ['02', '指标质量等级'],
+          ['03', '关键公式与约束'],
+          ['04', '场景预设'],
+          ['05', '数据导入 · 校准曲线 / Trace'],
+          ['06', '观察 Lens'],
+          ['07', '已知限制'],
+        ].map(([index, label]) => (
+          <button
+            key={index}
+            type="button"
+            onClick={() => document.getElementById(`reference-section-${index}`)?.scrollIntoView({ block: 'start' })}
+          >
+            <span className="mono">{index}</span>
+            {t(label)}
+          </button>
+        ))}
+      </nav>
+
+      <section className="ref-section" id="reference-section-01">
         <div className="ref-section-head">
           <span className="eyebrow">01</span>
           <h2>{t('三个核心区分')}</h2>
@@ -198,7 +219,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-02">
         <div className="ref-section-head">
           <span className="eyebrow">02</span>
           <h2>{t('指标质量等级')}</h2>
@@ -219,7 +240,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-03">
         <div className="ref-section-head">
           <span className="eyebrow">03</span>
           <h2>{t('关键公式与约束')}</h2>
@@ -249,7 +270,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-04">
         <div className="ref-section-head">
           <span className="eyebrow">04</span>
           <h2>{t('场景预设')}</h2>
@@ -275,7 +296,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-05">
         <div className="ref-section-head">
           <span className="eyebrow">05</span>
           <h2>{t('数据导入 · 校准曲线 / Trace')}</h2>
@@ -384,7 +405,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-06">
         <div className="ref-section-head">
           <span className="eyebrow">06</span>
           <h2>{t('观察 Lens')}</h2>
@@ -398,7 +419,7 @@ export function ReferencePage(): ReactNode {
         </div>
       </section>
 
-      <section className="ref-section">
+      <section className="ref-section" id="reference-section-07">
         <div className="ref-section-head">
           <span className="eyebrow">07</span>
           <h2>{t('已知限制')}</h2>

@@ -115,6 +115,62 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(meta).not.toContainText('事件 0 /');
   });
 
+  test('E2E-19 drag seek and playback shortcuts preserve native controls', async ({ page }) => {
+    await openLab(page);
+    await selectPreset(page, 'budget-8-demo', 4);
+    await runExperiment(page);
+
+    const scrub = page.locator('.tl-scrub');
+    const box = await scrub.boundingBox();
+    if (!box) throw new Error('Timeline scrub is not visible');
+    await page.mouse.move(box.x + box.width * 0.2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+    const totalUs = Number(await page.locator('.timeline').getAttribute('data-total-us'));
+    const sought = Number(await scrub.getAttribute('aria-valuenow'));
+    // Seek snaps to the latest event at or before the pointer position; allow
+    // for the intentionally sparse event timeline rather than expecting exact time.
+    expect(Math.abs(sought - totalUs * 0.7)).toBeLessThan(totalUs * 0.15);
+
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    const before = await page.locator('.tl-meta-events').innerText();
+    await page.keyboard.press('ArrowRight');
+    await expect(page.locator('.tl-meta-events')).not.toHaveText(before);
+    // Keep the short demo from reaching its end before the pause assertion.
+    await page.locator('.tl-speed').selectOption('0.25');
+    await page.getByRole('button', { name: '回到起点', exact: true }).click();
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.keyboard.press('Space');
+    await expect(page.locator('.tl-play')).toHaveAttribute('aria-label', '暂停');
+    await page.keyboard.press('Space');
+    await expect(page.locator('.tl-play')).toHaveAttribute('aria-label', '播放');
+
+    await page.keyboard.press('5');
+    await expect(page.locator('.metrics-lens')).toBeVisible();
+    await page.locator('[data-testid="scenario-select"]').focus();
+    await page.keyboard.press('2');
+    await expect(page.locator('.metrics-lens')).toBeVisible();
+
+    await page.getByTestId('lens-topology').focus();
+    await page.keyboard.press('Space');
+    await expect(page.locator('.topology-lens')).toBeVisible();
+    await expect(page.locator('.tl-play')).toHaveAttribute('aria-label', '播放');
+  });
+
+  test('E2E-20 guide and legend close with Escape', async ({ page }) => {
+    await openLab(page);
+    await page.locator('.help-btn').click();
+    await expect(page.locator('.onboarding-dock')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.onboarding-dock')).toHaveCount(0);
+
+    await page.getByRole('button', { name: '图例', exact: true }).click();
+    await expect(page.locator('#canvas-legend')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#canvas-legend')).toHaveCount(0);
+  });
+
   test('E2E-05 prefix cache hit is visible on the Request Inspector', async ({ page }) => {
     await openLab(page);
     await selectPreset(page, 'prefix-cache-demo', 4);
@@ -141,11 +197,11 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(page.locator('.config-panel')).toBeInViewport();
     await page.locator('.drawer-backdrop').click({ position: { x: 1200, y: 700 } });
 
-    await page.getByRole('button', { name: '◧ 检查器' }).click();
+    await page.getByRole('button', { name: '检查器', exact: true }).click();
     await expect(page.locator('[data-testid="inspector"]')).toBeInViewport();
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="inspector"]')).not.toBeInViewport();
-    await expect(page.getByRole('button', { name: '◧ 检查器' })).toBeFocused();
+    await expect(page.getByRole('button', { name: '检查器', exact: true })).toBeFocused();
 
     // Reach Run with real Tab presses rather than programmatic focus().
     let reached = false;
@@ -221,6 +277,12 @@ test.describe('InferenceLab UI acceptance', () => {
     await expect(page).toHaveTitle('InferenceLab · LLM Inference Mechanisms');
     await expect(page.getByTestId('lens-topology')).toContainText('Topology');
     await expect(page.locator('.run-btn')).toContainText('Run experiment');
+    const headerControlsFit = await page.evaluate(() => {
+      const select = document.querySelector('[data-testid="scenario-select"]')!.getBoundingClientRect();
+      const nav = document.querySelector('.top-nav')!.getBoundingClientRect();
+      return select.right <= nav.left;
+    });
+    expect(headerControlsFit).toBe(true);
     await expect(page.locator('.panel-label').first()).toContainText('Control panel');
 
     const stored = await page.evaluate(

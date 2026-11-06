@@ -233,4 +233,25 @@ test.describe('M4/M5 acceptance', () => {
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('.run-btn')).toBeEnabled();
   });
+
+  test('E2E-21 Ascend 910C exposes a 384-NPU, 48-node plan', async ({ page }) => {
+    await openLab(page);
+    await selectPreset(page, 'ascend-910c-384-moe-ep', 384);
+    await expect(page.locator('.topology-meta')).toContainText('48 节点 / 384 加速卡');
+    await expect(page.locator('.topology-meta')).toContainText('EP 组 48');
+    await expect(page.locator('.node-card')).toHaveCount(48);
+    await expect(page.locator('[data-testid="quality-badge"]')).not.toContainText('UNKNOWN');
+  });
+
+  test('E2E-22 Ascend 950DT PD run emits UB-backed KV transfers', async ({ page }) => {
+    await openLab(page);
+    await selectPreset(page, 'ascend-950dt-64-pd-mla-mtp', 64);
+    await expect(page.locator('.topology-meta')).toContainText('8 节点 / 64 加速卡');
+
+    await runExperiment(page);
+    await page.locator('[data-testid="lens-transport"]').click();
+    await expect(page.locator('.transport-summary')).toContainText('PD_PULL');
+    await expect(page.locator('.transfer-card')).not.toHaveCount(0);
+    await expect(page.locator('.transfer-card').first()).toContainText('PD_KV_TRANSFER');
+  });
 });

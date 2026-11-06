@@ -296,9 +296,9 @@ export function ExperimentsPage(): ReactNode {
 
   return (
     <main className="page-shell experiments-page">
-      <div className="page-head">
+      <div className="page-head page-masthead">
         <div>
-          <div className="eyebrow">{t('实验')}</div>
+          <div className="eyebrow">{t('实验')} · RUN ARCHIVE</div>
           <h1>{t('实验记录')}</h1>
           <p>
             {t(
@@ -307,6 +307,9 @@ export function ExperimentsPage(): ReactNode {
           </p>
         </div>
         <div className="page-actions">
+          <span className="page-sequence mono" aria-label={t('已记录 Run 数量')}>
+            EXP / {String(runHistory.length).padStart(2, '0')}
+          </span>
           <button className="btn" onClick={() => navigate('lab')}>{t('← 回到工作台')}</button>
           <button className="btn" disabled={runHistory.length === 0} onClick={exportRuns}>{t('↧ 导出记录 JSON')}</button>
         </div>

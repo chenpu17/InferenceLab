@@ -47,7 +47,7 @@ describe('run transfer progress', () => {
     const checkpoints = result.replayCheckpoints!;
     const checkpointFixture = (checkpoints[0] ?? {}) as StateSnapshot;
     const emittedCheckpoints = [checkpointFixture, checkpointFixture];
-    const { events, replayCheckpoints: _replayCheckpoints, ...headerResult } = result;
+    const { events, replayCheckpoints: _replayCheckpoints, snapshots: _snapshots, ...headerResult } = result;
     const progress: RunProgress[] = [];
     let resolved = false;
 
@@ -101,6 +101,7 @@ describe('run transfer progress', () => {
     emit(checkpoint(0));
     const assembled = await running;
     expect(assembled.events).toEqual(events.slice(0, 2));
+    expect(assembled.snapshots).toEqual([]);
     expect(assembled.replayCheckpoints).toEqual(emittedCheckpoints);
     expect(progress.at(-1)).toEqual({
       phase: 'assembling',

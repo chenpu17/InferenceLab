@@ -1,6 +1,7 @@
-import { useMemo, type ReactNode } from 'react';
-import { useLabStore, type Lens } from '../store/useLabStore';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import { useLabStore } from '../store/useLabStore';
 import { formatBytes, formatCount, formatUs } from '../lib/format';
+import { lensDefinition } from '../lib/lenses';
 import { entityLabel } from '../lib/entities';
 import { getRunIndex } from '../lib/runIndex';
 import { TopologyLens } from './lenses/TopologyLens';
@@ -9,31 +10,9 @@ import { SchedulerLens } from './lenses/SchedulerLens';
 import { TransportLens } from './lenses/TransportLens';
 import { MetricsLens } from './lenses/MetricsLens';
 import { OnboardingDock } from './OnboardingDock';
+import { ErrorBoundary } from './ui/ErrorBoundary';
+import { Icon } from './ui/Icon';
 import { useI18n } from '../i18n';
-
-const LENS_NAME: Record<Lens, string> = {
-  topology: '拓扑',
-  memory: '显存',
-  scheduler: '调度',
-  transport: '传输',
-  metrics: '指标',
-};
-
-const LENS_TITLE: Record<Lens, string> = {
-  topology: '物理拓扑 · 并行部署',
-  memory: 'HBM 与 KV · 双层账本',
-  scheduler: '请求队列 · Token Budget',
-  transport: '链路 · 传输 · 竞争域',
-  metrics: '关键路径 · 证据与质量',
-};
-
-const LENS_WHY: Record<Lens, string> = {
-  topology: '设备位置来自 Plan.resolvedRanks，TP 改变只重组组边界与 DP 副本，不移动物理卡。',
-  memory: 'KV Pool 是 HBM 预算中的已预留段；Block 增长只改变内层 used/free，不重复增加外层 HBM 承诺。',
-  scheduler: '预算按 max_num_batched_tokens 扣减；这是 vLLM V1 的机制子集，并非逐行复刻源码。',
-  transport: '传输时长与共享竞争域来自 TransferScheduler；没有物理路径时不会凭空画连线。',
-  metrics: '时间指标使用标注过的合成成本模型；输出 ≤1 token 时 TPOT 显示 N/A，不猜数字。',
-};
 
 function Kpi({
   name,
@@ -88,6 +67,20 @@ export function CanvasPanel(): ReactNode {
   const toggleLegend = useLabStore((state) => state.toggleLegend);
   const setLens = useLabStore((state) => state.setLens);
   const { t, lt } = useI18n();
+  const lens = lensDefinition(activeLens);
+
+  useEffect(() => {
+    if (!showLegend) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      const drawers = useLabStore.getState().drawers;
+      if (drawers.config || drawers.inspector || document.querySelector('dialog[open], [aria-modal="true"]')) return;
+      event.preventDefault();
+      toggleLegend();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [showLegend, toggleLegend]);
 
   const engines = viewState ? Object.values(viewState.engines) : [];
   const waiting = engines.reduce((sum, engine) => sum + engine.waiting.length, 0);
@@ -302,8 +295,8 @@ export function CanvasPanel(): ReactNode {
     <section className="canvas-panel" aria-label={t('主观察画布')}>
       <div className="canvas-head">
         <div>
-          <div className="eyebrow">{t('观察')} / {t(LENS_NAME[activeLens])}</div>
-          <div className="canvas-title">{t(LENS_TITLE[activeLens])}</div>
+          <div className="eyebrow">{t('观察')} / {t(lens.label)}</div>
+          <div className="canvas-title">{t(lens.title)}</div>
           <div className="canvas-subtitle">{lt(scenario.title)}</div>
         </div>
         <div className="canvas-tools">
@@ -315,10 +308,16 @@ export function CanvasPanel(): ReactNode {
             }}
             title={t('清除选择并回到全局视图')}
           >
-            ◎ {t('全局视图')}
+            <Icon name="search" /> {t('全局视图')}
           </button>
-          <button className={`tool-btn ${showLegend ? 'active' : ''}`} onClick={toggleLegend} aria-pressed={showLegend}>
-            ◉ {t('图例')}
+          <button
+            className={`tool-btn ${showLegend ? 'active' : ''}`}
+            onClick={toggleLegend}
+            aria-pressed={showLegend}
+            aria-expanded={showLegend}
+            aria-controls="canvas-legend"
+          >
+            <Icon name="reference" /> {t('图例')}
           </button>
         </div>
       </div>
@@ -393,7 +392,7 @@ export function CanvasPanel(): ReactNode {
       )}
 
       {showLegend && (
-        <div className="legend-popover" role="dialog" aria-label={t('颜色图例')}>
+        <div className="legend-popover" id="canvas-legend" role="region" aria-label={t('颜色图例')}>
           <div><i style={{ background: 'var(--compute)' }} /> {t('计算 / Prefill')}</div>
           <div><i style={{ background: 'var(--kv)' }} /> {t('KV / Decode / 就绪')}</div>
           <div><i style={{ background: 'var(--transfer)' }} /> {t('传输 / DMA / P→D')}</div>
@@ -405,17 +404,19 @@ export function CanvasPanel(): ReactNode {
       )}
 
       <div className="canvas-body">
-        {activeLens === 'topology' && <TopologyLens />}
-        {activeLens === 'memory' && <MemoryLens />}
-        {activeLens === 'scheduler' && <SchedulerLens />}
-        {activeLens === 'transport' && <TransportLens />}
-        {activeLens === 'metrics' && <MetricsLens />}
+        <ErrorBoundary resetKeys={[activeLens, activeRun]}>
+          {activeLens === 'topology' && <TopologyLens />}
+          {activeLens === 'memory' && <MemoryLens />}
+          {activeLens === 'scheduler' && <SchedulerLens />}
+          {activeLens === 'transport' && <TransportLens />}
+          {activeLens === 'metrics' && <MetricsLens />}
+        </ErrorBoundary>
       </div>
 
       <div className="why-bar">
         <span className="why-spark" aria-hidden="true">✦</span>
         <span>
-          <b>{activeLens === 'topology' ? t('机制解释') : t('观察提示')}</b>　{t(LENS_WHY[activeLens])}
+          <b>{activeLens === 'topology' ? t('机制解释') : t('观察提示')}</b>　{t(lens.why)}
         </span>
         <button className="why-more" onClick={focusOnLens}>
           {t('查看原因 →')}

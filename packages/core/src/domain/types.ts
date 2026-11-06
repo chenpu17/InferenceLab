@@ -98,6 +98,8 @@ export interface ContentionDomain {
 
 export interface HardwareProfile {
   id: ID;
+  /** Human-readable name for selectors; IDs remain the stable identity. */
+  label?: string;
   version: string;
   profileType: 'synthetic-toy' | 'hardware-measured' | 'hardware-vendor-spec';
   provenance: Evidence;

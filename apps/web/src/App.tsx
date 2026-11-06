@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Header } from './components/Header';
 import { usePlayback } from './hooks/usePlayback';
+import { usePlaybackShortcuts } from './hooks/usePlaybackShortcuts';
 import { useLabStore, type Route } from './store/useLabStore';
 import { LabPage } from './pages/LabPage';
 import { ExperimentsPage } from './pages/ExperimentsPage';
@@ -21,6 +22,7 @@ export function App(): ReactNode {
   const reducedMotion = useLabStore((state) => state.reducedMotion);
 
   usePlayback();
+  usePlaybackShortcuts();
 
   useEffect(() => {
     const root = document.documentElement;

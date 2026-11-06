@@ -333,7 +333,7 @@ export function ConfigPanel(): ReactNode {
           >
             {hardwareProfiles.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.id}
+                {item.label ?? item.id}
               </option>
             ))}
           </select>

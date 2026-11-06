@@ -17,11 +17,11 @@
 ## 2. 区域职责（1440×900 基准）
 
 ```
-┌──────────── 56px Header：品牌 / 场景 / 模式 / 证据等级 | Draft 状态 | Run ───────────┐
-│ 56px Rail │ 292px Config │ Canvas（>=500px，自适应） │ 308px Inspector │
-│ 5 Lens    │ 分组参数     │ KPI ≤4 / 主视图 / Why bar │ What/State/Why/Related │
+┌──────────── 60px Header：品牌 / 场景 / 一级导航 / 模式 | 质量 / Draft-Run / 主题 / Run ───────────┐
+│ 64px Rail │ 304px Config │ Canvas（>=500px，自适应） │ 320px Inspector │
+│ 01–05 Lens│ 分组参数     │ 工程网格 / KPI / 主视图 / Why bar │ What/State/Why/Related │
 ├─────────────────────────────────────────────────────────────────────────────────┤
-│ 190–230px Docked Timeline：虚拟时间 / 4 类事件轨道 / Play-Pause-Step-Seek / 事件详情 │
+│ 224px Docked Timeline：时间刻度 / 4 通道 / Play-Pause-Step-Drag Seek / 快捷键提示 │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -147,3 +147,12 @@
 - **已实装**：M3 PD/Offload 与 Transport Lens、M4 MoE/EP/CP/PP/SP 结构视图、MLA/SFA/DSA KV 布局、MTP/DSpark 投机假设、M5 Trace/校准曲线导入与实测复盘。Replay 不再 disabled。
 - **仍为受限支持**：PP/SP、MLA/SFA/DSA、MTP/DSpark 均为 partial/unknown 支持（均匀层切分、理想 Bubble、显式布局假设、场景接受率），CP 为 partial 支持；这些是能力边界，不是缺失视图。详见 `KNOWN_LIMITATIONS.md`。
 - **已补充**：`docs/UX_REVIEW.md`、Playwright 截图 baseline 与 `docs/PERFORMANCE.md`。
+
+## 10. 2026-11-06 仪器化交互重构
+
+- 视觉 Token 与本地 IBM Plex Sans / Mono 字体集中在 `styles/tokens.css`；`global.css` 仅按基础、应用壳、工作台、Lens、Timeline、页面和响应式顺序导入拆分样式。暗色与浅色分别定义对比度，状态色始终配合文字。
+- Lens 使用 `01–05` 通道编号和统一 SVG 图标；名称、标题、提示与机制解释由 `lib/lenses.ts` 集中管理。指标空值/质量展示、Block 状态与等待原因分别由 `components/ui/MetricValue.tsx` 和 `lib/labels.ts` 复用。
+- Timeline 游标与轨道支持 Pointer Events 连续拖拽，保留 slider ARIA 与键盘操作。工作台快捷键为 Space 播放/暂停、左右方向键单事件、Shift+左右方向键 10 事件、数字 1–5 切换 Lens；输入控件、模态框及按钮原生 Space 激活不被全局快捷键劫持。
+- Onboarding 和图例是可操作页面的非模态 `region`，支持 Escape；配置/检查器抽屉与未知数据同意框仍为模态交互。顶层和 Lens 出口均有 ErrorBoundary。
+- 实验页增加 Run 序号读数，参考页增加 01–07 粘性章节导航。窄屏 Lens 改为横向通道条，抽屉开关位置随 Timeline 的展开、空态和收起高度联动。
+- Worker 不再向主线程传输 UI 不消费的 `snapshots`；完整事件日志与 replay checkpoints 不变，历史 Run 仍从冻结事件重建。

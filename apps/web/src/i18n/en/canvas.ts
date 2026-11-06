@@ -169,9 +169,12 @@ export const canvas = {
   '下一个调度迭代': 'Next scheduling iteration',
   '播放速度': 'Playback speed',
   '虚拟时间游标': 'Virtual time cursor',
+  '时间刻度': 'Time scale',
+  'Space 播放/暂停 · ←/→ 单事件 · Shift+←/→ 10 事件 · 1–5 切换 Lens':
+    'Space play/pause · ←/→ one event · Shift+←/→ ten events · 1–5 switch Lens',
   '{label} 轨道；方向键按 1% 步进，Home/End 跳到首尾':
     '{label} track; arrow keys step by 1%, Home/End jump to start/end',
-  '点击轨道跳转时间，点击区间跳到该区间内的时刻；回放由 ReplayIndex 重建，不修改已冻结的 Run。':
-    'Click a track to seek time, or a segment to jump to a moment inside it; replay is rebuilt from ReplayIndex and never modifies the frozen run.',
+  '点击或拖拽轨道跳转时间，点击区间跳到该区间内的时刻；回放由 ReplayIndex 重建，不修改已冻结的 Run。':
+    'Click or drag a track to seek time, or select a segment to jump to a moment inside it; replay is rebuilt from ReplayIndex and never modifies the frozen run.',
   'exact · 事件统计': 'exact · event counts',
 } as const;

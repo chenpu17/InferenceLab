@@ -2,7 +2,27 @@
 
 本项目按设计包 `docs/InferenceLab_Design_v1.1` 的 D0 → M0 → M1 → M2 → M3 → M4 → M5 里程碑推进。日期为开发记录日期。
 
-## [Unreleased] · 2026-11-05
+## [Unreleased] · 2026-11-06
+
+### Ascend A3 910C / A5 950DT 仿真 Profile
+
+- 新增 `hw-ascend-910c-a3-384`：48 节点 × 8 NPU，128 GB HBM / 3.2 TB/s / 800 TFLOPS FP16 每卡，392 GB/s 单向 UnifiedBus；总算力由 Atlas 900 A3 公开的 307.2 PFLOPS FP16 推导。
+- 新增 `hw-ascend-950dt-rack-64`：单机柜 8 节点 × 8 NPU，144 GB HBM / 4 TB/s / 1000 TFLOPS FP8 每卡，1 TB/s 单向 UnifiedBus，0.2 µs 单跳延迟；8192 卡 SuperPoD 不建模。
+- 每张 NPU 的 UB 上行链路使用独立竞争域，配合两跳 BFS 路径表达非阻塞 Fabric；不同源 NPU 的传输可并行，同一源 NPU 仍排队。主机 PCIe 也按 NPU 独立建域。
+- 新增 `fw-ascend-vllm-teaching` 保守框架矩阵：PD/EP/MLA/MTP 等标为 partial，CPU Offload 等保持 unknown，并明确不是 CANN/vLLM-Ascend 版本等价声明。
+- 新增 `ascend-910c-384-moe-ep`（TP16 × DP24、EP8、48 请求）与 `ascend-950dt-64-pd-mla-mtp`（P/D 各 32 卡、PD_PULL、MLA、MTP）预设；新增按 DP 副本划分 EP 组的 helper，避免 384 卡场景触发 `EP_GROUP_SIZE`。
+- `HardwareProfile` 新增可选 `label`，硬件下拉显示可读机型名；旧 `ascend-a3-glm53-template` 继续作为 unknown 边界保留。
+- 新增 `docs/ASCEND.md`，记录规格来源、推导/假设标记、UB 抽象与 950DT 规模限制；新增 `packages/profiles/test/ascend.test.ts` 与 E2E-21/22。
+
+### 精密仪器 UI 与回放交互
+
+- 重做暗/浅双主题 Token、仪器面板、工程网格、KPI、五 Lens、实验归档和参考页；本地打包 IBM Plex Sans / Mono，关键数字使用等宽数字。
+- 将 4,332 行 `global.css` 按基础、应用壳、工作台、Lens、Timeline、页面和响应式职责拆分；窄屏 Lens 改为横向通道条，抽屉开关与 Timeline 高度联动。
+- Header、Lens、画布工具和 Timeline 控制统一为本地 SVG 图标；修复英文长文案下场景选择器与一级导航重叠。
+- Timeline 新增时间刻度、通道编号和 Pointer Events 连续拖拽 seek；新增 Space、方向键、Shift+方向键及 1–5 Lens 快捷键，同时保留输入控件与按钮原生键盘行为。
+- Onboarding 与图例支持非模态操作和 Escape；新增顶层/Lens 级 ErrorBoundary。共享 Lens 文案、Block/等待标签与 MetricValue 展示逻辑。
+- Worker RunHeader 不再传输 UI 不读取的 `snapshots`，保留完整事件和回放 checkpoints；新增对应单元测试。
+- 参考页新增 01–07 章节导航，实验页新增 Run 数量读数；新增 E2E-19/20，重新生成桌面、窄屏、浅色和 reduced-motion 截图。
 
 ### UI 本地化与响应式修复
 
@@ -84,10 +104,10 @@
 ## 验证记录
 
 - `pnpm lint`：通过。
-- `pnpm test`：core 80 + adapters 6 + profiles 27 + web 11 = 124 条单元测试通过。
+- `pnpm test`：core 80 + adapters 6 + profiles 33 + web 34 = 153 条单元测试通过。
 - `pnpm typecheck`：4 个 workspace 全部通过。
 - `pnpm build`：Vite 生产构建通过。
 - `pnpm audit --audit-level=moderate`：0 个已知漏洞。
-- `pnpm e2e`：24 条 Playwright 用例通过（含 M4/M5、性能与截图基线）。
+- `pnpm e2e`：33 条 Playwright 用例通过（含 M4/M5、Ascend Profile、拖拽与快捷键、非模态 Escape、性能与截图基线）。
 
 性能数字随机器变化，最新一次结果见 `docs/performance-report.json` 与 `docs/PERFORMANCE.md`。

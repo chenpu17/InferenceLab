@@ -6,10 +6,9 @@ import {
   formatCount,
   formatUs,
   percentOf,
-  QUALITY_LABEL,
   QUALITY_TITLE,
-  qualityClass,
 } from '../../lib/format';
+import { MetricValue } from '../ui/MetricValue';
 import { useI18n } from '../../i18n';
 
 const PRIMARY_METRICS = [
@@ -22,17 +21,6 @@ const PRIMARY_METRICS = [
   'throughput.outputTokensPerSec',
   'scheduler.preemptions',
 ];
-
-const UNIT_LABEL: Record<string, string> = {
-  requests: '请求数',
-  blocks: 'Block',
-  bytes: '字节',
-  tokens: 'Token',
-  steps: '步',
-  events: '事件数',
-  routings: '路由次数',
-  x: '×',
-};
 
 const EVIDENCE_KIND_LABEL: Record<string, string> = {
   derived: '推导',
@@ -47,15 +35,6 @@ const OBSERVED_METRIC_LABEL: Record<string, string> = {
   'Observed TPOT P50': '实测 TPOT P50',
 };
 
-function metricDisplay(metric: Metric): string {
-  if (metric.value === null) return 'N/A';
-  if (metric.unit === 'µs') return formatUs(metric.value);
-  if (metric.unit === 'bytes') return formatBytes(metric.value);
-  if (metric.unit === 'tokens/s') return `${metric.value.toFixed(1)} tok/s`;
-  if (metric.unit === 'req/s') return `${metric.value.toFixed(2)} req/s`;
-  return formatCount(metric.value);
-}
-
 function MetricCard({
   metric,
   selected,
@@ -67,7 +46,6 @@ function MetricCard({
 }): ReactNode {
   const { t, lt } = useI18n();
   const observed = metric.group === 'observed';
-  const label = observed ? 'OBSERVED' : QUALITY_LABEL[metric.quality];
   const title = observed
     ? t('来自导入 Trace 的实测值，未被仿真器改写，也不参与成本模型拟合。')
     : lt(metric.reason ?? QUALITY_TITLE[metric.quality]);
@@ -82,21 +60,8 @@ function MetricCard({
     >
       <div className="metric-head">
         <span>{metricLabel}</span>
-        <span
-          className={`quality-tag ${observed ? 'quality-observed' : qualityClass(metric.quality)}`}
-          title={title}
-        >
-          {label}
-        </span>
       </div>
-      <div className="metric-value">{metricDisplay(metric)}</div>
-      <div className="metric-bottom">
-        {metric.reason !== undefined
-          ? lt(metric.reason)
-          : metric.value === null
-            ? t('缺少可计算样本')
-            : t(UNIT_LABEL[metric.unit] ?? metric.unit)}
-      </div>
+      <MetricValue metric={metric} />
     </button>
   );
 }

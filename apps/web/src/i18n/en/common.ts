@@ -39,4 +39,8 @@ export const common = {
   '运行': 'Run',
   '检查器': 'Inspector',
   '面板开关': 'Panel toggles',
+  '界面发生错误': 'Interface error',
+  '此区域遇到了问题。你可以重试，或返回工作台继续操作。': 'This area encountered a problem. Retry it or return to the workbench to continue.',
+  '重试': 'Retry',
+  '返回工作台': 'Return to workbench',
 } as const;

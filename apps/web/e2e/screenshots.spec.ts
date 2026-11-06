@@ -122,7 +122,7 @@ test.describe('UI screenshot baseline', () => {
     await selectPreset(page, 'toy-32gpu-tp16-dp2');
     await page.getByRole('button', { name: '切换到浅色主题' }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-    await page.screenshot({ path: path.join(OUT, '1440x900-light.png') });
+    await page.screenshot({ path: path.join(OUT, '1440x900-light.png'), animations: 'disabled' });
 
     await page.getByRole('button', { name: '切换减少动效' }).click();
     await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');

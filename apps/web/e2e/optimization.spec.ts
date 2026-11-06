@@ -35,7 +35,7 @@ test.describe('optimization acceptance', () => {
 
   test('onboarding stays dismissed after reload and can be reopened explicitly', async ({ page }) => {
     await page.goto('/#/lab');
-    const dialog = page.getByRole('dialog', { name: '3 分钟引导' });
+    const dialog = page.getByRole('region', { name: '3 分钟引导' });
     await expect(dialog).toBeVisible();
     await page.getByRole('button', { name: '跳过' }).click();
     await expect(dialog).toHaveCount(0);

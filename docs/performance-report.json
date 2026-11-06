@@ -1,27 +1,27 @@
 {
   "scenario": "high-density-demo (48 requests x 8192 prompt / 1000 output)",
-  "generatedAt": "2026-11-06T04:09:49.072Z",
-  "runReadyMs": 2354,
+  "generatedAt": "2026-11-06T10:59:29.389Z",
+  "runReadyMs": 1605,
   "marks": {
     "il-run-response-received": [
-      1979
+      1876
     ],
     "il-run-state-set": [
-      1979
+      1876
     ],
     "il-timeline-built": [
-      2020,
-      2032
+      1896,
+      1902
     ]
   },
-  "longTaskCount": 2,
-  "longTaskP95Ms": 119,
-  "longTaskMaxMs": 119,
-  "frameCount": 89,
-  "frameP95Ms": 16.700000000000728,
-  "frameMaxMs": 33.29999999999973,
+  "longTaskCount": 1,
+  "longTaskP95Ms": 58,
+  "longTaskMaxMs": 58,
+  "frameCount": 88,
+  "frameP95Ms": 16.799999999999727,
+  "frameMaxMs": 50.09999999999991,
   "advancedWhilePlaying": true,
-  "seekLatencyMs": 219.19999980926514,
+  "seekLatencyMs": 223.30000019073486,
   "seekChanged": true,
   "seekBefore": "0.00 µs",
   "seekAfter": "11.61 s",

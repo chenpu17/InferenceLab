@@ -11,6 +11,7 @@ import {
   qualityClass,
 } from '../../lib/format';
 import { useI18n } from '../../i18n';
+import { BLOCK_STATE_LABEL } from '../../lib/labels';
 
 const BLOCK_STATE_CLASS: Record<string, string> = {
   FREE: 'block-free',
@@ -23,19 +24,6 @@ const BLOCK_STATE_CLASS: Record<string, string> = {
   OFFLOADING: 'block-offloading',
   HOST_RESIDENT: 'block-host',
   LOADING: 'block-loading',
-};
-
-const BLOCK_STATE_LABEL: Record<string, string> = {
-  FREE: '未占用',
-  RESERVED: '已预留',
-  PARTIAL: '部分写入',
-  COMPLETE: '计算完成',
-  CACHED_ACTIVE: '缓存活跃',
-  REUSABLE: '待复用',
-  EVICTING: '淘汰中',
-  OFFLOADING: '写回中',
-  HOST_RESIDENT: '主机驻留',
-  LOADING: '主机加载中',
 };
 
 function HbmBar({ rank }: { rank: RankPlan }): ReactNode {

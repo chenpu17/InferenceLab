@@ -3,20 +3,7 @@ import type { RequestView } from '@inferencelab/core';
 import { useLabStore } from '../../store/useLabStore';
 import { formatCount, percentOf } from '../../lib/format';
 import { useI18n } from '../../i18n';
-
-const WAITING_REASON_LABEL: Record<string, string> = {
-  WAITING_FOR_KV_AFTER_PREEMPTION: '抢占后等待 KV',
-  WAITING_FOR_REMOTE_KV: '等待远端 KV',
-  HOST_KV_LOADING: '主机 KV 加载中',
-  REMOTE_KV_READY: '远端 KV 就绪',
-  PD_ENGINE_MISSING: '缺少 PD 引擎',
-  PREEMPTED_RECOMPUTE: '抢占后重算',
-  BUDGET_TOO_SMALL_FOR_PREFILL: '预算不足以 Prefill',
-  BUDGET_TOO_SMALL_FOR_DECODE: '预算不足以 Decode',
-  KV_ALLOC_BLOCKED: 'KV 分配阻塞',
-  SCHEDULER_STALLED: '调度停滞',
-  REJECTED: '已拒绝',
-};
+import { WAITING_REASON_LABEL } from '../../lib/labels';
 
 function RequestChip({
   request,

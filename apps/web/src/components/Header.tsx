@@ -4,6 +4,7 @@ import { useLabStore, type Mode } from '../store/useLabStore';
 import { QUALITY_TITLE } from '../lib/format';
 import { useI18n } from '../i18n';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { Icon } from './ui/Icon';
 
 const MODES: Array<{ id: Mode; label: string; title?: string; disabled?: boolean }> = [
   { id: 'explore', label: '原理探索' },
@@ -165,9 +166,10 @@ export function Header(): ReactNode {
     <header className="app-header">
       <div className="header-left">
         <button className="brand" onClick={() => navigate('lab')} aria-label={t('返回工作台')}>
-          <span className="brandmark">◈</span>
+          <span className="brandmark"><Icon name="experiment" size={22} /></span>
           <span className="brandtext">
-            InferenceLab <span className="version">v1.1</span>
+            <span>InferenceLab <span className="version">v1.1</span></span>
+            <span className="brand-kicker mono">MECHANISM CONSOLE</span>
           </span>
         </button>
         <label className="scenario-picker">
@@ -179,6 +181,7 @@ export function Header(): ReactNode {
               if (event.target.value) loadPreset(event.target.value);
             }}
             data-testid="scenario-select"
+            title={lt(scenario.title)}
           >
             {presetValue === '' && <option value="">{t('自定义 · {title}', { title: lt(scenario.title) })}</option>}
             {scenarioPresets.map((preset) => (
@@ -235,9 +238,8 @@ export function Header(): ReactNode {
             aria-controls="header-more-popover"
             onClick={() => setMoreOpen((open) => !open)}
           >
-            ⋯
-          </button>
-          {moreOpen && (
+            <Icon name="more" />
+          </button>          {moreOpen && (
             <div className="header-more" id="header-more-popover" data-testid="header-more" aria-label={t('更多操作')}>
               <div className="more-section more-modes" role="group" aria-label={t('工作模式')}>
                 {MODES.map((item, index) => (
@@ -311,7 +313,7 @@ export function Header(): ReactNode {
           aria-label={t('打开配置面板')}
           onClick={() => toggleDrawer('config')}
         >
-          ☰
+          <Icon name="menu" />
         </button>
         <button
           className="icon-btn theme-btn"
@@ -319,7 +321,7 @@ export function Header(): ReactNode {
           aria-label={theme === 'dark' ? t('切换到浅色主题') : t('切换到深色主题')}
           onClick={toggleTheme}
         >
-          {theme === 'dark' ? '◐' : '◑'}
+          <Icon name="theme" />
         </button>
         <button
           className={`icon-btn motion-btn ${reducedMotion ? 'active' : ''}`}
@@ -332,10 +334,10 @@ export function Header(): ReactNode {
           aria-pressed={reducedMotion}
           onClick={() => setReducedMotion(!reducedMotion)}
         >
-          ◔
+          <Icon name="motion" />
         </button>
         <button className="icon-btn help-btn" title={t('重新打开 3 分钟引导')} aria-label={t('帮助')} onClick={resetOnboarding}>
-          ?
+          <Icon name="help" />
         </button>
         <div className="run-control">
           <button
@@ -348,7 +350,9 @@ export function Header(): ReactNode {
               else void runNow(false);
             }}
           >
-            <span className="run-icon" aria-hidden="true">{running ? (reducedMotion ? '●' : '◌') : '▶'}</span>
+            <span className={`run-icon ${running ? 'running' : ''}`} aria-hidden="true">
+              <Icon name={running ? 'motion' : 'run'} />
+            </span>
             <span className="run-text">{runLabel}</span>
           </button>
           {running && (

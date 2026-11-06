@@ -3,6 +3,7 @@ export const experiments = {
   '运行 · {time}': 'Run · {time}',
   '修订 {revision} · {time} 虚拟': 'revision {revision} · {time} virtual',
   '实验记录': 'Experiment records',
+  '已记录 Run 数量': 'Number of recorded runs',
   '每次 Run 都会冻结 Scenario、Plan 与完整事件日志。切换记录只重建回放，不重新仿真； 因此同一个 Run 的结果可重复。':
     'Every Run freezes its Scenario, Plan, and full event log. Switching records rebuilds the replay without re-simulating, so the result of a Run is reproducible.',
   '← 回到工作台': '← Back to workbench',

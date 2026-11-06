@@ -1,0 +1,845 @@
+/* ---------- Drawer / responsive ---------- */
+
+.lab-drawer-tools {
+  display: none;
+}
+
+.drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 1439px) {
+  .lab-main {
+    grid-template-columns: var(--rail-w) 260px minmax(0, 1fr) 280px;
+  }
+
+  .config-panel {
+    width: 260px;
+  }
+
+  .inspector {
+    width: 280px;
+  }
+
+  .mode-switch {
+    display: none;
+  }
+
+  .header-more-wrap {
+    display: block;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .ref-grid.five {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1280px) {
+  .scenario-picker {
+    max-width: 190px;
+  }
+
+  .transport-grid,
+  .metrics-lower {
+    grid-template-columns: 1fr;
+  }
+
+  .run-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1280px) {
+  .mobile-only {
+    display: inline-grid;
+  }
+
+  .lab-main {
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  }
+
+  .config-panel,
+  .inspector {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    z-index: 60;
+    width: min(340px, 88vw);
+    box-shadow: var(--shadow);
+    transition: transform 160ms ease;
+  }
+
+  .config-panel {
+    left: var(--rail-w);
+    transform: translateX(calc(-100% - var(--rail-w)));
+    border-right: 1px solid var(--border);
+  }
+
+  .inspector {
+    right: 0;
+    transform: translateX(100%);
+    border-left: 1px solid var(--border);
+  }
+
+  .drawer-config-open .config-panel {
+    transform: translateX(0);
+  }
+
+  .drawer-inspector-open .inspector {
+    transform: translateX(0);
+  }
+
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 56px 0 0 var(--rail-w);
+    background: rgba(0, 0, 0, 0.42);
+    z-index: 50;
+  }
+
+  .lab-drawer-tools {
+    display: flex;
+    position: fixed;
+    right: 12px;
+    bottom: calc(var(--timeline-h) + var(--dock-gap));
+    z-index: 45;
+    gap: 4px;
+  }
+
+  .lab-drawer-tools button {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: var(--text-xs);
+    box-shadow: var(--shadow);
+  }
+
+  .lab-drawer-tools button.active {
+    color: var(--compute);
+    border-color: var(--compute);
+  }
+
+  .canvas-panel {
+    padding: 10px 12px 8px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ref-grid.three {
+    grid-template-columns: 1fr;
+  }
+
+  .ref-grid.five {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .brandtext {
+    display: none;
+  }
+
+  .scenario-picker {
+    max-width: 160px;
+  }
+
+  .scenario-picker select {
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .icon-btn.theme-btn,
+  .icon-btn.motion-btn,
+  .icon-btn.help-btn {
+    display: none;
+  }
+
+  .more-settings {
+    display: flex;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-header {
+    gap: 8px;
+  }
+
+  .scenario-picker {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .lab-layout {
+    --rail-w: 48px;
+  }
+
+  .top-nav,
+  .draft-pill {
+    display: none;
+  }
+
+  /* Keep the quality badge visible: it is the primary honesty signal. Hide the
+     wordmark instead so the compact header still fits. */
+  .brandtext {
+    display: none;
+  }
+
+  .quality-pill {
+    padding: 0 5px;
+  }
+
+  .mobile-hint {
+    display: block;
+  }
+
+  .device-tags {
+    display: none;
+  }
+
+  .app-header {
+    height: 52px;
+    flex-basis: 52px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .scenario-picker {
+    display: inline-flex;
+    max-width: 132px;
+  }
+
+  .scenario-picker select {
+    max-width: 110px;
+    font-size: var(--text-xs);
+  }
+
+  .icon-btn {
+    display: none;
+  }
+
+  .icon-btn.mobile-only,
+  .icon-btn.lang-btn,
+  .icon-btn.more-trigger {
+    display: inline-grid;
+  }
+
+  .more-nav {
+    display: flex;
+  }
+
+  .run-btn {
+    padding: 0 8px;
+    font-size: var(--text-xs);
+  }
+
+  .lab-main {
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  }
+
+  .tool-rail {
+    width: var(--rail-w);
+  }
+
+  .rail-btn {
+    width: 38px;
+    min-height: 40px;
+    font-size: 13px;
+  }
+
+  .rail-label {
+    display: none;
+  }
+
+  .config-panel {
+    left: var(--rail-w);
+    transform: translateX(calc(-100% - var(--rail-w)));
+    top: 52px;
+  }
+
+  .inspector {
+    top: 52px;
+  }
+
+  .drawer-backdrop {
+    inset: 52px 0 0 var(--rail-w);
+  }
+
+  .timeline {
+    height: 178px;
+    flex-basis: 178px;
+    padding: 6px 8px 4px;
+  }
+
+  .timeline-empty {
+    height: 104px;
+    flex-basis: 104px;
+  }
+
+  .tl-track {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .tl-track-label span {
+    font-size: var(--text-xs);
+  }
+
+  .tl-meta-end {
+    display: none;
+  }
+
+  .tl-foot-note {
+    display: none;
+  }
+
+  /* The floating replay caption overlaps the in-flow hint bar on narrow
+     screens; the timeline already exposes the same event count. */
+  .canvas-quality-note {
+    display: none;
+  }
+
+  .lab-drawer-tools {
+    bottom: calc(var(--timeline-h) + 8px);
+    right: 8px;
+  }
+
+  .kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .canvas-title {
+    font-size: 14px;
+  }
+
+  .canvas-tools .tool-btn {
+    font-size: var(--text-xs);
+    padding: 3px 5px;
+  }
+
+  .onboarding-dock {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    bottom: 50px;
+  }
+
+  .why-bar {
+    font-size: var(--text-xs);
+  }
+
+  .why-more {
+    display: none;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .memory-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .rank-list {
+    position: static;
+  }
+
+  .rank-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .transport-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scheduler-queues,
+  .scheduler-static {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .queue-list {
+    max-height: 160px;
+  }
+
+  .ref-grid.two,
+  .ref-grid.five {
+    grid-template-columns: 1fr;
+  }
+
+  .ref-tr {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .ref-tr span:nth-child(3) {
+    display: none;
+  }
+
+  .page-head {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .page-actions {
+    justify-content: flex-start;
+  }
+
+  .run-card-head {
+    flex-direction: column;
+  }
+
+  .run-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .run-card-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .compare-runs {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .evidence-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hbm-legend {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .scenario-picker {
+    max-width: 120px;
+  }
+
+  .scenario-picker select {
+    max-width: 96px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    gap: 6px;
+    padding: 0 8px;
+  }
+
+  .header-left,
+  .header-right {
+    gap: 6px;
+  }
+
+  /* Reclaim a few pixels from the badge so the scenario picker can show more
+     of the preset name instead of a hard ellipsis. */
+  .quality-pill {
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+  }
+
+  .scenario-picker {
+    max-width: 152px;
+  }
+
+  .scenario-picker select {
+    max-width: 128px;
+  }
+
+  .run-btn {
+    width: 34px;
+    padding: 0;
+  }
+
+  .run-btn .run-text {
+    display: none;
+  }
+
+  /* The event counter and the "EVENT LOG" qualifier are secondary on phones;
+     dropping them keeps the header on one line without clipping. */
+  .tl-eyebrow-long,
+  .tl-meta {
+    display: none;
+  }
+}
+
+/* Instrument refinements retain every existing breakpoint and drawer behavior. */
+@media (max-width: 1439px) {
+  .lab-layout {
+    --config-w: 272px;
+    --inspector-w: 288px;
+  }
+
+  .lab-main {
+    grid-template-columns: var(--rail-w) var(--config-w) minmax(0, 1fr) var(--inspector-w);
+  }
+
+  .config-panel {
+    width: var(--config-w);
+    padding-inline: 14px;
+  }
+
+  .inspector {
+    width: var(--inspector-w);
+    padding-inline: 14px;
+  }
+
+  .kpi {
+    padding-inline: 10px;
+  }
+
+  .kpi-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .lab-layout {
+    --config-w: min(360px, 88vw);
+    --inspector-w: min(360px, 88vw);
+  }
+
+  .lab-main {
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  }
+
+  .config-panel,
+  .inspector {
+    top: var(--header-h);
+    bottom: 0;
+    z-index: var(--z-drawer);
+    width: min(360px, 88vw);
+    box-shadow: var(--shadow);
+  }
+
+  .config-panel {
+    left: var(--rail-w);
+    transform: translateX(calc(-100% - var(--rail-w)));
+  }
+
+  .drawer-backdrop {
+    inset: var(--header-h) 0 0 var(--rail-w);
+    z-index: var(--z-backdrop);
+  }
+
+  .lab-drawer-tools {
+    right: var(--dock-gap);
+    bottom: calc(var(--timeline-h) + var(--dock-gap));
+    z-index: var(--z-dock);
+    gap: 6px;
+  }
+
+  .lab-layout:has(.timeline-collapsed) .lab-drawer-tools {
+    bottom: calc(var(--timeline-collapsed-h) + var(--dock-gap));
+  }
+
+  .lab-layout:has(.timeline-empty) .lab-drawer-tools {
+    bottom: calc(var(--timeline-empty-h) + var(--dock-gap));
+  }
+
+  .lab-drawer-tools button {
+    min-height: 34px;
+    padding: 6px 10px;
+    border-color: var(--border-strong);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--panel) 96%, transparent);
+    font-size: var(--text-xs);
+    box-shadow: var(--shadow), var(--shadow-inset);
+    backdrop-filter: blur(10px);
+  }
+
+  .lab-drawer-tools button.active {
+    color: var(--compute);
+    border-color: var(--compute);
+  }
+
+  .canvas-panel {
+    padding: 14px 14px 10px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: 52px;
+    --timeline-h: 196px;
+    --timeline-empty-h: 116px;
+  }
+
+  .lab-layout {
+    --rail-w: 0px;
+    --mobile-rail-h: 58px;
+  }
+
+  .app-header {
+    height: var(--header-h);
+    flex-basis: var(--header-h);
+  }
+
+  .app-header::after {
+    left: 8px;
+  }
+
+  .brandmark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .scenario-picker select,
+  .run-btn,
+  .canvas-tools .tool-btn,
+  .why-bar,
+  .quality-pill {
+    font-size: var(--text-xs);
+  }
+
+  .lab-main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--mobile-rail-h) minmax(0, 1fr);
+  }
+
+  .tool-rail {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: var(--mobile-rail-h);
+    min-width: 0;
+    padding: 6px 8px;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-strong);
+    background: var(--rail);
+  }
+
+  .rail-btn,
+  html[lang='en'] .rail-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 76px;
+    min-height: 44px;
+    padding: 6px 10px;
+    flex-direction: row;
+    gap: 7px;
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--surface) 65%, transparent);
+    font-size: var(--text-md);
+  }
+
+  .rail-btn:last-child {
+    min-width: 44px;
+  }
+
+  .rail-btn.active {
+    box-shadow: inset 0 -2px 0 var(--compute), var(--shadow-inset);
+  }
+
+  .rail-label,
+  html[lang='en'] .rail-label {
+    display: inline;
+    overflow: visible;
+    font-size: var(--text-xs);
+    text-overflow: clip;
+  }
+
+  .rail-spacer {
+    display: none;
+  }
+
+  .canvas-panel {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 12px 10px 8px;
+  }
+
+  .config-panel {
+    top: var(--header-h);
+    left: 0;
+    width: min(340px, 92vw);
+    transform: translateX(-100%);
+  }
+
+  .inspector {
+    top: var(--header-h);
+    width: min(340px, 92vw);
+  }
+
+  .drawer-backdrop {
+    inset: var(--header-h) 0 0;
+  }
+
+  .timeline {
+    height: var(--timeline-h);
+    flex-basis: var(--timeline-h);
+    padding: 8px 8px 6px;
+    gap: 6px;
+  }
+
+  .timeline-collapsed {
+    height: var(--timeline-collapsed-h);
+    flex-basis: var(--timeline-collapsed-h);
+  }
+
+  .timeline-empty {
+    height: var(--timeline-empty-h);
+    flex-basis: var(--timeline-empty-h);
+  }
+
+  .tl-track {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .timeline-ruler {
+    margin-left: 102px;
+  }
+
+  .timeline-ruler-mark:nth-child(even):not(:last-child) {
+    display: none;
+  }
+
+  .tl-track-label span {
+    font-size: var(--text-xs);
+  }
+
+  .channel-code {
+    display: none;
+  }
+
+  .tl-title {
+    gap: 6px;
+  }
+
+  .tl-title b {
+    font-size: var(--text-sm);
+  }
+
+  .tl-controls {
+    gap: 4px;
+  }
+
+  .tl-icon {
+    width: 26px;
+  }
+
+  .lab-drawer-tools {
+    right: 8px;
+    bottom: calc(var(--timeline-h) + 8px);
+  }
+
+  .lab-layout:has(.timeline-collapsed) .lab-drawer-tools {
+    bottom: calc(var(--timeline-collapsed-h) + 8px);
+  }
+
+  .lab-layout:has(.timeline-empty) .lab-drawer-tools {
+    bottom: calc(var(--timeline-empty-h) + 8px);
+  }
+
+  .canvas-title {
+    font-size: var(--text-lg);
+  }
+
+  .kpi {
+    padding: 9px 10px;
+  }
+
+  .kpi-value {
+    font-size: 20px;
+  }
+
+  .page-shell {
+    padding: 22px 14px 36px;
+  }
+
+  .page-head,
+  .page-masthead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+  }
+
+  .page-head h1,
+  .page-masthead h1 {
+    font-size: 24px;
+  }
+
+  .reference-section-nav {
+    margin-bottom: 16px;
+  }
+
+  .onboarding-dock {
+    bottom: 54px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quality-pill {
+    padding-inline: 6px;
+    letter-spacing: 0.035em;
+  }
+
+  .scenario-picker {
+    max-width: 128px;
+    padding-inline: 8px;
+  }
+
+  .scenario-picker select {
+    max-width: 104px;
+  }
+
+  .header-left,
+  .header-right {
+    gap: 4px;
+  }
+
+  .version {
+    display: none;
+  }
+
+  .tl-speed {
+    min-width: 48px;
+  }
+
+  .timeline-ruler-mark:not(:first-child):not(:last-child) {
+    display: none;
+  }
+
+  .metric-value {
+    font-size: 22px;
+  }
+
+  .event-history-row {
+    grid-template-columns: 56px minmax(0, 1fr) 64px;
+  }
+
+  .error-boundary {
+    margin-block: 24px;
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric-card:hover,
+  .run-btn:active:not(:disabled) {
+    transform: none;
+  }
+}

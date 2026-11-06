@@ -62,8 +62,6 @@ function assignLanes(segments: RawSegment[], minVisualDurationUs: number): Timel
 
 export function buildTimeline(events: SimEvent[]): TimelineModel {
   const raw: Record<TrackId, RawSegment[]> = { prefill: [], decode: [], transfer: [], wait: [] };
-  const indexById = new Map<string, number>();
-  events.forEach((event, index) => indexById.set(event.id, index));
 
   const totalUs = events.reduce((max, event) => {
     const duration = Number(event.detail.durationUs ?? 0);
@@ -171,8 +169,35 @@ export function buildTimeline(events: SimEvent[]): TimelineModel {
   return { tracks, totalUs: Math.max(1, totalUs) };
 }
 
-export function findEventIndex(events: SimEvent[], eventId: string): number {
-  return events.findIndex((event) => event.id === eventId);
+const NICE_STEP_FACTORS = [1, 2, 2.5, 5, 10];
+
+function niceStepAtLeast(value: number): number {
+  const magnitude = 10 ** Math.floor(Math.log10(value));
+  const normalized = value / magnitude;
+  const factor = NICE_STEP_FACTORS.find((candidate) => candidate >= normalized) ?? 10;
+  return factor * magnitude;
+}
+
+/** Returns five to seven readable ticks, including both timeline endpoints. */
+export function buildTimelineTicks(totalUs: number): number[] {
+  if (!Number.isFinite(totalUs) || totalUs <= 0) return [0];
+
+  // Prefer six ticks, then seven or five when a rounded step would otherwise
+  // overlap the endpoint. The final interval may be shorter than the others.
+  for (const intervals of [5, 6, 4]) {
+    const step = niceStepAtLeast(totalUs / intervals);
+    const ticks = Array.from({ length: intervals }, (_, index) =>
+      Number((index * step).toPrecision(12)),
+    );
+    if (ticks[ticks.length - 1]! < totalUs) {
+      // A rounded tick very close to the endpoint produces overlapping labels.
+      // Drop that penultimate tick while retaining the exact run duration.
+      const rounded = ticks[ticks.length - 1]!;
+      return rounded > totalUs * 0.9 ? [...ticks.slice(0, -1), totalUs] : [...ticks, totalUs];
+    }
+  }
+
+  return Array.from({ length: 6 }, (_, index) => (totalUs * index) / 5);
 }
 
 export function nextEventOfType(events: SimEvent[], fromIndex: number, type: SimEvent['type']): number {

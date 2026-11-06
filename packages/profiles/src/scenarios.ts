@@ -12,6 +12,10 @@ import {
 } from '@inferencelab/core';
 import { createAscendA3Template, createToy32Hardware, createToy4Hardware } from './hardware/toy.js';
 import {
+  createAscend910C384Hardware,
+  createAscend950DT64Hardware,
+} from './hardware/ascend.js';
+import {
   createGlm53TemplateModel,
   createToyDenseModel,
   createToyMlaModel,
@@ -19,6 +23,7 @@ import {
   createToySparseModel,
 } from './models/toy.js';
 import { createTeachingFrameworkProfile } from './frameworks/teaching.js';
+import { createAscendFrameworkProfile } from './frameworks/ascend.js';
 
 const GB = 1_000_000_000;
 
@@ -40,6 +45,8 @@ export interface ProfileBundle {
 const hardware4 = createToy4Hardware();
 const hardware32 = createToy32Hardware();
 const hardwareA3 = createAscendA3Template();
+const hardware910c = createAscend910C384Hardware();
+const hardware950dt = createAscend950DT64Hardware();
 const dense = createToyDenseModel();
 const moe = createToyMoeModel();
 const moeRedundant = createToyMoeModel({
@@ -52,10 +59,11 @@ const mla = createToyMlaModel();
 const mlaDcp = createToyMlaModel({ id: 'model-toy-mla-4b-dcp', contextSharded: true });
 const sparse = createToySparseModel();
 const framework = createTeachingFrameworkProfile();
+const ascendFramework = createAscendFrameworkProfile();
 
-export const hardwareProfiles = [hardware4, hardware32, hardwareA3];
+export const hardwareProfiles = [hardware4, hardware32, hardware910c, hardware950dt, hardwareA3];
 export const modelProfiles = [dense, moe, moeRedundant, mla, mlaDcp, sparse, glmTemplate];
-export const frameworkProfiles = [framework];
+export const frameworkProfiles = [framework, ascendFramework];
 
 export function getProfileBundle(scenario: Scenario): ProfileBundle {
   const hardware = hardwareProfiles.find((h) => h.id === scenario.hardwareProfileId);
@@ -113,6 +121,8 @@ function baseScenario(
   runtimeConfig: RuntimeConfig,
   workload: Scenario['workload'],
   seed = 42,
+  frameworkProfile: FrameworkProfile = framework,
+  assumptions: Record<string, number | boolean | string> = {},
 ): Scenario {
   return {
     schemaVersion: '1.0',
@@ -122,14 +132,53 @@ function baseScenario(
     accuracyTier: 'discrete-event',
     hardwareProfileId: hardware.id,
     modelProfileId: model.id,
-    frameworkProfileId: framework.id,
+    frameworkProfileId: frameworkProfile.id,
     deployment,
     runtime: runtimeConfig,
     workload,
     assumptions: {
       note: '机制教学仿真；时间指标使用显式合成成本模型。',
       syntheticTiming: true,
+      ...assumptions,
     },
+  };
+}
+
+/**
+ * Assign EP groups across consecutive DP replicas at the same TP position.
+ * This keeps every group at the declared EP width; the teaching `withEpGroups`
+ * above is intentionally left unchanged for the existing toy presets.
+ */
+function withEpGroupsAcrossReplicas(deployment: Deployment, ep: number): Deployment {
+  const dp = Math.max(1, deployment.logicalParallelism.dp ?? 1);
+  if (ep < 1 || dp % ep !== 0) {
+    throw new Error(`EP=${ep} 需要 DP=${dp} 能被整除，才能按副本分组。`);
+  }
+  const engineOrder = new Map(deployment.engines.map((engine, index) => [engine.id, index]));
+  const positionInEngine = new Map<string, number>();
+  for (const engine of deployment.engines) {
+    engine.rankIds.forEach((rankId, index) => positionInEngine.set(rankId, index));
+  }
+  const epGroups = new Map<string, string[]>();
+  const ranks = deployment.placement.ranks.map((rank) => {
+    const replicaIndex = engineOrder.get(rank.engineId) ?? 0;
+    const tpPosition = positionInEngine.get(rank.rankId) ?? 0;
+    const groupIndex = Math.floor(replicaIndex / ep);
+    const groupId = `ep-tp${tpPosition}-g${groupIndex}`;
+    const members = epGroups.get(groupId) ?? [];
+    members.push(rank.rankId);
+    epGroups.set(groupId, members);
+    return { ...rank, epGroupIds: [groupId] };
+  });
+  for (const [groupId, members] of epGroups) {
+    if (members.length !== ep) {
+      throw new Error(`EP Group ${groupId} 生成了 ${members.length} 个 Rank，期望 ${ep}。`);
+    }
+  }
+  return {
+    ...deployment,
+    placement: { ranks },
+    logicalParallelism: { ...deployment.logicalParallelism, ep },
   };
 }
 
@@ -539,6 +588,75 @@ export const scenarioPresets: ScenarioPreset[] = [
       { kind: 'fixed', count: 4, promptTokens: 1024, outputTokens: 128, atUs: 0 },
       101,
     ),
+  },
+  {
+    id: 'ascend-910c-384-moe-ep',
+    title: 'Ascend A3 · 910C × 384 · MoE/EP',
+    summary:
+      '48 节点 × 8 NPU，TP16 × DP24 = 384 Rank；EP8 按 DP 副本分组。观察 24 个 Engine 的请求路由、专家驻留与每 NPU 独立 UB 上行竞争域。',
+    tags: ['Ascend', '910C', 'A3', 'MoE', 'EP', 'UB', 'M5'],
+    milestone: 'M5',
+    scenario: (() => {
+      const deployment = withEpGroupsAcrossReplicas(deploymentFor(hardware910c, 16, 24), 8);
+      return baseScenario(
+        'ascend-910c-384-moe-ep',
+        'Ascend A3 · 910C × 384 · MoE/EP',
+        hardware910c,
+        moe,
+        deployment,
+        runtime({
+          maxModelLen: 8192,
+          maxNumSeqs: 16,
+          maxNumBatchedTokens: 32768,
+          blockSize: 64,
+          kvCacheMemoryBytes: 24 * GB,
+          enableExpertParallel: true,
+        }),
+        { kind: 'fixed', count: 48, promptTokens: 4096, outputTokens: 64, atUs: 0 },
+        107,
+        ascendFramework,
+        { dtype: 'fp16' },
+      );
+    })(),
+  },
+  {
+    id: 'ascend-950dt-64-pd-mla-mtp',
+    title: 'Ascend 950DT · 64 卡 PD + MLA + MTP',
+    summary:
+      '单机柜 8 节点 × 8 NPU；P/D 各 TP8 × DP4（各 32 卡），PD_PULL 跨节点传输 KV；MLA latent 缓存与 MTP Draft 4 / 接受率 0.6 均显式为假设。',
+    tags: ['Ascend', '950DT', 'A5', 'PD', 'MLA', 'MTP', 'UB', 'M5'],
+    milestone: 'M5',
+    scenario: (() => {
+      const generated = generatePdDeployment(hardware950dt, {
+        prefillTp: 8,
+        prefillDp: 4,
+        decodeTp: 8,
+        decodeDp: 4,
+        strategy: 'PD_PULL',
+      });
+      if (generated.issues.some((issue) => issue.severity === 'error')) {
+        throw new Error('950DT PD 预设部署生成失败');
+      }
+      return baseScenario(
+        'ascend-950dt-64-pd-mla-mtp',
+        'Ascend 950DT · 64 卡 PD + MLA + MTP',
+        hardware950dt,
+        mla,
+        generated.deployment,
+        runtime({
+          maxModelLen: 16384,
+          maxNumSeqs: 16,
+          maxNumBatchedTokens: 32768,
+          blockSize: 64,
+          kvCacheMemoryBytes: 16 * GB,
+          speculative: { method: 'mtp', draftTokens: 4, acceptanceRate: 0.6, draftCostRatio: 0.15 },
+        }),
+        { kind: 'fixed', count: 16, promptTokens: 8192, outputTokens: 128, atUs: 0 },
+        109,
+        ascendFramework,
+        { dtype: 'fp8' },
+      );
+    })(),
   },
   {
     id: 'ascend-a3-glm53-template',

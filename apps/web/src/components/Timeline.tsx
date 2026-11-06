@@ -1,23 +1,90 @@
-import { memo, useCallback, useMemo, type ReactNode } from 'react';
+import {
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from 'react';
 import { useLabStore } from '../store/useLabStore';
-import { buildTimeline, type TimelineSegment, type TimelineTrack } from '../lib/timeline';
+import { buildTimeline, buildTimelineTicks, type TimelineSegment, type TimelineTrack } from '../lib/timeline';
 import { formatClock, formatCount, formatUs, percentOf } from '../lib/format';
 import { useI18n } from '../i18n';
+import { Icon } from './ui/Icon';
+
+type SeekEvent = ReactMouseEvent<HTMLDivElement> | ReactPointerEvent<HTMLDivElement>;
+
+function usePointerSeek(totalUs: number, onSeekTime: (us: number) => void) {
+  const pointerIdRef = useRef<number | null>(null);
+  const suppressClickRef = useRef(false);
+
+  const seek = useCallback(
+    (event: SeekEvent) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(1, rect.width)));
+      onSeekTime(ratio * totalUs);
+    },
+    [onSeekTime, totalUs],
+  );
+
+  const finish = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    if (pointerIdRef.current !== event.pointerId) return;
+    pointerIdRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }, []);
+
+  return {
+    onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerIdRef.current = event.pointerId;
+      suppressClickRef.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      seek(event);
+    },
+    onPointerMove: (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (pointerIdRef.current === event.pointerId) seek(event);
+    },
+    onPointerUp: (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (pointerIdRef.current !== event.pointerId) return;
+      seek(event);
+      finish(event);
+    },
+    onPointerCancel: (event: ReactPointerEvent<HTMLDivElement>) => {
+      suppressClickRef.current = false;
+      finish(event);
+    },
+    onClick: (event: ReactMouseEvent<HTMLDivElement>) => {
+      // Pointer activation already performed the seek; suppress its trailing click
+      // (especially after a drag), while retaining click-only assistive activation.
+      if (suppressClickRef.current) {
+        suppressClickRef.current = false;
+        return;
+      }
+      seek(event);
+    },
+  };
+}
 
 function TrackRow({
   track,
+  channel,
   totalUs,
   virtualTimeUs,
   selectedEventIndex,
   onSeekTime,
 }: {
   track: TimelineTrack;
+  channel: number;
   totalUs: number;
   virtualTimeUs: number;
   selectedEventIndex: number;
   onSeekTime: (us: number) => void;
 }): ReactNode {
   const { t, lt } = useI18n();
+  const pointerSeek = usePointerSeek(totalUs, onSeekTime);
   const visibleLanes = Math.min(track.laneCount, 4);
   const hidden = track.laneCount - visibleLanes;
   const seekBy = (delta: number) => onSeekTime(Math.min(totalUs, Math.max(0, virtualTimeUs + delta)));
@@ -29,7 +96,10 @@ function TrackRow({
     <div className="tl-track">
       <div className="tl-track-label">
         <i style={{ background: track.color }} />
-        <span>{lt(track.label)}</span>
+        <span className="timeline-channel">
+          {lt(track.label)}
+          <span className="channel-code mono">CH {String(channel).padStart(2, '0')}</span>
+        </span>
         <b className="mono">{track.segments.length}</b>
       </div>
       <div
@@ -38,11 +108,7 @@ function TrackRow({
         role="group"
         tabIndex={0}
         aria-label={t('{label} 轨道；方向键按 1% 步进，Home/End 跳到首尾', { label: lt(track.label) })}
-        onClick={(event) => {
-          const rect = event.currentTarget.getBoundingClientRect();
-          const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(1, rect.width)));
-          onSeekTime(ratio * totalUs);
-        }}
+        {...pointerSeek}
         onKeyDown={(event) => {
           if (event.key === 'ArrowLeft') {
             event.preventDefault();
@@ -98,6 +164,7 @@ const Segment = memo(function Segment({
       data-end-us={segment.endUs}
       data-track={segment.track}
       data-request-id={segment.requestId ?? ''}
+      onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => {
         event.stopPropagation();
         onSelect(segment);
@@ -163,12 +230,13 @@ export function Timeline(): ReactNode {
     performance.mark('il-timeline-built');
     return built;
   }, [activeRun]);
+  const scrubPointerSeek = usePointerSeek(model?.totalUs ?? 1, setVirtualTime);
 
   if (drawers.timeline) {
     return (
       <div className="timeline timeline-collapsed" data-testid="timeline">
         <button className="tl-expand" onClick={() => toggleDrawer('timeline')}>
-          ▴ {t('展开 Timeline')}
+          <Icon name="collapse" size={14} /> {t('展开 Timeline')}
           {activeRun && <span className="mono"> · {t('{count} 个事件', { count: activeRun.events.length })}</span>}
         </button>
       </div>
@@ -184,9 +252,9 @@ export function Timeline(): ReactNode {
             <b>{t('事件日志回放')}</b>
           </div>
           <div className="tl-controls">
-            <button className="tl-icon" disabled title={t('运行后可播放')}>▶</button>
-            <button className="tl-icon" disabled title={t('运行后可单步')}>▸|</button>
-            <button className="tl-icon tl-collapse" onClick={() => toggleDrawer('timeline')} title={t('收起 Timeline')}>▾</button>
+            <button className="tl-icon" disabled title={t('运行后可播放')} aria-label={t('运行后可播放')}><Icon name="play" size={14} /></button>
+            <button className="tl-icon" disabled title={t('运行后可单步')} aria-label={t('运行后可单步')}><Icon name="step" size={14} /></button>
+            <button className="tl-icon tl-collapse" onClick={() => toggleDrawer('timeline')} title={t('收起 Timeline')} aria-label={t('收起 Timeline')}><Icon name="expand" size={14} /></button>
           </div>
         </div>
         <p className="tl-empty-text">
@@ -217,17 +285,17 @@ export function Timeline(): ReactNode {
           </span>
         </div>
         <div className="tl-controls">
-          <button className="tl-icon" onClick={resetPlayback} title={t('回到起点')} aria-label={t('回到起点')}>↺</button>
+          <button className="tl-icon" onClick={resetPlayback} title={t('回到起点')} aria-label={t('回到起点')}><Icon name="reset" size={14} /></button>
           <button
             className="tl-icon tl-play"
             onClick={togglePlay}
             title={reducedMotion ? t('已开启减少动态：仍可手动单步') : playing ? t('暂停') : t('播放')}
             aria-label={playing ? t('暂停') : t('播放')}
           >
-            {playing ? '❚❚' : atEnd ? '↺▶' : '▶'}
+            <Icon name={playing ? 'pause' : atEnd ? 'reset' : 'play'} size={14} />
           </button>
-          <button className="tl-icon" onClick={stepEvent} title={t('单步事件')} aria-label={t('单步事件')}>▸|</button>
-          <button className="tl-icon" onClick={stepIteration} title={t('跳到下一个调度迭代')} aria-label={t('下一个调度迭代')}>⇥</button>
+          <button className="tl-icon" onClick={stepEvent} title={t('单步事件')} aria-label={t('单步事件')}><Icon name="step" size={14} /></button>
+          <button className="tl-icon" onClick={stepIteration} title={t('跳到下一个调度迭代')} aria-label={t('下一个调度迭代')}><Icon name="next" size={14} /></button>
           <select
             className="tl-speed"
             value={speed}
@@ -240,7 +308,7 @@ export function Timeline(): ReactNode {
             <option value={4}>4×</option>
             <option value={16}>16×</option>
           </select>
-          <button className="tl-icon tl-collapse" onClick={() => toggleDrawer('timeline')} title={t('收起 Timeline')}>▾</button>
+          <button className="tl-icon tl-collapse" onClick={() => toggleDrawer('timeline')} title={t('收起 Timeline')} aria-label={t('收起 Timeline')}><Icon name="expand" size={14} /></button>
         </div>
       </div>
 
@@ -253,11 +321,7 @@ export function Timeline(): ReactNode {
         aria-valuemax={model.totalUs}
         aria-valuenow={Math.round(virtualTimeUs)}
         aria-valuetext={formatUs(virtualTimeUs)}
-        onClick={(event) => {
-          const rect = event.currentTarget.getBoundingClientRect();
-          const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(1, rect.width)));
-          setVirtualTime(ratio * model.totalUs);
-        }}
+        {...scrubPointerSeek}
         onKeyDown={(event) => {
           const seekBy = (delta: number) => setVirtualTime(Math.min(model.totalUs, Math.max(0, virtualTimeUs + delta)));
           if (event.key === 'ArrowLeft') {
@@ -286,11 +350,24 @@ export function Timeline(): ReactNode {
         <span className="tl-scrub-label mono">{formatUs(virtualTimeUs)}</span>
       </div>
 
+      <div className="timeline-ruler" role="group" aria-label={t('时间刻度')}>
+        {buildTimelineTicks(model.totalUs).map((tick) => (
+          <span
+            key={tick}
+            className="timeline-ruler-mark"
+            style={{ left: `${percentOf(tick, model.totalUs) * 100}%` }}
+          >
+            <span className="mono">{formatUs(tick)}</span>
+          </span>
+        ))}
+      </div>
+
       <div className="tl-tracks">
-        {model.tracks.map((track) => (
+        {model.tracks.map((track, index) => (
           <TrackRow
             key={track.id}
             track={track}
+            channel={index + 1}
             totalUs={model.totalUs}
             virtualTimeUs={virtualTimeUs}
             selectedEventIndex={eventIndex}
@@ -305,7 +382,10 @@ export function Timeline(): ReactNode {
         <span className="tl-legend"><i className="tl-transfer" /> {t('KV / 传输')}</span>
         <span className="tl-legend"><i className="tl-wait" /> {t('等待 / 阻塞')}</span>
         <span className="tl-foot-note">
-          {t('点击轨道跳转时间，点击区间跳到该区间内的时刻；回放由 ReplayIndex 重建，不修改已冻结的 Run。')}
+          {t('点击或拖拽轨道跳转时间，点击区间跳到该区间内的时刻；回放由 ReplayIndex 重建，不修改已冻结的 Run。')}
+        </span>
+        <span className="shortcut-hint">
+          {t('Space 播放/暂停 · ←/→ 单事件 · Shift+←/→ 10 事件 · 1–5 切换 Lens')}
         </span>
       </div>
     </div>
